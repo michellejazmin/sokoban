@@ -1,0 +1,23 @@
+package org.example.model;
+
+import org.example.interfaces.ElementoTablero;
+
+public abstract class ElementoBase implements ElementoTablero {
+    private final Coordenada coordenada;
+    private final char simbolo;
+
+    protected ElementoBase(Coordenada coordenada, char simbolo) {
+        this.coordenada = coordenada;
+        this.simbolo = simbolo;
+    }
+
+    @Override
+    public Coordenada getCoordenada() {
+        return coordenada;
+    }
+
+    @Override
+    public char getSimbolo() {
+        return simbolo;
+    }
+}
