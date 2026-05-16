@@ -1,6 +1,6 @@
 package org.example.model.cajas;
 
-import org.example.model.Coordenada;
+import org.example.model.dto.Coordenada;
 
 public class CajaNormal extends Caja {
     public CajaNormal(Coordenada coordenada) {

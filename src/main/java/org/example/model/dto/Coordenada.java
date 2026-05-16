@@ -1,4 +1,4 @@
-package org.example.model;
+package org.example.model.dto;
 
 public class Coordenada {
     private final int posX;

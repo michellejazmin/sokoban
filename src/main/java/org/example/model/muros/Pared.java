@@ -1,6 +1,6 @@
-package org.example.model.pared;
+package org.example.model.muros;
 
-import org.example.model.Coordenada;
+import org.example.model.dto.Coordenada;
 import org.example.model.ElementoBase;
 
 public class Pared extends ElementoBase {

@@ -1,6 +1,6 @@
 package org.example.model.cajas;
 
-import org.example.model.Coordenada;
+import org.example.model.dto.Coordenada;
 import org.example.model.ElementoBase;
 
 public abstract class Caja extends ElementoBase {

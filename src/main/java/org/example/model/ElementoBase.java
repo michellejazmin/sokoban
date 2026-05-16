@@ -1,6 +1,7 @@
 package org.example.model;
 
 import org.example.interfaces.ElementoTablero;
+import org.example.model.dto.Coordenada;
 
 public abstract class ElementoBase implements ElementoTablero {
     private final Coordenada coordenada;
