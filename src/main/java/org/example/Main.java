@@ -1,23 +1,22 @@
 package org.example;
 
 import org.example.interfaces.ElementoTablero;
-import org.example.model.LevelsExtractor;
+import org.example.interfaces.LectorNiveles;
+import org.example.model.GestorNiveles;
+import org.example.model.TableroFactory;
+import org.example.model.TxtLevelsExtractor;
 import org.example.model.Tablero;
 
 import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        LevelsExtractor levelsExtractor = new LevelsExtractor();
-        Tablero primerTablero = levelsExtractor.getTablero(0);
+        LectorNiveles lectorTxt = new TxtLevelsExtractor("/TableroXNivel");
 
-        System.out.println(primerTablero.getNombre());
+        TableroFactory factory = new TableroFactory();
 
-        for (List<ElementoTablero> fila : primerTablero.getGrilla()) {
-            for (ElementoTablero elemento : fila) {
-                System.out.print(elemento.getSimbolo() + " ");
-            }
-            System.out.println();
-        }
+        GestorNiveles gestor = new GestorNiveles(lectorTxt, factory);
+
+        Tablero tableroParaJugar = gestor.getTableroActual();
     }
 }

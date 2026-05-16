@@ -25,7 +25,7 @@ public class ElementoFactory {
             case 'P' -> new Pared(coordenada);
             case 'S' -> new Suelo(coordenada);
             case 'C' -> new Cerrojo(coordenada);
-            case 'R' -> new Reja(coordenada);
+            case 'R' -> new Reja(coordenada); // R ==> L o O , utilice un Estado para tener solo una clase
             case 'A' -> new Aceite(coordenada);
             default -> throw new IllegalArgumentException("Simbolo de tablero desconocido: " + simbolo);
         };
