@@ -1,6 +1,6 @@
 package org.example.model.dto;
 
-public class Coordenada {
+public final class Coordenada {
     private final int posX;
     private final int posY;
 

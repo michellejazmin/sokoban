@@ -8,7 +8,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-
+/**
+ * Representa el estado actual de un nivel del juego.
+ * Mantiene la disposición de la grilla, las cajas, los objetivos y el jugador.
+ */
 
 public class Tablero {
     private final String nombre;

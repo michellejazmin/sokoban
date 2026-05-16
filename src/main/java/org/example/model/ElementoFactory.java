@@ -12,7 +12,12 @@ import org.example.model.suelo.Aceite;
 import org.example.model.suelo.Cerrojo;
 import org.example.model.suelo.Destino;
 import org.example.model.suelo.Suelo;
-
+/**
+ * Fábrica que se dedica a instanciar las entidades individuales del juego.
+ * Traduce un caracter específico ('P', 'S', 'N', 'F', etc.) en su objeto correspondiente
+ * (Pared, Suelo, CajaNormal, CajaFragil, etc.) asignándole sus coordenadas por ahora...
+ * Centraliza la creación de objetos.
+ */
 public class ElementoFactory {
 
     public ElementoTablero crearElementoEstatico(char simbolo, Coordenada coordenada) {

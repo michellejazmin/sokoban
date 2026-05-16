@@ -9,6 +9,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Se encarga de la lectura del archivo de txt.
+ * Extrae los caracteres del archivo plano (.txt) y los agrupa en listas de Strings,
+ * separando cada nivel del juego cuando encuentra una línea en blanco.
+ * Aísla la lógica de acceso a datos, este tiene que estar conectado a una interfaz despues(bajo acoplamiento)
+ */
+
 public class LevelsExtractor {
     private static final String DEFAULT_LEVELS_FILE = "/TableroXNivel";
 
