@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 /**
  * Actúa como ensamblador del nivel.
- * Recibe la matriz de texto cruda (provista por LevelsExtractor), la recorre y
+ * Recibe la matriz de texto cruda (dada por LevelsExtractor), la recorre y
  * delega la creación de cada objeto individual al ElementoFactory.
  * Su responsabilidad es organizar estas entidades recién creadas en las
  * estructuras de datos correctas (grilla, lista de cajas, lista de objetivos)

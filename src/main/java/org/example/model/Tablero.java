@@ -5,7 +5,6 @@ import org.example.model.cajas.Caja;
 import org.example.model.suelo.Destino;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -26,8 +25,8 @@ public class Tablero {
         }
 
         this.nombre = nombre;
-        this.grilla = copiarGrilla(grilla);
-        this.cajas = List.copyOf(cajas);
+        this.grilla = grilla;
+        this.cajas = cajas;
         this.objetivos = List.copyOf(objetivos);
         this.jugador = jugador;
     }
@@ -41,11 +40,11 @@ public class Tablero {
     }
 
     public List<Caja> getCajas() {
-        return Collections.unmodifiableList(cajas);
+        return cajas;
     }
 
     public List<Destino> getObjetivos() {
-        return Collections.unmodifiableList(objetivos);
+        return objetivos;
     }
 
     public Jugador getJugador() {
@@ -63,6 +62,6 @@ public class Tablero {
             copia.add(List.copyOf(fila));
         }
 
-        return Collections.unmodifiableList(copia);
+        return List.copyOf(copia);
     }
 }
