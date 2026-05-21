@@ -2,6 +2,7 @@ package org.example.model;
 
 import org.example.interfaces.ElementoTablero;
 import org.example.model.cajas.Caja;
+import org.example.model.player.Jugador;
 import org.example.model.suelo.Destino;
 
 import java.util.ArrayList;
@@ -63,5 +64,19 @@ public class Tablero {
         }
 
         return List.copyOf(copia);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder tableroTexto = new StringBuilder();
+
+        for (List<ElementoTablero> fila : grilla) {
+            for (ElementoTablero elemento : fila) {
+                tableroTexto.append(elemento.getSimbolo()).append(' ');
+            }
+            tableroTexto.append(System.lineSeparator());
+        }
+
+        return tableroTexto.toString();
     }
 }

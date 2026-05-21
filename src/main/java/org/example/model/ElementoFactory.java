@@ -8,6 +8,7 @@ import org.example.model.cajas.CajaNormal;
 import org.example.model.dto.Coordenada;
 import org.example.model.muros.Pared;
 import org.example.model.muros.Reja;
+import org.example.model.player.Jugador;
 import org.example.model.suelo.Aceite;
 import org.example.model.suelo.Cerrojo;
 import org.example.model.suelo.Destino;

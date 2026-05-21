@@ -4,7 +4,7 @@ import org.example.interfaces.ElementoTablero;
 import org.example.model.dto.Coordenada;
 
 public abstract class ElementoBase implements ElementoTablero {
-    private final Coordenada coordenada;
+    private Coordenada coordenada;
     private final char simbolo;
 
     protected ElementoBase(Coordenada coordenada, char simbolo) {

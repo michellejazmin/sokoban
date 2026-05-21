@@ -1,8 +1,8 @@
 package org.example.model.dto;
 
 public final class Coordenada {
-    private final int posX;
-    private final int posY;
+    private  int posX;
+    private  int posY;
 
     public Coordenada(int posX, int posY) {
         this.posX = posX;
@@ -15,5 +15,13 @@ public final class Coordenada {
 
     public int getPosY() {
         return posY;
+    }
+
+    public void setPosY(int posY) {
+        this.posY = posY;
+    }
+
+    public void setPosX(int posX) {
+        this.posX = posX;
     }
 }

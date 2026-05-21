@@ -3,6 +3,7 @@ package org.example.model;
 import org.example.interfaces.ElementoTablero;
 import org.example.model.cajas.Caja;
 import org.example.model.dto.Coordenada;
+import org.example.model.player.Jugador;
 import org.example.model.suelo.Destino;
 
 import java.util.ArrayList;
