@@ -18,8 +18,7 @@ public class Main {
 
         Tablero tableroParaJugar = gestor.getTableroActual();
         Jugador jugador = tableroParaJugar.getJugador();
-        MovimientoTeclado movimientoTeclado = new MovimientoTeclado(jugador); // se encapsula despues en el constructor
-        // de la view
+        MovimientoTeclado movimientoTeclado = new MovimientoTeclado(jugador); // se encapsula despues en el constructo de la view
 
         System.out.println(tableroParaJugar);
     }
