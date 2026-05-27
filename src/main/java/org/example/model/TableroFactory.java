@@ -16,7 +16,7 @@ import java.util.List;
  * estructuras de datos correctas (grilla, lista de cajas, lista de objetivos)
  * para construir y retornar un objeto Tablero listo para ser jugado.
  */
-public class TableroFactory {
+public final class TableroFactory {
 
     private final ElementoFactory elementoFactory;
 

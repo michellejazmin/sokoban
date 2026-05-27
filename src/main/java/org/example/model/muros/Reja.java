@@ -4,7 +4,7 @@ import org.example.enumerados.Estado;
 import org.example.model.ElementoBase;
 import org.example.model.dto.Coordenada;
 
-public class Reja extends ElementoBase {
+public final class Reja extends ElementoBase {
     private Estado estado;
     public Reja (Coordenada coordenada){
         super(coordenada,'R');
