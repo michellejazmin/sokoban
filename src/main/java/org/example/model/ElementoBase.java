@@ -21,8 +21,6 @@ public abstract class ElementoBase implements ElementoTablero {
     public char getSimbolo() {
         return simbolo;
     }
-<<<<<<< HEAD
-=======
 
     @Override
     public boolean esResbaloso() {
@@ -33,5 +31,4 @@ public abstract class ElementoBase implements ElementoTablero {
     public boolean bloqueaPaso() {
         return false; // por defecto ningún elemento bloquea el paso
     }
->>>>>>> 9898165 (modificaciones estructurales para la construccion de un TPO extraordinario)
 }

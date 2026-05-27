@@ -3,10 +3,6 @@ package org.example.model.cajas;
 import org.example.model.dto.Coordenada;
 
 public final class CajaFragil extends Caja {
-<<<<<<< HEAD
-    public CajaFragil(Coordenada coordenada) {
-        super(coordenada, 'F');
-=======
     private int ttl;
     public CajaFragil(Coordenada coordenada) {
         super(coordenada, 'F');
@@ -25,6 +21,5 @@ public final class CajaFragil extends Caja {
             System.out.println("Sin Vida");
         }
         this.ttl--;
->>>>>>> 9898165 (modificaciones estructurales para la construccion de un TPO extraordinario)
     }
 }

@@ -9,14 +9,6 @@ import java.util.List;
  * Administra los niveles del juego.
  * Orquesta la lectura de datos crudos (vía LectorNiveles) y la
  * instanciación de los mapas (vía TableroFactory).
-<<<<<<< HEAD
- */
-public class GestorNiveles {
-    private final List<Tablero> tableros;
-    private int nivelActualIndex;
-
-    public GestorNiveles(LectorNiveles lector, TableroFactory factory) {
-=======
  * Singleton: existe una única instancia durante toda la partida.
  */
 public final class GestorNiveles {
@@ -25,13 +17,10 @@ public final class GestorNiveles {
     private int nivelActualIndex;
 
     private GestorNiveles(LectorNiveles lector, TableroFactory factory) {
->>>>>>> 9898165 (modificaciones estructurales para la construccion de un TPO extraordinario)
         this.tableros = inicializarTableros(lector, factory);
         this.nivelActualIndex = 0;
     }
 
-<<<<<<< HEAD
-=======
     public static GestorNiveles getInstancia(LectorNiveles lector, TableroFactory factory) {
         if (instancia == null) {
             instancia = new GestorNiveles(lector, factory);
@@ -39,7 +28,6 @@ public final class GestorNiveles {
         return instancia;
     }
 
->>>>>>> 9898165 (modificaciones estructurales para la construccion de un TPO extraordinario)
     private List<Tablero> inicializarTableros(LectorNiveles lector, TableroFactory factory) {
         List<List<String>> tablerosTexto = lector.extraerNivelesTexto();
         List<Tablero> tablerosArmados = new ArrayList<>();

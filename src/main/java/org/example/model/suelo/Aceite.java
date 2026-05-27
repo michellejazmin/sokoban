@@ -7,12 +7,9 @@ public class Aceite extends ElementoBase {
     public Aceite(Coordenada coordenada) {
         super(coordenada, 'A');
     }
-<<<<<<< HEAD
-=======
 
     @Override
     public boolean esResbaloso() {
         return true;
     }
->>>>>>> 9898165 (modificaciones estructurales para la construccion de un TPO extraordinario)
 }
