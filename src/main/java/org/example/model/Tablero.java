@@ -2,8 +2,10 @@ package org.example.model;
 
 import org.example.interfaces.ElementoTablero;
 import org.example.model.cajas.Caja;
+import org.example.model.dto.Coordenada;
 import org.example.model.player.Jugador;
 import org.example.model.suelo.Destino;
+import org.example.model.suelo.Suelo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +21,7 @@ public class Tablero {
     private final List<Caja> cajas;
     private final List<Destino> objetivos;
     private final Jugador jugador;
+    private ElementoTablero elementoBajoJugador; // lo que había en la celda antes de que el jugador la pisara
 
     public Tablero(String nombre, List<List<ElementoTablero>> grilla, List<Caja> cajas, List<Destino> objetivos, Jugador jugador) {
         if (jugador == null) {
@@ -30,6 +33,7 @@ public class Tablero {
         this.cajas = cajas;
         this.objetivos = List.copyOf(objetivos);
         this.jugador = jugador;
+        this.elementoBajoJugador = new Suelo(new Coordenada(jugador.getCoordenada().getPosX(), jugador.getCoordenada().getPosY()));
     }
 
     public String getNombre() {
@@ -57,8 +61,10 @@ public class Tablero {
     }
 
     public boolean mover(int dx, int dy) {
-        int x = jugador.getCoordenada().getPosX() + dx;
-        int y = jugador.getCoordenada().getPosY() + dy;
+        int oldX = jugador.getCoordenada().getPosX();
+        int oldY = jugador.getCoordenada().getPosY();
+        int x = oldX + dx;
+        int y = oldY + dy;
 
         ElementoTablero siguiente = getElemento(x, y);
 
@@ -66,8 +72,16 @@ public class Tablero {
 
         // TODO: empujar caja si hay una adelante
 
+        // Restaurar la celda anterior con lo que había debajo
+        grilla.get(oldY).set(oldX, elementoBajoJugador);
+
+        // Guardar lo que hay debajo del nuevo destino
+        elementoBajoJugador = siguiente;
+
+        // Mover jugador en coordenada y en grilla
         jugador.getCoordenada().setPosX(x);
         jugador.getCoordenada().setPosY(y);
+        grilla.get(y).set(x, jugador);
 
         if (siguiente.esResbaloso()) {
             mover(dx, dy);
