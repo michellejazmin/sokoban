@@ -56,6 +56,29 @@ public class Tablero {
         return grilla.get(posY).get(posX);
     }
 
+<<<<<<< HEAD
+=======
+    public boolean mover(int dx, int dy) {
+        int x = jugador.getCoordenada().getPosX() + dx;
+        int y = jugador.getCoordenada().getPosY() + dy;
+
+        ElementoTablero siguiente = getElemento(x, y);
+
+        if (siguiente.bloqueaPaso()) return false;
+
+        // TODO: empujar caja si hay una adelante
+
+        jugador.getCoordenada().setPosX(x);
+        jugador.getCoordenada().setPosY(y);
+
+        if (siguiente.esResbaloso()) {
+            mover(dx, dy);
+        }
+
+        return true;
+    }
+
+>>>>>>> 9898165 (modificaciones estructurales para la construccion de un TPO extraordinario)
     private List<List<ElementoTablero>> copiarGrilla(List<List<ElementoTablero>> grilla) {
         List<List<ElementoTablero>> copia = new ArrayList<>();
 

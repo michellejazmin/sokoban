@@ -19,4 +19,12 @@ public final class Reja extends ElementoBase {
     public Estado getEstado() {
         return estado;
     }
+<<<<<<< HEAD
+=======
+
+    @Override
+    public boolean bloqueaPaso() {
+        return estado == Estado.CERRADO;
+    }
+>>>>>>> 9898165 (modificaciones estructurales para la construccion de un TPO extraordinario)
 }
