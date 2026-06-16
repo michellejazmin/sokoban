@@ -19,11 +19,11 @@ public class MovimientoTeclado implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        switch (Character.toLowerCase(e.getKeyChar())) {
-            case 'w' -> controller.moverArriba();
-            case 'a' -> controller.moverIzquierda();
-            case 's' -> controller.moverAbajo();
-            case 'd' -> controller.moverDerecha();
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_UP, KeyEvent.VK_W -> controller.moverArriba();
+            case KeyEvent.VK_DOWN, KeyEvent.VK_S -> controller.moverAbajo();
+            case KeyEvent.VK_LEFT, KeyEvent.VK_A -> controller.moverIzquierda();
+            case KeyEvent.VK_RIGHT, KeyEvent.VK_D -> controller.moverDerecha();
             default  -> { /* Ignorar otras teclas */ }
         }
     }
