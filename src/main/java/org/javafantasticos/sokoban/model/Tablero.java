@@ -24,7 +24,7 @@ public class Tablero {
     private final List<Destino> objetivos;
     private final Jugador jugador;
     private ElementoTablero elementoBajoJugador; // lo que había en la celda antes de que el jugador la pisara
-    //private ElementoTablero elementoBajoCaja; // lo que había en la celda antes de que una caja la pisara
+    private ElementoTablero elementoBajoCaja; // lo que había en la celda antes de que una caja la pisara
     private Suscriptor tableroPanel;
 
     public Tablero(String nombre, List<List<ElementoTablero>> grilla, List<Caja> cajas, List<Destino> objetivos, Jugador jugador) {
@@ -74,8 +74,14 @@ public class Tablero {
 
         if (siguiente.bloqueaPaso()) return;
 
+        // TODO: Ver si el objeto "siguiente" puede moverse
+
         // TODO: Empujar caja si hay una adelante
         siguiente.actualizar(jugador.getCoordenada(), dx, dy);
+        int posXSiguiente = siguiente.getCoordenada().getPosX();
+        int posYSiguiente = siguiente.getCoordenada().getPosY();
+        grilla.get(posYSiguiente).set(posXSiguiente, siguiente);
+        notificarVista();
 
         // Restaurar la celda anterior con lo que había debajo
         grilla.get(oldY).set(oldX, elementoBajoJugador);

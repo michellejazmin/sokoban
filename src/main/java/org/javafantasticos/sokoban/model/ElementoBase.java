@@ -36,6 +36,6 @@ public abstract class ElementoBase implements ElementoTablero {//, Suscriptor {
     // TODO: arreglar esta porquería
     @Override
     public void actualizar(Coordenada posicionActualJugador, int dx, int dy) {
-
+        return;
     }
 }
