@@ -1,6 +1,5 @@
 package org.javafantasticos.sokoban.model;
 
-import org.javafantasticos.sokoban.interfaces.ElementoTablero;
 import org.javafantasticos.sokoban.interfaces.Suscriptor;
 import org.javafantasticos.sokoban.model.cajas.Caja;
 import org.javafantasticos.sokoban.model.dto.Coordenada;
@@ -19,15 +18,15 @@ import java.util.List;
 
 public class Tablero {
     private final String nombre;
-    private final List<List<ElementoTablero>> grilla;
+    private final List<List<ElementoBase>> grilla;
     private final List<Caja> cajas;
     private final List<Destino> objetivos;
     private final Jugador jugador;
-    private ElementoTablero elementoBajoJugador; // lo que había en la celda antes de que el jugador la pisara
-    private ElementoTablero elementoBajoCaja; // lo que había en la celda antes de que una caja la pisara
+    private ElementoBase elementoBajoJugador; // lo que había en la celda antes de que el jugador la pisara
+    private ElementoBase elementoBajoCaja; // lo que había en la celda antes de que una caja la pisara
     private Suscriptor tableroPanel;
 
-    public Tablero(String nombre, List<List<ElementoTablero>> grilla, List<Caja> cajas, List<Destino> objetivos, Jugador jugador) {
+    public Tablero(String nombre, List<List<ElementoBase>> grilla, List<Caja> cajas, List<Destino> objetivos, Jugador jugador) {
         if (jugador == null) {
             throw new IllegalArgumentException("El tablero no tiene jugador");
         }
@@ -44,7 +43,7 @@ public class Tablero {
         return nombre;
     }
 
-    public List<List<ElementoTablero>> getGrilla() {
+    public List<List<ElementoBase>> getGrilla() {
         return grilla;
     }
 
@@ -60,7 +59,7 @@ public class Tablero {
         return jugador;
     }
 
-    public ElementoTablero getElemento(int posX, int posY) {
+    public ElementoBase getElemento(int posX, int posY) {
         return grilla.get(posY).get(posX);
     }
 
@@ -70,11 +69,16 @@ public class Tablero {
         int x = oldX + dx;
         int y = oldY + dy;
 
-        ElementoTablero siguiente = getElemento(x, y);
+        ElementoBase siguiente = getElemento(x, y);
 
         if (siguiente.bloqueaPaso()) return;
 
         // TODO: Ver si el objeto "siguiente" puede moverse
+        // TODO: arreglar este horror
+        ElementoBase siguienteDelSiguiente = getElemento(x+dx, y+dy);
+        if (siguiente.esMovible() && (siguienteDelSiguiente.bloqueaPasoAJugadorMasCaja() || siguienteDelSiguiente.bloqueaPaso())) {
+            return;
+        }
 
         // TODO: Empujar caja si hay una adelante
         siguiente.actualizar(jugador.getCoordenada(), dx, dy);
@@ -116,10 +120,10 @@ public class Tablero {
         }
     }
 
-    private List<List<ElementoTablero>> copiarGrilla(List<List<ElementoTablero>> grilla) {
-        List<List<ElementoTablero>> copia = new ArrayList<>();
+    private List<List<ElementoBase>> copiarGrilla(List<List<ElementoBase>> grilla) {
+        List<List<ElementoBase>> copia = new ArrayList<>();
 
-        for (List<ElementoTablero> fila : grilla) {
+        for (List<ElementoBase> fila : grilla) {
             copia.add(List.copyOf(fila));
         }
 
@@ -130,8 +134,8 @@ public class Tablero {
     public String toString() {
         StringBuilder tableroTexto = new StringBuilder();
 
-        for (List<ElementoTablero> fila : grilla) {
-            for (ElementoTablero elemento : fila) {
+        for (List<ElementoBase> fila : grilla) {
+            for (ElementoBase elemento : fila) {
                 tableroTexto.append(elemento.getSimbolo()).append(' ');
             }
             tableroTexto.append(System.lineSeparator());

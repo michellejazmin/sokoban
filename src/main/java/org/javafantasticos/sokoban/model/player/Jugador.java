@@ -14,4 +14,9 @@ public final class Jugador extends ElementoBase {
         super(coordenada, 'J');
     }
 
+    @Override
+    public boolean esMovible() {
+        return true;
+    }
+
 }

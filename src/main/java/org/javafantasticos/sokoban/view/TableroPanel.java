@@ -1,7 +1,7 @@
 package org.javafantasticos.sokoban.view;
 
-import org.javafantasticos.sokoban.interfaces.ElementoTablero;
 import org.javafantasticos.sokoban.interfaces.Suscriptor;
+import org.javafantasticos.sokoban.model.ElementoBase;
 import org.javafantasticos.sokoban.model.Tablero;
 
 import javax.swing.*;
@@ -37,7 +37,7 @@ public class TableroPanel extends JPanel implements Suscriptor {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        List<List<ElementoTablero>> grilla = tablero.getGrilla();
+        List<List<ElementoBase>> grilla = tablero.getGrilla();
 
         for (int fila = 0; fila < grilla.size(); fila++) {
             for (int col = 0; col < grilla.get(fila).size(); col++) {
@@ -60,7 +60,7 @@ public class TableroPanel extends JPanel implements Suscriptor {
             case 'A' -> { fondo = new Color(100, 180, 240); texto = "~"; }  // Aceite
             case 'D' -> { fondo = new Color(144, 238, 144); texto = "★"; }  // Destino
             case 'C' -> { fondo = new Color(210, 180, 140); texto = "🔒";}  // Cerrojo
-            case 'R' -> { fondo = new Color(180, 100, 50);  texto = "⛩"; }  // Reja
+            case 'R' -> { fondo = new Color(180, 100, 50);  texto = "⛩"; }  // Reja cerrada
             case 'N' -> { fondo = new Color(210, 140, 60);  texto = "■"; }  // Caja normal
             case 'F' -> { fondo = new Color(240, 200, 100); texto = "◧"; }  // Caja frágil
             case 'K' -> { fondo = new Color(255, 220, 50);  texto = "🔑";}  // Caja llave

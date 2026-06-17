@@ -1,6 +1,5 @@
 package org.javafantasticos.sokoban.model;
 
-import org.javafantasticos.sokoban.interfaces.ElementoTablero;
 import org.javafantasticos.sokoban.model.cajas.Caja;
 import org.javafantasticos.sokoban.model.cajas.CajaFragil;
 import org.javafantasticos.sokoban.model.cajas.CajaLlave;
@@ -21,12 +20,12 @@ import org.javafantasticos.sokoban.model.suelo.Suelo;
  */
 public class ElementoFactory {
 
-    public ElementoTablero crearElementoEstatico(char simbolo, Coordenada coordenada) {
+    public ElementoBase crearElementoEstatico(char simbolo, Coordenada coordenada) {
         return switch (simbolo) {
             case 'P' -> new Pared(coordenada);
             case 'S' -> new Suelo(coordenada);
             case 'C' -> new Cerrojo(coordenada);
-            case 'R' -> new Reja(coordenada); // R ==> L o O , utilice un Estado para tener solo una clase
+            case 'R' -> new Reja(coordenada);
             case 'A' -> new Aceite(coordenada);
             default -> throw new IllegalArgumentException("Simbolo de tablero desconocido: " + simbolo);
         };

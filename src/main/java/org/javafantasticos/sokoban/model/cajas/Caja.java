@@ -20,4 +20,14 @@ public abstract class Caja extends ElementoBase {
             this.coordenada.setPosY(coordenada.getPosY() + dy);
         }
     }
+
+    @Override
+    public boolean esMovible() {
+        return true;
+    }
+
+    @Override
+    public boolean bloqueaPasoAJugadorMasCaja() {
+        return true;
+    }
 }

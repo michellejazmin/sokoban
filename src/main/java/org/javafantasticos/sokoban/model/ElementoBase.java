@@ -1,10 +1,8 @@
 package org.javafantasticos.sokoban.model;
 
-import org.javafantasticos.sokoban.interfaces.ElementoTablero;
-import org.javafantasticos.sokoban.interfaces.Suscriptor;
 import org.javafantasticos.sokoban.model.dto.Coordenada;
 
-public abstract class ElementoBase implements ElementoTablero {//, Suscriptor {
+public abstract class ElementoBase {
     protected Coordenada coordenada;
     private final char simbolo;
 
@@ -13,28 +11,34 @@ public abstract class ElementoBase implements ElementoTablero {//, Suscriptor {
         this.simbolo = simbolo;
     }
 
-    @Override
     public Coordenada getCoordenada() {
         return coordenada;
     }
 
-    @Override
     public char getSimbolo() {
         return simbolo;
     }
 
-    @Override
+    public boolean estaVacia() {
+        return coordenada == null;
+    }
+
+    public boolean esMovible() {
+        return false;
+    }
+
     public boolean esResbaloso() {
         return false; // por defecto ningún elemento es resbaloso
     }
 
-    @Override
     public boolean bloqueaPaso() {
         return false; // por defecto ningún elemento bloquea el paso
     }
 
-    // TODO: arreglar esta porquería
-    @Override
+    public boolean bloqueaPasoAJugadorMasCaja() {
+        return false; // por defecto ningún elemento bloquea el paso
+    }
+
     public void actualizar(Coordenada posicionActualJugador, int dx, int dy) {
         return;
     }

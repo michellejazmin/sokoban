@@ -1,6 +1,5 @@
 package org.javafantasticos.sokoban.model;
 
-import org.javafantasticos.sokoban.interfaces.ElementoTablero;
 import org.javafantasticos.sokoban.model.cajas.Caja;
 import org.javafantasticos.sokoban.model.dto.Coordenada;
 import org.javafantasticos.sokoban.model.player.Jugador;
@@ -25,14 +24,14 @@ public final class TableroFactory {
     }
 
     public Tablero crearTablero(String nombre, List<String> filasTexto) {
-        List<List<ElementoTablero>> grilla = new ArrayList<>();
+        List<List<ElementoBase>> grilla = new ArrayList<>();
         List<Caja> cajas = new ArrayList<>();
         List<Destino> objetivos = new ArrayList<>();
         Jugador jugador = null;
 
         for (int posY = 0; posY < filasTexto.size(); posY++) {
             String[] simbolos = filasTexto.get(posY).split(",");
-            List<ElementoTablero> fila = new ArrayList<>();
+            List<ElementoBase> fila = new ArrayList<>();
 
             for (int posX = 0; posX < simbolos.length; posX++) {
                 char simbolo = simbolos[posX].trim().charAt(0);

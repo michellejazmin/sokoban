@@ -4,6 +4,7 @@ import org.javafantasticos.sokoban.enumerados.Estado;
 import org.javafantasticos.sokoban.model.ElementoBase;
 import org.javafantasticos.sokoban.model.dto.Coordenada;
 
+// TODO: crear RejaAbierta y RejaCerrada
 public final class Reja extends ElementoBase {
     private Estado estado;
     public Reja (Coordenada coordenada){
