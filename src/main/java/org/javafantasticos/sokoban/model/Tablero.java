@@ -64,45 +64,56 @@ public class Tablero {
     }
 
     public void mover(int dx, int dy) {
-        int oldX = jugador.getCoordenada().getPosX();
-        int oldY = jugador.getCoordenada().getPosY();
-        int x = oldX + dx;
-        int y = oldY + dy;
+        int xJugador = jugador.getCoordenada().getPosX();
+        int yJugador = jugador.getCoordenada().getPosY();
+        int xDestinoJugador = xJugador + dx;
+        int yDestinoJugador = yJugador + dy;
 
-        ElementoBase siguiente = getElemento(x, y);
+        ElementoBase siguiente = getElemento(xDestinoJugador, yDestinoJugador);
 
         if (siguiente.bloqueaPaso()) return;
 
-        // TODO: Ver si el objeto "siguiente" puede moverse
-        // TODO: arreglar este horror
-        ElementoBase siguienteDelSiguiente = getElemento(x+dx, y+dy);
-        if (siguiente.esMovible() && (siguienteDelSiguiente.bloqueaPasoAJugadorMasCaja() || siguienteDelSiguiente.bloqueaPaso())) {
-            return;
+        // Si el siguiente es una caja, intentamos moverla
+        if (siguiente.esMovible()) {
+            int xDestinoCaja = xDestinoJugador + dx;
+            int yDestinoCaja = yDestinoJugador + dy;
+            ElementoBase destinoCaja = getElemento(xDestinoCaja, yDestinoCaja);
+
+            // Si lo que hay detrás de la caja bloquea, no podemos mover
+            // TODO: usar esVacio/esOcupable cuando implementemos los dos niveles de tablero
+            if (destinoCaja.bloqueaPaso() || destinoCaja.esMovible()) return;
+
+            /*// TODO: Ver si el objeto "siguiente" puede moverse
+            // TODO: arreglar este horror
+            ElementoBase siguienteDelSiguiente = getElemento(xDestinoJugador + dx, yDestinoJugador + dy);
+            if (siguiente.esMovible() && (siguienteDelSiguiente.bloqueaPasoAJugadorMasCaja() || siguienteDelSiguiente.bloqueaPaso())) {
+                return;
+            }*/
+
+            // TODO: Empujar caja si hay una adelante
+            siguiente.actualizar(jugador.getCoordenada(), dx, dy);
+            int posXSiguiente = siguiente.getCoordenada().getPosX();
+            int posYSiguiente = siguiente.getCoordenada().getPosY();
+            grilla.get(posYSiguiente).set(posXSiguiente, siguiente);
+            notificarVista();
         }
 
-        // TODO: Empujar caja si hay una adelante
-        siguiente.actualizar(jugador.getCoordenada(), dx, dy);
-        int posXSiguiente = siguiente.getCoordenada().getPosX();
-        int posYSiguiente = siguiente.getCoordenada().getPosY();
-        grilla.get(posYSiguiente).set(posXSiguiente, siguiente);
-        notificarVista();
-
         // Restaurar la celda anterior con lo que había debajo
-        grilla.get(oldY).set(oldX, elementoBajoJugador);
+        grilla.get(yJugador).set(xJugador, elementoBajoJugador);
 
         // Guardar lo que hay debajo del nuevo destino
         elementoBajoJugador = siguiente;
 
         // Mover jugador en coordenada y en grilla
-        jugador.getCoordenada().setPosX(x);
-        jugador.getCoordenada().setPosY(y);
-        grilla.get(y).set(x, jugador);
+        jugador.getCoordenada().setPosX(xDestinoJugador);
+        jugador.getCoordenada().setPosY(yDestinoJugador);
+        grilla.get(yDestinoJugador).set(xDestinoJugador, jugador);
 
         if (siguiente.esResbaloso()) {
             mover(dx, dy);
-        } else {
-            notificarVista();
         }
+
+        notificarVista();
 
     }
 
