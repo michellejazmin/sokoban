@@ -1,6 +1,8 @@
-package org.javafantasticos.sokoban.model;
+package org.javafantasticos.sokoban.controller;
 
 import org.javafantasticos.sokoban.interfaces.LectorNiveles;
+import org.javafantasticos.sokoban.model.Tablero;
+import org.javafantasticos.sokoban.model.TableroFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,20 +14,12 @@ import java.util.List;
  * Singleton: existe una única instancia durante toda la partida.
  */
 public final class GestorNiveles {
-    private static GestorNiveles instancia;
     private final List<Tablero> tableros;
     private int nivelActualIndex;
 
-    private GestorNiveles(LectorNiveles lector, TableroFactory factory) {
+    public GestorNiveles(LectorNiveles lector, TableroFactory factory) {
         this.tableros = inicializarTableros(lector, factory);
         this.nivelActualIndex = 0;
-    }
-
-    public static GestorNiveles getInstancia(LectorNiveles lector, TableroFactory factory) {
-        if (instancia == null) {
-            instancia = new GestorNiveles(lector, factory);
-        }
-        return instancia;
     }
 
     private List<Tablero> inicializarTableros(LectorNiveles lector, TableroFactory factory) {

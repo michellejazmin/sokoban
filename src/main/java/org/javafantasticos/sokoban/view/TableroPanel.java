@@ -1,6 +1,7 @@
 package org.javafantasticos.sokoban.view;
 
 import org.javafantasticos.sokoban.interfaces.ElementoTablero;
+import org.javafantasticos.sokoban.interfaces.Suscriptor;
 import org.javafantasticos.sokoban.model.Tablero;
 
 import javax.swing.*;
@@ -11,7 +12,7 @@ import java.util.List;
  * Panel que dibuja el estado actual del tablero.
  * Cada celda se representa con un color según su símbolo.
  */
-public class TableroPanel extends JPanel {
+public class TableroPanel extends JPanel implements Suscriptor {
 
     private static final int TAMANIO_CELDA = 50;
 
@@ -19,11 +20,15 @@ public class TableroPanel extends JPanel {
 
     public TableroPanel(Tablero tablero) {
         this.tablero = tablero;
-        int ancho = tablero.getGrilla().get(0).size() * TAMANIO_CELDA;
+        int ancho = tablero.getGrilla().getFirst().size() * TAMANIO_CELDA;
         int alto  = tablero.getGrilla().size() * TAMANIO_CELDA;
         setPreferredSize(new Dimension(ancho, alto));
     }
 
+    /**
+     * Redibuja el tablero. Llamar después de cada movimiento.
+     */
+    @Override
     public void actualizar(Tablero tablero) {
         this.tablero = tablero;
         repaint();

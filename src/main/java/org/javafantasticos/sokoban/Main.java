@@ -2,11 +2,11 @@ package org.javafantasticos.sokoban;
 
 import org.javafantasticos.sokoban.controller.GameController;
 import org.javafantasticos.sokoban.interfaces.LectorNiveles;
-import org.javafantasticos.sokoban.model.GestorNiveles;
+import org.javafantasticos.sokoban.controller.GestorNiveles;
 import org.javafantasticos.sokoban.model.TableroFactory;
-import org.javafantasticos.sokoban.model.TxtLevelsExtractor;
-import org.javafantasticos.sokoban.model.Tablero;
-import org.javafantasticos.sokoban.view.VistaJuego;
+import org.javafantasticos.sokoban.controller.TxtLevelsExtractor;
+
+import javax.swing.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -14,11 +14,10 @@ public class Main {
 
         TableroFactory factory = new TableroFactory();
 
-        GestorNiveles gestor = GestorNiveles.getInstancia(lectorTxt, factory);
+        GestorNiveles gestor = new GestorNiveles(lectorTxt, factory);
 
-        Tablero tableroParaJugar = gestor.getTableroActual();
-        GameController controller = new GameController(tableroParaJugar);
-
-        new VistaJuego(tableroParaJugar, controller);
+        SwingUtilities.invokeLater(() -> {
+            new GameController(gestor);
+        });
     }
 }

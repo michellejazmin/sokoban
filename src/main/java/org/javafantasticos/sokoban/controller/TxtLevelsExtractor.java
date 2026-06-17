@@ -1,4 +1,4 @@
-package org.javafantasticos.sokoban.model;
+package org.javafantasticos.sokoban.controller;
 
 import org.javafantasticos.sokoban.interfaces.LectorNiveles;
 
@@ -15,17 +15,27 @@ import java.util.List;
  */
 public final class TxtLevelsExtractor implements LectorNiveles {
     private final String rutaArchivo;
+    //private static TxtLevelsExtractor instancia;
 
     public TxtLevelsExtractor(String rutaArchivo) {
         this.rutaArchivo = rutaArchivo;
     }
+
+    /* TODO: decidir si hay que usar singleton
+    public static TxtLevelsExtractor getInstancia() {
+        if (instancia == null) {
+            String NIVELES_TXT = "/TableroXNivel";
+            instancia = new TxtLevelsExtractor(NIVELES_TXT);
+        }
+        return instancia;
+    }*/
 
     @Override
     public List<List<String>> extraerNivelesTexto() {
         InputStream inputStream = getClass().getResourceAsStream(rutaArchivo);
 
         if (inputStream == null) {
-            throw new IllegalArgumentException("No se encontro el archivo de niveles: " + rutaArchivo);
+            throw new IllegalArgumentException("No se encontró el archivo de niveles: " + rutaArchivo);
         }
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {

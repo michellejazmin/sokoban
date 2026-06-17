@@ -1,11 +1,14 @@
 package org.javafantasticos.sokoban.model;
 
+import org.javafantasticos.sokoban.controller.GameController;
 import org.javafantasticos.sokoban.interfaces.ElementoTablero;
+import org.javafantasticos.sokoban.interfaces.Suscriptor;
 import org.javafantasticos.sokoban.model.cajas.Caja;
 import org.javafantasticos.sokoban.model.dto.Coordenada;
 import org.javafantasticos.sokoban.model.player.Jugador;
 import org.javafantasticos.sokoban.model.suelo.Destino;
 import org.javafantasticos.sokoban.model.suelo.Suelo;
+import org.javafantasticos.sokoban.view.TableroPanel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +25,8 @@ public class Tablero {
     private final List<Destino> objetivos;
     private final Jugador jugador;
     private ElementoTablero elementoBajoJugador; // lo que había en la celda antes de que el jugador la pisara
+    //private ElementoTablero elementoBajoCaja; // lo que había en la celda antes de que una caja la pisara
+    private Suscriptor tableroPanel;
 
     public Tablero(String nombre, List<List<ElementoTablero>> grilla, List<Caja> cajas, List<Destino> objetivos, Jugador jugador) {
         if (jugador == null) {
@@ -60,7 +65,7 @@ public class Tablero {
         return grilla.get(posY).get(posX);
     }
 
-    public boolean mover(int dx, int dy) {
+    public void mover(int dx, int dy) {
         int oldX = jugador.getCoordenada().getPosX();
         int oldY = jugador.getCoordenada().getPosY();
         int x = oldX + dx;
@@ -68,9 +73,10 @@ public class Tablero {
 
         ElementoTablero siguiente = getElemento(x, y);
 
-        if (siguiente.bloqueaPaso()) return false;
+        if (siguiente.bloqueaPaso()) return;
 
-        // TODO: empujar caja si hay una adelante
+        // Empujar caja si hay una adelante
+        siguiente.actualizar(jugador.getCoordenada(), dx, dy);
 
         // Restaurar la celda anterior con lo que había debajo
         grilla.get(oldY).set(oldX, elementoBajoJugador);
@@ -87,7 +93,19 @@ public class Tablero {
             mover(dx, dy);
         }
 
-        return true;
+        notificarVista();
+    }
+
+    public void suscribirVista(TableroPanel tableroPanel) {
+        this.tableroPanel = tableroPanel;
+    }
+
+    public void desuscribirVista(TableroPanel tableroPanel) {
+        this.tableroPanel = null;
+    }
+
+    private void notificarVista() {
+        tableroPanel.actualizar(this);
     }
 
     private List<List<ElementoTablero>> copiarGrilla(List<List<ElementoTablero>> grilla) {

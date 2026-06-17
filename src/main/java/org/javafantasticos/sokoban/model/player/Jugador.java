@@ -1,13 +1,20 @@
 package org.javafantasticos.sokoban.model.player;
 
 import org.javafantasticos.sokoban.interfaces.IMovimientos;
+import org.javafantasticos.sokoban.interfaces.Suscriptor;
 import org.javafantasticos.sokoban.model.ElementoBase;
 import org.javafantasticos.sokoban.model.dto.Coordenada;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public final class Jugador extends ElementoBase implements IMovimientos {
+
+    //private final List<Suscriptor> suscriptores;
 
     public Jugador(Coordenada coordenada) {
         super(coordenada, 'J');
+        //this.suscriptores = new ArrayList<>();
     }
 
     @Override
@@ -38,4 +45,19 @@ public final class Jugador extends ElementoBase implements IMovimientos {
             coord.setPosY(coord.getPosY() + movimientoY);
         }
     }
+
+    /*public void suscribir(Suscriptor suscriptor) {
+        this.suscriptores.add(suscriptor);
+    }
+
+    public void desuscribir(Suscriptor suscriptor) {
+        this.suscriptores.remove(suscriptor);
+    }
+
+    public void notificarSuscriptores() {
+        suscriptores.forEach((suscriptor) -> {
+            suscriptor.actualizar(this.coordenada, , );
+        });
+    }*/
+
 }

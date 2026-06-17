@@ -1,6 +1,4 @@
-package org.javafantasticos.sokoban.model.player;
-
-import org.javafantasticos.sokoban.controller.GameController;
+package org.javafantasticos.sokoban.controller;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;

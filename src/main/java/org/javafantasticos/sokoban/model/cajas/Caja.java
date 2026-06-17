@@ -1,5 +1,6 @@
 package org.javafantasticos.sokoban.model.cajas;
 
+import org.javafantasticos.sokoban.interfaces.Suscriptor;
 import org.javafantasticos.sokoban.model.dto.Coordenada;
 import org.javafantasticos.sokoban.model.ElementoBase;
 
