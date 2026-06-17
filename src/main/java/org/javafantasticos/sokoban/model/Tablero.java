@@ -1,6 +1,5 @@
 package org.javafantasticos.sokoban.model;
 
-import org.javafantasticos.sokoban.controller.GameController;
 import org.javafantasticos.sokoban.interfaces.ElementoTablero;
 import org.javafantasticos.sokoban.interfaces.Suscriptor;
 import org.javafantasticos.sokoban.model.cajas.Caja;
@@ -75,7 +74,7 @@ public class Tablero {
 
         if (siguiente.bloqueaPaso()) return;
 
-        // Empujar caja si hay una adelante
+        // TODO: Empujar caja si hay una adelante
         siguiente.actualizar(jugador.getCoordenada(), dx, dy);
 
         // Restaurar la celda anterior con lo que había debajo
@@ -91,21 +90,24 @@ public class Tablero {
 
         if (siguiente.esResbaloso()) {
             mover(dx, dy);
+        } else {
+            notificarVista();
         }
 
-        notificarVista();
     }
 
     public void suscribirVista(TableroPanel tableroPanel) {
         this.tableroPanel = tableroPanel;
     }
 
-    public void desuscribirVista(TableroPanel tableroPanel) {
+    public void desuscribirVista() {
         this.tableroPanel = null;
     }
 
     private void notificarVista() {
-        tableroPanel.actualizar(this);
+        if (tableroPanel != null) {
+            tableroPanel.actualizar(this);
+        }
     }
 
     private List<List<ElementoTablero>> copiarGrilla(List<List<ElementoTablero>> grilla) {

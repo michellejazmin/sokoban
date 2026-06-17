@@ -33,6 +33,7 @@ public abstract class ElementoBase implements ElementoTablero {//, Suscriptor {
         return false; // por defecto ningún elemento bloquea el paso
     }
 
+    // TODO: arreglar esta porquería
     @Override
     public void actualizar(Coordenada posicionActualJugador, int dx, int dy) {
 
