@@ -2,10 +2,8 @@ package org.javafantasticos.sokoban.model;
 
 import org.javafantasticos.sokoban.interfaces.Suscriptor;
 import org.javafantasticos.sokoban.model.cajas.Caja;
-import org.javafantasticos.sokoban.model.dto.Coordenada;
 import org.javafantasticos.sokoban.model.player.Jugador;
 import org.javafantasticos.sokoban.model.suelo.Destino;
-import org.javafantasticos.sokoban.model.suelo.Suelo;
 import org.javafantasticos.sokoban.view.TableroPanel;
 
 import java.util.ArrayList;
@@ -18,33 +16,42 @@ import java.util.List;
 
 public class Tablero {
     private final String nombre;
-    private final List<List<ElementoBase>> grilla;
+    private final List<List<ElementoBase>> grillaInferior;
+    private final List<List<ElementoBase>> grillaSuperior;
     private final List<Caja> cajas;
     private final List<Destino> objetivos;
     private final Jugador jugador;
     private ElementoBase elementoBajoJugador; // lo que había en la celda antes de que el jugador la pisara
-    private ElementoBase elementoBajoCaja; // lo que había en la celda antes de que una caja la pisara
     private Suscriptor tableroPanel;
 
-    public Tablero(String nombre, List<List<ElementoBase>> grilla, List<Caja> cajas, List<Destino> objetivos, Jugador jugador) {
+    public Tablero(String nombre,
+                   List<List<ElementoBase>> grillaInferior,
+                   List<List<ElementoBase>> grillaSuperior,
+                   List<Caja> cajas,
+                   List<Destino> objetivos,
+                   Jugador jugador) {
         if (jugador == null) {
             throw new IllegalArgumentException("El tablero no tiene jugador");
         }
 
         this.nombre = nombre;
-        this.grilla = grilla;
+        this.grillaInferior = grillaInferior;
+        this.grillaSuperior = grillaSuperior;
         this.cajas = cajas;
         this.objetivos = List.copyOf(objetivos);
         this.jugador = jugador;
-        this.elementoBajoJugador = new Suelo(new Coordenada(jugador.getCoordenada().getPosX(), jugador.getCoordenada().getPosY()));
     }
 
     public String getNombre() {
         return nombre;
     }
 
-    public List<List<ElementoBase>> getGrilla() {
-        return grilla;
+    public List<List<ElementoBase>> getGrillaInferior() {
+        return grillaInferior;
+    }
+
+    public List<List<ElementoBase>> getGrillaSuperior() {
+        return grillaSuperior;
     }
 
     public List<Caja> getCajas() {
@@ -60,7 +67,10 @@ public class Tablero {
     }
 
     public ElementoBase getElemento(int posX, int posY) {
-        return grilla.get(posY).get(posX);
+        if (grillaSuperior.get(posY).get(posX) != null) {
+            return grillaSuperior.get(posY).get(posX);
+        }
+        return grillaInferior.get(posY).get(posX);
     }
 
     public void mover(int dx, int dy) {
@@ -69,47 +79,30 @@ public class Tablero {
         int xDestinoJugador = xJugador + dx;
         int yDestinoJugador = yJugador + dy;
 
-        ElementoBase siguiente = getElemento(xDestinoJugador, yDestinoJugador);
+        ElementoBase elementoAdyacente = getElemento(xDestinoJugador, yDestinoJugador);
 
-        if (siguiente.bloqueaPaso()) return;
+        if (elementoAdyacente.bloqueaPaso()) return;
 
-        // Si el siguiente es una caja, intentamos moverla
-        if (siguiente.esMovible()) {
+        // Si el elemento adyacente es una caja, intentamos moverla
+        if (elementoAdyacente.esMovible()) {
             int xDestinoCaja = xDestinoJugador + dx;
             int yDestinoCaja = yDestinoJugador + dy;
             ElementoBase destinoCaja = getElemento(xDestinoCaja, yDestinoCaja);
 
             // Si lo que hay detrás de la caja bloquea, no podemos mover
-            // TODO: usar esVacio/esOcupable cuando implementemos los dos niveles de tablero
-            if (destinoCaja.bloqueaPaso() || destinoCaja.esMovible()) return;
+            if (!destinoCaja.esOcupable()) return;
 
-            /*// TODO: Ver si el objeto "siguiente" puede moverse
-            // TODO: arreglar este horror
-            ElementoBase siguienteDelSiguiente = getElemento(xDestinoJugador + dx, yDestinoJugador + dy);
-            if (siguiente.esMovible() && (siguienteDelSiguiente.bloqueaPasoAJugadorMasCaja() || siguienteDelSiguiente.bloqueaPaso())) {
-                return;
-            }*/
-
-            // TODO: Empujar caja si hay una adelante
-            siguiente.actualizar(jugador.getCoordenada(), dx, dy);
-            int posXSiguiente = siguiente.getCoordenada().getPosX();
-            int posYSiguiente = siguiente.getCoordenada().getPosY();
-            grilla.get(posYSiguiente).set(posXSiguiente, siguiente);
-            notificarVista();
+            elementoAdyacente.getCoordenada().setPosX(xDestinoCaja);
+            elementoAdyacente.getCoordenada().setPosY(yDestinoCaja);
+            grillaSuperior.get(yDestinoCaja).set(xDestinoCaja, elementoAdyacente);
         }
 
-        // Restaurar la celda anterior con lo que había debajo
-        grilla.get(yJugador).set(xJugador, elementoBajoJugador);
-
-        // Guardar lo que hay debajo del nuevo destino
-        elementoBajoJugador = siguiente;
-
-        // Mover jugador en coordenada y en grilla
         jugador.getCoordenada().setPosX(xDestinoJugador);
         jugador.getCoordenada().setPosY(yDestinoJugador);
-        grilla.get(yDestinoJugador).set(xDestinoJugador, jugador);
+        grillaSuperior.get(yJugador).set(xJugador, null);
+        grillaSuperior.get(yDestinoJugador).set(xDestinoJugador, jugador);
 
-        if (siguiente.esResbaloso()) {
+        if (elementoAdyacente.esResbaloso()) {
             mover(dx, dy);
         }
 
@@ -141,7 +134,8 @@ public class Tablero {
         return List.copyOf(copia);
     }
 
-    @Override
+    // TODO: modificar el método para que funcione con la implementación de dos grillas
+    /*@Override
     public String toString() {
         StringBuilder tableroTexto = new StringBuilder();
 
@@ -153,5 +147,5 @@ public class Tablero {
         }
 
         return tableroTexto.toString();
-    }
+    }*/
 }

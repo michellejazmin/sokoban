@@ -19,8 +19,9 @@ public abstract class ElementoBase {
         return simbolo;
     }
 
-    public boolean estaVacia() {
-        return coordenada == null;
+    public boolean esOcupable() {
+        // Por defecto, ningún elemento es ocupable, es decir, el jugador no se puede ubicar sobre él.
+        return false;
     }
 
     public boolean esMovible() {

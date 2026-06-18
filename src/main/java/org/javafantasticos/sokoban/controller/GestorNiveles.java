@@ -13,6 +13,7 @@ import java.util.List;
  * instanciación de los mapas (vía TableroFactory).
  * Singleton: existe una única instancia durante toda la partida.
  */
+// TODO: Implementar Singleton?
 public final class GestorNiveles {
     private final List<Tablero> tableros;
     private int nivelActualIndex;

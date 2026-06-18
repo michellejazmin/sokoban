@@ -7,4 +7,9 @@ public class Suelo extends ElementoBase {
     public Suelo(Coordenada coordenada) {
         super(coordenada, 'S');
     }
+
+    @Override
+    public boolean esOcupable() {
+        return true;
+    }
 }

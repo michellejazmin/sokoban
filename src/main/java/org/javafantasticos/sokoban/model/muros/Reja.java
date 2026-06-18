@@ -25,4 +25,9 @@ public final class Reja extends ElementoBase {
     public boolean bloqueaPaso() {
         return estado == Estado.CERRADO;
     }
+
+    @Override
+    public boolean esOcupable() {
+        return estado == Estado.ABIERTO;
+    }
 }

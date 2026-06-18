@@ -7,4 +7,9 @@ public class Cerrojo extends ElementoBase {
     public Cerrojo(Coordenada coordenada) {
         super(coordenada, 'C');
     }
+
+    @Override
+    public boolean esOcupable() {
+        return true;
+    }
 }

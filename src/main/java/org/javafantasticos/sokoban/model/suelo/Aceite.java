@@ -9,6 +9,11 @@ public class Aceite extends ElementoBase {
     }
 
     @Override
+    public boolean esOcupable() {
+        return true;
+    }
+
+    @Override
     public boolean esResbaloso() {
         return true;
     }

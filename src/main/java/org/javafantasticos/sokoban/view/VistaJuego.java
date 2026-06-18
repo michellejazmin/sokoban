@@ -1,14 +1,10 @@
 package org.javafantasticos.sokoban.view;
 
-import org.javafantasticos.sokoban.controller.GameController;
-import org.javafantasticos.sokoban.interfaces.Suscriptor;
 import org.javafantasticos.sokoban.model.Tablero;
 import org.javafantasticos.sokoban.controller.MovimientoTeclado;
 
 import javax.swing.*;
-import javax.swing.Timer;
 import java.awt.*;
-import java.awt.event.ActionListener;
 
 /**
  * Ventana principal del juego.

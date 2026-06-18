@@ -4,6 +4,7 @@ import org.javafantasticos.sokoban.model.cajas.Caja;
 import org.javafantasticos.sokoban.model.dto.Coordenada;
 import org.javafantasticos.sokoban.model.player.Jugador;
 import org.javafantasticos.sokoban.model.suelo.Destino;
+import org.javafantasticos.sokoban.model.suelo.Suelo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,14 +25,16 @@ public final class TableroFactory {
     }
 
     public Tablero crearTablero(String nombre, List<String> filasTexto) {
-        List<List<ElementoBase>> grilla = new ArrayList<>();
+        List<List<ElementoBase>> grillaInferior = new ArrayList<>();
+        List<List<ElementoBase>> grillaSuperior = new ArrayList<>();
         List<Caja> cajas = new ArrayList<>();
         List<Destino> objetivos = new ArrayList<>();
         Jugador jugador = null;
 
         for (int posY = 0; posY < filasTexto.size(); posY++) {
             String[] simbolos = filasTexto.get(posY).split(",");
-            List<ElementoBase> fila = new ArrayList<>();
+            List<ElementoBase> filaInferior = new ArrayList<>();
+            List<ElementoBase> filaSuperior = new ArrayList<>();
 
             for (int posX = 0; posX < simbolos.length; posX++) {
                 char simbolo = simbolos[posX].trim().charAt(0);
@@ -40,25 +43,34 @@ public final class TableroFactory {
                 switch (simbolo) {
                     case 'N', 'F', 'K' -> {
                         Caja caja = elementoFactory.crearCaja(simbolo, coordenada);
+                        Suelo suelo = elementoFactory.crearSuelo(coordenada);
                         cajas.add(caja);
-                        fila.add(caja);
+                        filaSuperior.add(caja);
+                        filaInferior.add(suelo);
                     }
                     case 'D' -> {
                         Destino destino = elementoFactory.crearDestino(coordenada);
                         objetivos.add(destino);
-                        fila.add(destino);
+                        filaInferior.add(destino);
+                        filaSuperior.add(null);
                     }
                     case 'J' -> {
                         jugador = elementoFactory.crearJugador(coordenada);
-                        fila.add(jugador);
+                        Suelo suelo = elementoFactory.crearSuelo(coordenada);
+                        filaSuperior.add(jugador);
+                        filaInferior.add(suelo);
                     }
-                    default -> fila.add(elementoFactory.crearElementoEstatico(simbolo, coordenada));
+                    default -> {
+                        filaInferior.add(elementoFactory.crearElementoEstatico(simbolo, coordenada));
+                        filaSuperior.add(null);
+                    }
                 }
             }
 
-            grilla.add(fila);
+            grillaInferior.add(filaInferior);
+            grillaSuperior.add(filaSuperior);
         }
 
-        return new Tablero(nombre, grilla, cajas, objetivos, jugador);
+        return new Tablero(nombre, grillaInferior, grillaSuperior, cajas, objetivos, jugador);
     }
 }

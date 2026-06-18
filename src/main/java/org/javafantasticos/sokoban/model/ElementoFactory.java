@@ -47,4 +47,8 @@ public class ElementoFactory {
     public Jugador crearJugador(Coordenada coordenada) {
         return new Jugador(coordenada);
     }
+
+    public Suelo crearSuelo(Coordenada coordenada) {
+        return new Suelo(coordenada);
+    }
 }

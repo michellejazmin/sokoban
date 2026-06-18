@@ -20,8 +20,8 @@ public class TableroPanel extends JPanel implements Suscriptor {
 
     public TableroPanel(Tablero tablero) {
         this.tablero = tablero;
-        int ancho = tablero.getGrilla().getFirst().size() * TAMANIO_CELDA;
-        int alto  = tablero.getGrilla().size() * TAMANIO_CELDA;
+        int ancho = tablero.getGrillaInferior().getFirst().size() * TAMANIO_CELDA;
+        int alto  = tablero.getGrillaInferior().size() * TAMANIO_CELDA;
         setPreferredSize(new Dimension(ancho, alto));
     }
 
@@ -37,11 +37,15 @@ public class TableroPanel extends JPanel implements Suscriptor {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        List<List<ElementoBase>> grilla = tablero.getGrilla();
+        List<List<ElementoBase>> grillaInferior = tablero.getGrillaInferior();
+        List<List<ElementoBase>> grillaSuperior = tablero.getGrillaSuperior();
 
-        for (int fila = 0; fila < grilla.size(); fila++) {
-            for (int col = 0; col < grilla.get(fila).size(); col++) {
-                char simbolo = grilla.get(fila).get(col).getSimbolo();
+        for (int fila = 0; fila < grillaInferior.size(); fila++) {
+            for (int col = 0; col < grillaInferior.get(fila).size(); col++) {
+                char simbolo = (grillaSuperior.get(fila).get(col) == null) ?
+                        grillaInferior.get(fila).get(col).getSimbolo() :
+                        grillaSuperior.get(fila).get(col).getSimbolo();
+
                 int x = col  * TAMANIO_CELDA;
                 int y = fila * TAMANIO_CELDA;
 
@@ -86,4 +90,5 @@ public class TableroPanel extends JPanel implements Suscriptor {
             g.drawString(texto, tx, ty);
         }
     }
+
 }

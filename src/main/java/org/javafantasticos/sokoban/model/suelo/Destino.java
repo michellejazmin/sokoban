@@ -7,4 +7,9 @@ public class Destino extends ElementoBase {
     public Destino(Coordenada coordenada) {
         super(coordenada, 'D');
     }
+
+    @Override
+    public boolean esOcupable() {
+        return true;
+    }
 }
