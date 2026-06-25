@@ -12,23 +12,16 @@ import java.util.List;
 
 /**
  * Implementación concreta que extrae niveles leyendo un archivo de texto (.txt).
+ * No es Singleton a propósito: es stateless y se inyecta a través de la interfaz
+ * {@link LectorNiveles}, lo que permite reemplazarlo (p. ej. por un lector JSON
+ * o un mock para tests) sin tocar al resto del sistema.
  */
 public final class TxtLevelsExtractor implements LectorNiveles {
     private final String rutaArchivo;
-    //private static TxtLevelsExtractor instancia;
 
     public TxtLevelsExtractor(String rutaArchivo) {
         this.rutaArchivo = rutaArchivo;
     }
-
-    /* TODO: decidir si hay que usar singleton
-    public static TxtLevelsExtractor getInstancia() {
-        if (instancia == null) {
-            String NIVELES_TXT = "/TableroXNivel";
-            instancia = new TxtLevelsExtractor(NIVELES_TXT);
-        }
-        return instancia;
-    }*/
 
     @Override
     public List<List<String>> extraerNivelesTexto() {
