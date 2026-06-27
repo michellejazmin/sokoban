@@ -13,16 +13,28 @@ public class GameController {
     private final GestorNiveles gestorNiveles;
     private final Ventana ventana;
     private final Menu vistaMenu;
+    private final Caretaker caretaker;
     private VistaJuego vistaJuego;
     private Tablero tablero;
+    private Runnable onMove;
 
     public GameController(GestorNiveles gestorNiveles) {
         this.gestorNiveles = gestorNiveles;
         this.ventana = new Ventana();
         this.vistaMenu = new Menu();
+        this.caretaker = new Caretaker();
         this.tablero = gestorNiveles.getTableroActual();
-        this.vistaJuego = new VistaJuego(tablero);
+        this.vistaJuego = new VistaJuego(tablero, this);
         this.tablero.suscribirVista(vistaJuego.getTableroPanel());
+
+        tablero.setOnStateChange(memento -> {
+            caretaker.saveState(memento);
+            if (onMove != null) {
+                onMove.run();
+            }
+        });
+
+        caretaker.saveState(tablero.crearMemento());
 
         ventana.agregarPantalla(vistaMenu, "MENU");
         ventana.agregarPantalla(vistaJuego, "JUEGO");
@@ -34,11 +46,31 @@ public class GameController {
         ventana.setVisible(true);
     }
 
+    public void setOnMove(Runnable callback) {
+        this.onMove = callback;
+    }
+
+    public void setVistaJuego(VistaJuego vistaJuego) {
+        this.vistaJuego = vistaJuego;
+    }
+
     private void empezarJuego() {
         ventana.mostrarJuego();
         MovimientoTeclado teclado = new MovimientoTeclado(this);
         vistaJuego.conectarTeclado(teclado);
         vistaJuego.requestFocusInWindow();
+    }
+
+    public void undo() {
+        caretaker.undo(tablero);
+
+        if (onMove != null) {
+            onMove.run();
+        }
+    }
+
+    public boolean canUndo() {
+        return caretaker.canUndo();
     }
 
     // TODO: método para avanzar de nivel

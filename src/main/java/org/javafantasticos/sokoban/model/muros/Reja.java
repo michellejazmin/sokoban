@@ -30,4 +30,14 @@ public final class Reja extends ElementoBase {
     public boolean esOcupable() {
         return estado == Estado.ABIERTO;
     }
+
+    @Override
+    public Estado getEstadoReja() {
+        return estado;
+    }
+
+    @Override
+    public void setEstadoReja(Estado estado) {
+        this.estado = estado;
+    }
 }

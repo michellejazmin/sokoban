@@ -1,5 +1,6 @@
 package org.javafantasticos.sokoban.model;
 
+import org.javafantasticos.sokoban.enumerados.Estado;
 import org.javafantasticos.sokoban.model.dto.Coordenada;
 
 public abstract class ElementoBase {
@@ -42,5 +43,12 @@ public abstract class ElementoBase {
 
     public void actualizar(Coordenada posicionActualJugador, int dx, int dy) {
         return;
+    }
+
+    public Estado getEstadoReja() {
+        return null;
+    }
+
+    public void setEstadoReja(Estado estado) {
     }
 }

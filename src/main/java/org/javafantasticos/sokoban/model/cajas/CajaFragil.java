@@ -16,6 +16,11 @@ public final class CajaFragil extends Caja {
     public int getTtl() {
         return this.ttl;
     }
+
+    public void setTtl(int ttl) {
+        this.ttl = ttl;
+    }
+
     public void reducirVida() {
         if (this.sinVida()){
             System.out.println("Sin Vida");

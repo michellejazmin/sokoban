@@ -8,6 +8,7 @@ import org.javafantasticos.sokoban.view.TableroPanel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Representa el estado actual de un nivel del juego.
@@ -22,6 +23,7 @@ public class Tablero {
     private final List<Destino> objetivos;
     private final Jugador jugador;
     private ElementoBase elementoBajoJugador; // lo que había en la celda antes de que el jugador la pisara
+    private Consumer<TableroMemento> onStateChange;
     private Suscriptor tableroPanel;
 
     public Tablero(String nombre,
@@ -73,6 +75,26 @@ public class Tablero {
         return grillaInferior.get(posY).get(posX);
     }
 
+    ElementoBase getElementoBajoJugador() {
+        return elementoBajoJugador;
+    }
+
+    void setElementoBajoJugador(ElementoBase elemento) {
+        this.elementoBajoJugador = elemento;
+    }
+
+    public void setOnStateChange(Consumer<TableroMemento> callback) {
+        this.onStateChange = callback;
+    }
+
+    public TableroMemento crearMemento() {
+        return new TableroMemento(this);
+    }
+
+    public void restaurar(TableroMemento memento) {
+        memento.restaurar(this);
+    }
+
     public void mover(int dx, int dy) {
         int xJugador = jugador.getCoordenada().getPosX();
         int yJugador = jugador.getCoordenada().getPosY();
@@ -101,6 +123,10 @@ public class Tablero {
         jugador.getCoordenada().setPosY(yDestinoJugador);
         grillaSuperior.get(yJugador).set(xJugador, null);
         grillaSuperior.get(yDestinoJugador).set(xDestinoJugador, jugador);
+
+        if (onStateChange != null) {
+            onStateChange.accept(new TableroMemento(this));
+        }
 
         if (elementoAdyacente.esResbaloso()) {
             mover(dx, dy);

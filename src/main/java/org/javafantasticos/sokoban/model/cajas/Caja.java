@@ -9,6 +9,13 @@ public abstract class Caja extends ElementoBase {
         super(coordenada, simbolo);
     }
 
+    public int getTtl() {
+        return 0;
+    }
+
+    public void setTtl(int ttl) {
+    }
+
     @Override
     public void actualizar(Coordenada posicionActualJugador, int dx, int dy) {
         int posXFinalJugador = posicionActualJugador.getPosX() + dx;
