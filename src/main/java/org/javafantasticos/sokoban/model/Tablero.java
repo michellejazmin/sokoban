@@ -2,7 +2,6 @@ package org.javafantasticos.sokoban.model;
 
 import org.javafantasticos.sokoban.interfaces.Suscriptor;
 import org.javafantasticos.sokoban.model.cajas.Caja;
-import org.javafantasticos.sokoban.model.cajas.CajaFragil;
 import org.javafantasticos.sokoban.model.player.Jugador;
 import org.javafantasticos.sokoban.model.suelo.Destino;
 import org.javafantasticos.sokoban.view.TableroPanel;
@@ -143,13 +142,7 @@ public class Tablero {
         if (pushEnEstePaso) {
             pushes = 1;
 
-            // Reducir vida de la caja frágil en cada empuje
-            if (elementoAdyacente instanceof CajaFragil fragil) {
-                fragil.reducirVida();
-                if (fragil.sinVida() && onGameOver != null) {
-                    onGameOver.accept("La caja frágil se ha roto :(");
-                }
-            }
+            elementoAdyacente.alSerEmpujada(onGameOver);
 
             // Deslizamiento de la caja sobre aceite
             ElementoBase terrenoCaja = grillaInferior.get(yDestinoCaja).get(xDestinoCaja);
@@ -195,15 +188,8 @@ public class Tablero {
 
         int pushes = 1;
 
-        // Reducir vida de la caja frágil en cada paso del deslizamiento
-        if (caja instanceof CajaFragil fragil) {
-            fragil.reducirVida();
-            if (fragil.sinVida()) {
-                if (onGameOver != null) {
-                    onGameOver.accept("La caja frágil se ha roto :(");
-                }
-                return pushes;
-            }
+        if (!caja.alSerEmpujada(onGameOver)) {
+            return pushes;
         }
 
         ElementoBase terreno = grillaInferior.get(ySiguiente).get(xSiguiente);

@@ -3,6 +3,8 @@ package org.javafantasticos.sokoban.model;
 import org.javafantasticos.sokoban.enumerados.Estado;
 import org.javafantasticos.sokoban.model.dto.Coordenada;
 
+import java.util.function.Consumer;
+
 public abstract class ElementoBase {
     protected Coordenada coordenada;
     private final char simbolo;
@@ -50,5 +52,9 @@ public abstract class ElementoBase {
     }
 
     public void setEstadoReja(Estado estado) {
+    }
+
+    public boolean alSerEmpujada(Consumer<String> onGameOver) {
+        return true;
     }
 }

@@ -12,6 +12,7 @@ public class GameOverPanel extends JPanel {
     private final JLabel tituloLabel;
     private final JLabel motivoLabel;
     private final JButton botonVolver;
+    private final JButton botonSalir;
     private BufferedImage backgroundImage;
 
     public GameOverPanel(String motivo) {
@@ -54,6 +55,15 @@ public class GameOverPanel extends JPanel {
         botonVolver.setOpaque(true);
         botonVolver.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
+        botonSalir = new JButton("Salir");
+        botonSalir.setFont(bodyFont);
+        botonSalir.setBackground(new Color(0xC0, 0x39, 0x2B));
+        botonSalir.setForeground(Color.WHITE);
+        botonSalir.setFocusPainted(false);
+        botonSalir.setBorderPainted(false);
+        botonSalir.setOpaque(true);
+        botonSalir.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.insets = new Insets(10, 0, 10, 0);
@@ -64,6 +74,8 @@ public class GameOverPanel extends JPanel {
         add(motivoLabel, gbc);
         gbc.gridy = 2;
         add(botonVolver, gbc);
+        gbc.gridy = 3;
+        add(botonSalir, gbc);
     }
 
     public void setMotivo(String motivo) {
@@ -72,6 +84,10 @@ public class GameOverPanel extends JPanel {
 
     public void escucharBotonVolver(ActionListener listener) {
         botonVolver.addActionListener(listener);
+    }
+
+    public void escucharBotonSalir(ActionListener listener) {
+        botonSalir.addActionListener(listener);
     }
 
     @Override

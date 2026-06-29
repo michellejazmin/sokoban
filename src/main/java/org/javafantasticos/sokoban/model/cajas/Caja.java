@@ -1,8 +1,9 @@
 package org.javafantasticos.sokoban.model.cajas;
 
-import org.javafantasticos.sokoban.interfaces.Suscriptor;
-import org.javafantasticos.sokoban.model.dto.Coordenada;
 import org.javafantasticos.sokoban.model.ElementoBase;
+import org.javafantasticos.sokoban.model.dto.Coordenada;
+
+import java.util.function.Consumer;
 
 public abstract class Caja extends ElementoBase {
     protected Caja(Coordenada coordenada, char simbolo) {
@@ -35,6 +36,10 @@ public abstract class Caja extends ElementoBase {
 
     @Override
     public boolean bloqueaPasoAJugadorMasCaja() {
+        return true;
+    }
+
+    public boolean alSerEmpujada(Consumer<String> onGameOver) {
         return true;
     }
 }

@@ -36,15 +36,36 @@ public class Menu extends JPanel {
             defaultFont = new Font("Arial", Font.PLAIN, 20);
         }
 
+        Font tituloFont;
+        try {
+            File fontFile = new File("src/main/resources/font/JetBrainsMono-Bold.ttf");
+            Font base = Font.createFont(Font.TRUETYPE_FONT, fontFile);
+            tituloFont = base.deriveFont(Font.BOLD, 48);
+        } catch (IOException | FontFormatException e) {
+            tituloFont = new Font("Arial", Font.BOLD, 48);
+        }
+
         JLabel titulo = new JLabel("Sokoban");
-        titulo.setFont(defaultFont);
+        titulo.setFont(tituloFont);
         titulo.setForeground(Color.WHITE);
 
         this.botonJugar = new JButton("Iniciar juego");
         this.botonJugar.setFont(defaultFont);
+        this.botonJugar.setBackground(new Color(0x5D, 0x7B, 0x93));
+        this.botonJugar.setForeground(Color.WHITE);
+        this.botonJugar.setFocusPainted(false);
+        this.botonJugar.setBorderPainted(false);
+        this.botonJugar.setOpaque(true);
+        this.botonJugar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         this.botonSalir = new JButton("Salir");
         this.botonSalir.setFont(defaultFont);
+        this.botonSalir.setBackground(new Color(0xC0, 0x39, 0x2B));
+        this.botonSalir.setForeground(Color.WHITE);
+        this.botonSalir.setFocusPainted(false);
+        this.botonSalir.setBorderPainted(false);
+        this.botonSalir.setOpaque(true);
+        this.botonSalir.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;

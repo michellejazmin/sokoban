@@ -53,6 +53,7 @@ public class GameController {
         this.vistaMenu.escucharBotonJugar(e -> empezarJuego());
         this.vistaMenu.escucharBotonSalir(e -> System.exit(0));
         this.gameOverPanel.escucharBotonVolver(e -> volverAlMenu());
+        this.gameOverPanel.escucharBotonSalir(e -> System.exit(0));
 
         ventana.mostrarMenu();
         ventana.setVisible(true);

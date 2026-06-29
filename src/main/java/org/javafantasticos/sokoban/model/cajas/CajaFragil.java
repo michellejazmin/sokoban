@@ -2,6 +2,8 @@ package org.javafantasticos.sokoban.model.cajas;
 
 import org.javafantasticos.sokoban.model.dto.Coordenada;
 
+import java.util.function.Consumer;
+
 public final class CajaFragil extends Caja {
     private int ttl;
     public CajaFragil(Coordenada coordenada) {
@@ -26,5 +28,17 @@ public final class CajaFragil extends Caja {
             System.out.println("Sin Vida");
         }
         this.ttl--;
+    }
+
+    @Override
+    public boolean alSerEmpujada(Consumer<String> onGameOver) {
+        reducirVida();
+        if (sinVida()) {
+            if (onGameOver != null) {
+                onGameOver.accept("La caja frágil se ha roto :(. Sokoban desempleado.");
+            }
+            return false;
+        }
+        return true;
     }
 }
