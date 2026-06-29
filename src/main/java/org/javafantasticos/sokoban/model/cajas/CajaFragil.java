@@ -9,7 +9,7 @@ public final class CajaFragil extends Caja {
         this.ttl = 25;
     }
 
-    private boolean sinVida(){
+    public boolean sinVida(){
         return this.ttl==0;
     }
 

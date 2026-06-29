@@ -1,6 +1,7 @@
 package org.javafantasticos.sokoban.controller;
 
 import org.javafantasticos.sokoban.model.Tablero;
+import org.javafantasticos.sokoban.view.GameOverPanel;
 import org.javafantasticos.sokoban.view.HUDPanel;
 import org.javafantasticos.sokoban.view.Menu;
 import org.javafantasticos.sokoban.view.Ventana;
@@ -18,6 +19,8 @@ public class GameController {
     private VistaJuego vistaJuego;
     private HUDPanel hudPanel;
     private Tablero tablero;
+    private GameOverPanel gameOverPanel;
+    private MovimientoTeclado teclado;
     private static final int SCORE_PER_LEVEL = 1000;
     private static final int STEP_PENALTY = 10;
     private static final int PUSH_PENALTY = 15;
@@ -38,15 +41,18 @@ public class GameController {
         this.vistaJuego = new VistaJuego(tablero, this);
         this.hudPanel = vistaJuego.getHudPanel();
         this.tablero.suscribirVista(vistaJuego.getTableroPanel());
+        this.gameOverPanel = new GameOverPanel("");
 
         configurarCallbacksTablero();
         caretaker.saveState(tablero.crearMemento(), steps, pushes);
 
         ventana.agregarPantalla(vistaMenu, "MENU");
         ventana.agregarPantalla(vistaJuego, "JUEGO");
+        ventana.agregarPantalla(gameOverPanel, "GAMEOVER");
 
         this.vistaMenu.escucharBotonJugar(e -> empezarJuego());
         this.vistaMenu.escucharBotonSalir(e -> System.exit(0));
+        this.gameOverPanel.escucharBotonVolver(e -> volverAlMenu());
 
         ventana.mostrarMenu();
         ventana.setVisible(true);
@@ -60,6 +66,7 @@ public class GameController {
             if (onMove != null) onMove.run();
             hudPanel.actualizar(this);
         });
+        tablero.setOnGameOver(reason -> mostrarGameOver(reason));
     }
 
     public void setOnMove(Runnable callback) {
@@ -69,9 +76,33 @@ public class GameController {
     private void empezarJuego() {
         ventana.mostrarJuego();
         hudPanel.actualizar(this);
-        MovimientoTeclado teclado = new MovimientoTeclado(this);
+        teclado = new MovimientoTeclado(this);
         vistaJuego.conectarTeclado(teclado);
         vistaJuego.requestFocusInWindow();
+    }
+
+    private void mostrarGameOver(String motivo) {
+        gameOverPanel.setMotivo(motivo);
+        ventana.mostrarGameOver();
+        if (teclado != null) {
+            vistaJuego.removeKeyListener(teclado);
+            teclado = null;
+        }
+    }
+
+    private void volverAlMenu() {
+        gestorNiveles.reiniciarProgreso();
+        tablero = gestorNiveles.getTableroActual();
+        tablero.suscribirVista(vistaJuego.getTableroPanel());
+        configurarCallbacksTablero();
+        caretaker.reset();
+        steps = 0;
+        pushes = 0;
+        caretaker.saveState(tablero.crearMemento(), steps, pushes);
+        hudPanel.actualizar(this);
+        vistaJuego.getTableroPanel().actualizar(tablero);
+        teclado = null;
+        ventana.mostrarMenu();
     }
 
     public void undo() {

@@ -2,12 +2,14 @@ package org.javafantasticos.sokoban.model;
 
 import org.javafantasticos.sokoban.interfaces.Suscriptor;
 import org.javafantasticos.sokoban.model.cajas.Caja;
+import org.javafantasticos.sokoban.model.cajas.CajaFragil;
 import org.javafantasticos.sokoban.model.player.Jugador;
 import org.javafantasticos.sokoban.model.suelo.Destino;
 import org.javafantasticos.sokoban.view.TableroPanel;
 
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * Representa el estado actual de un nivel del juego.
@@ -23,6 +25,7 @@ public class Tablero {
     private final Jugador jugador;
     private ElementoBase elementoBajoJugador; // lo que había en la celda antes de que el jugador la pisara
     private BiConsumer<TableroMemento, Boolean> onStateChange;
+    private Consumer<String> onGameOver;
     private Suscriptor tableroPanel;
 
     public Tablero(String nombre,
@@ -86,6 +89,10 @@ public class Tablero {
         this.onStateChange = callback;
     }
 
+    public void setOnGameOver(Consumer<String> callback) {
+        this.onGameOver = callback;
+    }
+
     public TableroMemento crearMemento() {
         return new TableroMemento(this);
     }
@@ -98,6 +105,10 @@ public class Tablero {
      * @return cantidad de cajas empujadas en este paso (incluyendo recursivos por aceite)
      */
     public int mover(int dx, int dy) {
+        return mover(dx, dy, false);
+    }
+
+    private int mover(int dx, int dy, boolean isRecursive) {
         int xJugador = jugador.getCoordenada().getPosX();
         int yJugador = jugador.getCoordenada().getPosY();
         int xDestinoJugador = xJugador + dx;
@@ -121,6 +132,15 @@ public class Tablero {
             elementoAdyacente.getCoordenada().setPosX(xDestinoCaja);
             elementoAdyacente.getCoordenada().setPosY(yDestinoCaja);
             grillaSuperior.get(yDestinoCaja).set(xDestinoCaja, elementoAdyacente);
+
+            // Reducir vida de la caja frágil solo en el empuje inicial (no en deslizamiento por aceite)
+            if (!isRecursive && elementoAdyacente instanceof CajaFragil fragil) {
+                fragil.reducirVida();
+                if (fragil.sinVida() && onGameOver != null) {
+                    onGameOver.accept("La caja frágil se ha roto :(. Sokoban desempleado.");
+                }
+            }
+
             pushEnEstePaso = true;
         }
 
@@ -135,7 +155,7 @@ public class Tablero {
 
         int pushes = pushEnEstePaso ? 1 : 0;
         if (elementoAdyacente.esResbaloso()) {
-            pushes += mover(dx, dy);
+            pushes += mover(dx, dy, true);
         }
 
         notificarVista();

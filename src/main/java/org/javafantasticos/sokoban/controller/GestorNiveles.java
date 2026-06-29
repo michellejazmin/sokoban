@@ -102,4 +102,12 @@ public final class GestorNiveles {
         }
         return false; // Ya no hay más niveles
     }
+
+    /**
+     * Reinicia el progreso del juego al nivel 1 con un tablero fresco.
+     */
+    public void reiniciarProgreso() {
+        nivelActualIndex = 0;
+        reiniciarNivelActual();
+    }
 }

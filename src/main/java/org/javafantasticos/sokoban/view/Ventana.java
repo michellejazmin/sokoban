@@ -38,4 +38,8 @@ public class Ventana extends JFrame {
         mostrarPantalla("MENU");
     }
 
+    public void mostrarGameOver() {
+        mostrarPantalla("GAMEOVER");
+    }
+
 }
