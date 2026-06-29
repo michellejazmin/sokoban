@@ -1,6 +1,7 @@
 package org.javafantasticos.sokoban.controller;
 
 import org.javafantasticos.sokoban.model.Tablero;
+import org.javafantasticos.sokoban.view.HUDPanel;
 import org.javafantasticos.sokoban.view.Menu;
 import org.javafantasticos.sokoban.view.Ventana;
 import org.javafantasticos.sokoban.view.VistaJuego;
@@ -15,7 +16,10 @@ public class GameController {
     private final Menu vistaMenu;
     private final Caretaker caretaker;
     private VistaJuego vistaJuego;
+    private HUDPanel hudPanel;
     private Tablero tablero;
+    private int steps;
+    private int pushes;
     private Runnable onMove;
 
     public GameController(GestorNiveles gestorNiveles) {
@@ -24,17 +28,15 @@ public class GameController {
         this.vistaMenu = new Menu();
         this.caretaker = new Caretaker();
         this.tablero = gestorNiveles.getTableroActual();
+        this.steps = 0;
+        this.pushes = 0;
+
         this.vistaJuego = new VistaJuego(tablero, this);
+        this.hudPanel = vistaJuego.getHudPanel();
         this.tablero.suscribirVista(vistaJuego.getTableroPanel());
 
-        tablero.setOnStateChange(memento -> {
-            caretaker.saveState(memento);
-            if (onMove != null) {
-                onMove.run();
-            }
-        });
-
-        caretaker.saveState(tablero.crearMemento());
+        configurarCallbacksTablero();
+        caretaker.saveState(tablero.crearMemento(), steps, pushes);
 
         ventana.agregarPantalla(vistaMenu, "MENU");
         ventana.agregarPantalla(vistaJuego, "JUEGO");
@@ -46,27 +48,49 @@ public class GameController {
         ventana.setVisible(true);
     }
 
+    private void configurarCallbacksTablero() {
+        tablero.setOnStateChange((memento, wasPush) -> {
+            steps++;
+            if (wasPush) pushes++;
+            caretaker.saveState(memento, steps, pushes);
+            if (onMove != null) onMove.run();
+            hudPanel.actualizar(this);
+        });
+    }
+
     public void setOnMove(Runnable callback) {
         this.onMove = callback;
     }
 
-    public void setVistaJuego(VistaJuego vistaJuego) {
-        this.vistaJuego = vistaJuego;
-    }
-
     private void empezarJuego() {
         ventana.mostrarJuego();
+        hudPanel.actualizar(this);
         MovimientoTeclado teclado = new MovimientoTeclado(this);
         vistaJuego.conectarTeclado(teclado);
         vistaJuego.requestFocusInWindow();
     }
 
     public void undo() {
-        caretaker.undo(tablero);
-
-        if (onMove != null) {
-            onMove.run();
+        Caretaker.Snapshot snap = caretaker.undo(tablero);
+        if (snap != null) {
+            steps = snap.steps();
+            pushes = snap.pushes();
+            if (onMove != null) onMove.run();
+            hudPanel.actualizar(this);
         }
+    }
+
+    public void reiniciarNivel() {
+        tablero = gestorNiveles.reiniciarNivelActual();
+        tablero.suscribirVista(vistaJuego.getTableroPanel());
+        configurarCallbacksTablero();
+        caretaker.reset();
+        steps = 0;
+        pushes = 0;
+        caretaker.saveState(tablero.crearMemento(), steps, pushes);
+        hudPanel.actualizar(this);
+        vistaJuego.getTableroPanel().actualizar(tablero);
+        vistaJuego.requestFocusInWindow();
     }
 
     public boolean canUndo() {
@@ -74,6 +98,7 @@ public class GameController {
     }
 
     // TODO: método para avanzar de nivel
+    // Movimiento
 
     public void moverArriba() {
         tablero.mover(0, -1);
@@ -91,8 +116,49 @@ public class GameController {
         tablero.mover(1, 0);
     }
 
+    // Getters para el HUD
+
+    public int getSteps() {
+        return steps;
+    }
+
+    public int getPushes() {
+        return pushes;
+    }
+
+    public int getNivelActual() {
+        return gestorNiveles.getNivelActualIndex() + 1;
+    }
+
+    public int getTotalNiveles() {
+        return gestorNiveles.getTotalNiveles();
+    }
+
+    public Tablero getTablero() {
+        return tablero;
+    }
+
+    public int getCajasEnDestino() {
+        return tablero.getCajasEnDestino();
+    }
+
+    public int getTotalCajas() {
+        return tablero.getCajas().size();
+    }
+
+    public int getUndoRemaining() {
+        return caretaker.getRemainingUndos();
+    }
+
+    public int getUndoStepSize() {
+        return caretaker.getUndoStepSize();
+    }
+
+    public int getMaxUndoUses() {
+        return caretaker.getMaxUndoUses();
+    }
+
     public VistaJuego getVistaJuego() {
         return vistaJuego;
     }
-
 }

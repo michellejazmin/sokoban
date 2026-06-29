@@ -6,9 +6,8 @@ import org.javafantasticos.sokoban.model.player.Jugador;
 import org.javafantasticos.sokoban.model.suelo.Destino;
 import org.javafantasticos.sokoban.view.TableroPanel;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 /**
  * Representa el estado actual de un nivel del juego.
@@ -23,7 +22,7 @@ public class Tablero {
     private final List<Destino> objetivos;
     private final Jugador jugador;
     private ElementoBase elementoBajoJugador; // lo que había en la celda antes de que el jugador la pisara
-    private Consumer<TableroMemento> onStateChange;
+    private BiConsumer<TableroMemento, Boolean> onStateChange;
     private Suscriptor tableroPanel;
 
     public Tablero(String nombre,
@@ -83,7 +82,7 @@ public class Tablero {
         this.elementoBajoJugador = elemento;
     }
 
-    public void setOnStateChange(Consumer<TableroMemento> callback) {
+    public void setOnStateChange(BiConsumer<TableroMemento, Boolean> callback) {
         this.onStateChange = callback;
     }
 
@@ -95,7 +94,10 @@ public class Tablero {
         memento.restaurar(this);
     }
 
-    public void mover(int dx, int dy) {
+    /**
+     * @return cantidad de cajas empujadas en este paso (incluyendo recursivos por aceite)
+     */
+    public int mover(int dx, int dy) {
         int xJugador = jugador.getCoordenada().getPosX();
         int yJugador = jugador.getCoordenada().getPosY();
         int xDestinoJugador = xJugador + dx;
@@ -103,7 +105,9 @@ public class Tablero {
 
         ElementoBase elementoAdyacente = getElemento(xDestinoJugador, yDestinoJugador);
 
-        if (elementoAdyacente.bloqueaPaso()) return;
+        if (elementoAdyacente.bloqueaPaso()) return 0;
+
+        boolean pushEnEstePaso = false;
 
         // Si el elemento adyacente es una caja, intentamos moverla
         if (elementoAdyacente.esMovible()) {
@@ -112,11 +116,12 @@ public class Tablero {
             ElementoBase destinoCaja = getElemento(xDestinoCaja, yDestinoCaja);
 
             // Si lo que hay detrás de la caja bloquea, no podemos mover
-            if (!destinoCaja.esOcupable()) return;
+            if (!destinoCaja.esOcupable()) return 0;
 
             elementoAdyacente.getCoordenada().setPosX(xDestinoCaja);
             elementoAdyacente.getCoordenada().setPosY(yDestinoCaja);
             grillaSuperior.get(yDestinoCaja).set(xDestinoCaja, elementoAdyacente);
+            pushEnEstePaso = true;
         }
 
         jugador.getCoordenada().setPosX(xDestinoJugador);
@@ -125,15 +130,16 @@ public class Tablero {
         grillaSuperior.get(yDestinoJugador).set(xDestinoJugador, jugador);
 
         if (onStateChange != null) {
-            onStateChange.accept(new TableroMemento(this));
+            onStateChange.accept(new TableroMemento(this), pushEnEstePaso);
         }
 
+        int pushes = pushEnEstePaso ? 1 : 0;
         if (elementoAdyacente.esResbaloso()) {
-            mover(dx, dy);
+            pushes += mover(dx, dy);
         }
 
         notificarVista();
-
+        return pushes;
     }
 
     public void suscribirVista(TableroPanel tableroPanel) {
@@ -150,14 +156,17 @@ public class Tablero {
         }
     }
 
-    private List<List<ElementoBase>> copiarGrilla(List<List<ElementoBase>> grilla) {
-        List<List<ElementoBase>> copia = new ArrayList<>();
-
-        for (List<ElementoBase> fila : grilla) {
-            copia.add(List.copyOf(fila));
+    public int getCajasEnDestino() {
+        int count = 0;
+        for (var caja : cajas) {
+            for (var destino : objetivos) {
+                if (caja.getCoordenada().equals(destino.getCoordenada())) {
+                    count++;
+                    break;
+                }
+            }
         }
-
-        return List.copyOf(copia);
+        return count;
     }
 
     // TODO: modificar el método para que funcione con la implementación de dos grillas

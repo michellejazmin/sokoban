@@ -24,11 +24,15 @@ import java.util.List;
 public final class GestorNiveles {
     private static GestorNiveles instancia;
 
+    private final TableroFactory factory;
+    private final List<List<String>> nivelesTexto;
     private final List<Tablero> tableros;
     private int nivelActualIndex;
 
     private GestorNiveles(LectorNiveles lector, TableroFactory factory) {
-        this.tableros = inicializarTableros(lector, factory);
+        this.factory = factory;
+        this.nivelesTexto = lector.extraerNivelesTexto();
+        this.tableros = inicializarTableros();
         this.nivelActualIndex = 0;
     }
 
@@ -56,15 +60,14 @@ public final class GestorNiveles {
         return instancia;
     }
 
-    private List<Tablero> inicializarTableros(LectorNiveles lector, TableroFactory factory) {
-        List<List<String>> tablerosTexto = lector.extraerNivelesTexto();
+    private List<Tablero> inicializarTableros() {
         List<Tablero> tablerosArmados = new ArrayList<>();
 
-        for (int i = 0; i < tablerosTexto.size(); i++) {
-            tablerosArmados.add(factory.crearTablero("Nivel " + (i + 1), tablerosTexto.get(i)));
+        for (int i = 0; i < nivelesTexto.size(); i++) {
+            tablerosArmados.add(factory.crearTablero("Nivel " + (i + 1), nivelesTexto.get(i)));
         }
 
-        return List.copyOf(tablerosArmados);
+        return tablerosArmados;
     }
 
     public Tablero getTableroActual() {
@@ -72,7 +75,24 @@ public final class GestorNiveles {
     }
 
     public List<Tablero> getTodosLosTableros() {
-        return tableros; // Ya es inmodificable por el List.copyOf()
+        return List.copyOf(tableros);
+    }
+
+    public int getNivelActualIndex() {
+        return nivelActualIndex;
+    }
+
+    public int getTotalNiveles() {
+        return tableros.size();
+    }
+
+    /**
+     * Reemplaza el tablero del nivel actual por uno recién creado desde el texto original.
+     */
+    public Tablero reiniciarNivelActual() {
+        Tablero nuevo = factory.crearTablero("Nivel " + (nivelActualIndex + 1), nivelesTexto.get(nivelActualIndex));
+        tableros.set(nivelActualIndex, nuevo);
+        return nuevo;
     }
 
     public boolean avanzarNivel() {

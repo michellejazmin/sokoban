@@ -11,16 +11,18 @@ public class Caretaker {
     private static final int UNDO_STEPS = 5;
     private static final int MAX_UNDO_USES = 3;
 
-    private final Deque<TableroMemento> history;
+    private final Deque<Snapshot> history;
     private int undoCount;
+
+    public record Snapshot(TableroMemento memento, int steps, int pushes) {}
 
     public Caretaker() {
         this.history = new ArrayDeque<>();
         this.undoCount = 0;
     }
 
-    public void saveState(TableroMemento memento) {
-        history.addLast(memento);
+    public void saveState(TableroMemento memento, int steps, int pushes) {
+        history.addLast(new Snapshot(memento, steps, pushes));
 
         if (history.size() > MAX_HISTORY) {
             history.removeFirst();
@@ -31,9 +33,12 @@ public class Caretaker {
         return undoCount < MAX_UNDO_USES && history.size() > UNDO_STEPS;
     }
 
-    public void undo(Tablero tablero) {
+    /**
+     * @return el Snapshot restaurado, o null si no se puede deshacer
+     */
+    public Snapshot undo(Tablero tablero) {
         if (!canUndo()) {
-            return;
+            return null;
         }
 
         for (int i = 0; i < UNDO_STEPS; i++) {
@@ -41,6 +46,25 @@ public class Caretaker {
         }
 
         undoCount++;
-        tablero.restaurar(history.peekLast());
+        Snapshot snap = history.peekLast();
+        tablero.restaurar(snap.memento());
+        return snap;
+    }
+
+    public void reset() {
+        history.clear();
+        undoCount = 0;
+    }
+
+    public int getRemainingUndos() {
+        return MAX_UNDO_USES - undoCount;
+    }
+
+    public int getUndoStepSize() {
+        return UNDO_STEPS;
+    }
+
+    public int getMaxUndoUses() {
+        return MAX_UNDO_USES;
     }
 }

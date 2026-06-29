@@ -1,5 +1,7 @@
 package org.javafantasticos.sokoban.model.dto;
 
+import java.util.Objects;
+
 public final class Coordenada {
     private  int posX;
     private  int posY;
@@ -23,5 +25,17 @@ public final class Coordenada {
 
     public void setPosX(int posX) {
         this.posX = posX;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Coordenada that)) return false;
+        return posX == that.posX && posY == that.posY;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(posX, posY);
     }
 }

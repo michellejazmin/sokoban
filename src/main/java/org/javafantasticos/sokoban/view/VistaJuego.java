@@ -9,12 +9,12 @@ import java.awt.*;
 
 /**
  * Ventana principal del juego.
- * Ensambla el panel de dibujo y registra el listener de teclado.
+ * Ensambla el panel de dibujo, el HUD y registra el listener de teclado.
  */
 public class VistaJuego extends JPanel {
 
     private final TableroPanel tableroPanel;
-    private final JButton undoButton;
+    private final HUDPanel hudPanel;
 
     public VistaJuego(Tablero tablero, GameController controller) {
         super();
@@ -23,22 +23,20 @@ public class VistaJuego extends JPanel {
         this.tableroPanel = new TableroPanel(tablero);
         this.add(tableroPanel, BorderLayout.CENTER);
 
-        undoButton = new JButton("Undo");
-        undoButton.setFocusable(false);
-        undoButton.setEnabled(controller.canUndo());
-        undoButton.addActionListener(e -> {
+        this.hudPanel = new HUDPanel();
+        this.add(hudPanel, BorderLayout.SOUTH);
+
+        hudPanel.onUndo(e -> {
             controller.undo();
             requestFocusInWindow();
         });
 
-        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
-        bottomPanel.add(undoButton);
-        this.add(bottomPanel, BorderLayout.SOUTH);
-
-        controller.setOnMove(() -> {
-            tableroPanel.repaint();
-            undoButton.setEnabled(controller.canUndo());
+        hudPanel.onReset(e -> {
+            controller.reiniciarNivel();
+            requestFocusInWindow();
         });
+
+        controller.setOnMove(() -> tableroPanel.repaint());
     }
 
     public void conectarTeclado(MovimientoTeclado teclado) {
@@ -49,4 +47,7 @@ public class VistaJuego extends JPanel {
         return tableroPanel;
     }
 
+    public HUDPanel getHudPanel() {
+        return hudPanel;
+    }
 }
