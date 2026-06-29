@@ -24,7 +24,7 @@ public class Tablero {
     private final List<Destino> objetivos;
     private final Jugador jugador;
     private ElementoBase elementoBajoJugador; // lo que había en la celda antes de que el jugador la pisara
-    private BiConsumer<TableroMemento, Boolean> onStateChange;
+    private BiConsumer<TableroMemento, Integer> onStateChange;
     private Consumer<String> onGameOver;
     private Suscriptor tableroPanel;
 
@@ -85,7 +85,7 @@ public class Tablero {
         this.elementoBajoJugador = elemento;
     }
 
-    public void setOnStateChange(BiConsumer<TableroMemento, Boolean> callback) {
+    public void setOnStateChange(BiConsumer<TableroMemento, Integer> callback) {
         this.onStateChange = callback;
     }
 
@@ -102,13 +102,9 @@ public class Tablero {
     }
 
     /**
-     * @return cantidad de cajas empujadas en este paso (incluyendo recursivos por aceite)
+     * @return cantidad de cajas empujadas en este paso (incluyendo deslizamientos por aceite)
      */
     public int mover(int dx, int dy) {
-        return mover(dx, dy, false);
-    }
-
-    private int mover(int dx, int dy, boolean isRecursive) {
         int xJugador = jugador.getCoordenada().getPosX();
         int yJugador = jugador.getCoordenada().getPosY();
         int xDestinoJugador = xJugador + dx;
@@ -119,11 +115,13 @@ public class Tablero {
         if (elementoAdyacente.bloqueaPaso()) return 0;
 
         boolean pushEnEstePaso = false;
+        int xDestinoCaja = -1;
+        int yDestinoCaja = -1;
 
         // Si el elemento adyacente es una caja, intentamos moverla
         if (elementoAdyacente.esMovible()) {
-            int xDestinoCaja = xDestinoJugador + dx;
-            int yDestinoCaja = yDestinoJugador + dy;
+            xDestinoCaja = xDestinoJugador + dx;
+            yDestinoCaja = yDestinoJugador + dy;
             ElementoBase destinoCaja = getElemento(xDestinoCaja, yDestinoCaja);
 
             // Si lo que hay detrás de la caja bloquea, no podemos mover
@@ -133,14 +131,6 @@ public class Tablero {
             elementoAdyacente.getCoordenada().setPosY(yDestinoCaja);
             grillaSuperior.get(yDestinoCaja).set(xDestinoCaja, elementoAdyacente);
 
-            // Reducir vida de la caja frágil solo en el empuje inicial (no en deslizamiento por aceite)
-            if (!isRecursive && elementoAdyacente instanceof CajaFragil fragil) {
-                fragil.reducirVida();
-                if (fragil.sinVida() && onGameOver != null) {
-                    onGameOver.accept("La caja frágil se ha roto :(. Sokoban desempleado.");
-                }
-            }
-
             pushEnEstePaso = true;
         }
 
@@ -149,16 +139,78 @@ public class Tablero {
         grillaSuperior.get(yJugador).set(xJugador, null);
         grillaSuperior.get(yDestinoJugador).set(xDestinoJugador, jugador);
 
-        if (onStateChange != null) {
-            onStateChange.accept(new TableroMemento(this), pushEnEstePaso);
+        int pushes = 0;
+        if (pushEnEstePaso) {
+            pushes = 1;
+
+            // Reducir vida de la caja frágil en cada empuje
+            if (elementoAdyacente instanceof CajaFragil fragil) {
+                fragil.reducirVida();
+                if (fragil.sinVida() && onGameOver != null) {
+                    onGameOver.accept("La caja frágil se ha roto :(");
+                }
+            }
+
+            // Deslizamiento de la caja sobre aceite
+            ElementoBase terrenoCaja = grillaInferior.get(yDestinoCaja).get(xDestinoCaja);
+            if (terrenoCaja.esResbaloso()) {
+                pushes += deslizarCaja(elementoAdyacente, dx, dy);
+            }
         }
 
-        int pushes = pushEnEstePaso ? 1 : 0;
+        if (onStateChange != null) {
+            onStateChange.accept(new TableroMemento(this), pushes);
+        }
+
+        // Deslizamiento del jugador sobre aceite
         if (elementoAdyacente.esResbaloso()) {
-            pushes += mover(dx, dy, true);
+            pushes += mover(dx, dy);
         }
 
         notificarVista();
+        return pushes;
+    }
+
+    /**
+     * Desliza una caja sobre terreno resbaladizo (aceite) hasta que encuentre
+     * un obstáculo o llegue a una casilla no resbaladiza.
+     * @return cantidad de casillas que la caja se deslizó
+     */
+    private int deslizarCaja(ElementoBase caja, int dx, int dy) {
+        int xActual = caja.getCoordenada().getPosX();
+        int yActual = caja.getCoordenada().getPosY();
+        int xSiguiente = xActual + dx;
+        int ySiguiente = yActual + dy;
+
+        ElementoBase destino = getElemento(xSiguiente, ySiguiente);
+
+        if (!destino.esOcupable()) {
+            return 0;
+        }
+
+        caja.getCoordenada().setPosX(xSiguiente);
+        caja.getCoordenada().setPosY(ySiguiente);
+        grillaSuperior.get(ySiguiente).set(xSiguiente, caja);
+        grillaSuperior.get(yActual).set(xActual, null);
+
+        int pushes = 1;
+
+        // Reducir vida de la caja frágil en cada paso del deslizamiento
+        if (caja instanceof CajaFragil fragil) {
+            fragil.reducirVida();
+            if (fragil.sinVida()) {
+                if (onGameOver != null) {
+                    onGameOver.accept("La caja frágil se ha roto :(");
+                }
+                return pushes;
+            }
+        }
+
+        ElementoBase terreno = grillaInferior.get(ySiguiente).get(xSiguiente);
+        if (terreno.esResbaloso()) {
+            pushes += deslizarCaja(caja, dx, dy);
+        }
+
         return pushes;
     }
 

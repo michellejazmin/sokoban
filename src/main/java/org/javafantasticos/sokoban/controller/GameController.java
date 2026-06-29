@@ -59,9 +59,9 @@ public class GameController {
     }
 
     private void configurarCallbacksTablero() {
-        tablero.setOnStateChange((memento, wasPush) -> {
+        tablero.setOnStateChange((memento, pushCount) -> {
             steps++;
-            if (wasPush) pushes++;
+            pushes += pushCount;
             caretaker.saveState(memento, steps, pushes);
             if (onMove != null) onMove.run();
             hudPanel.actualizar(this);
