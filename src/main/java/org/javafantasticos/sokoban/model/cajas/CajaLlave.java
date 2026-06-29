@@ -6,4 +6,9 @@ public final class CajaLlave extends Caja {
     public CajaLlave(Coordenada coordenada) {
         super(coordenada, 'K');
     }
+
+    @Override
+    public boolean esCajaLlave() {
+        return true;
+    }
 }

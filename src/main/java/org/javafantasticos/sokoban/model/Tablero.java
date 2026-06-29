@@ -1,5 +1,6 @@
 package org.javafantasticos.sokoban.model;
 
+import org.javafantasticos.sokoban.enumerados.Estado;
 import org.javafantasticos.sokoban.interfaces.Suscriptor;
 import org.javafantasticos.sokoban.model.cajas.Caja;
 import org.javafantasticos.sokoban.model.player.Jugador;
@@ -151,6 +152,8 @@ public class Tablero {
             }
         }
 
+        actualizarRejas();
+
         if (onStateChange != null) {
             onStateChange.accept(new TableroMemento(this), pushes);
         }
@@ -214,13 +217,58 @@ public class Tablero {
         }
     }
 
+    private boolean hayCajaLlaveSobreCerrojo() {
+        boolean encontrado = false;
+        for (Caja caja : cajas) {
+            if (!encontrado && caja.esCajaLlave()) {
+                for (Destino destino : objetivos) {
+                    if (!encontrado && destino.esCerrojo()
+                            && caja.getCoordenada().equals(destino.getCoordenada())) {
+                        encontrado = true;
+                    }
+                }
+            }
+        }
+        return encontrado;
+    }
+
+    private void actualizarRejas() {
+        boolean cerrar = !hayCajaLlaveSobreCerrojo();
+
+        if (cerrar) {
+            for (List<ElementoBase> fila : grillaInferior) {
+                for (ElementoBase elem : fila) {
+                    if (elem.getEstadoReja() == Estado.ABIERTO) {
+                        int rx = elem.getCoordenada().getPosX();
+                        int ry = elem.getCoordenada().getPosY();
+                        if (grillaSuperior.get(ry).get(rx) != null) {
+                            cerrar = false;
+                        }
+                    }
+                }
+            }
+        }
+
+        Estado nuevoEstado = cerrar ? Estado.CERRADO : Estado.ABIERTO;
+        for (List<ElementoBase> fila : grillaInferior) {
+            for (ElementoBase elem : fila) {
+                if (elem.getEstadoReja() != null) {
+                    elem.setEstadoReja(nuevoEstado);
+                }
+            }
+        }
+    }
+
     public int getCajasEnDestino() {
         int count = 0;
         for (var caja : cajas) {
+            boolean contada = false;
             for (var destino : objetivos) {
-                if (caja.getCoordenada().equals(destino.getCoordenada())) {
-                    count++;
-                    break;
+                if (!contada && caja.getCoordenada().equals(destino.getCoordenada())) {
+                    if (!destino.esCerrojo() || caja.esCajaLlave()) {
+                        contada = true;
+                        count++;
+                    }
                 }
             }
         }

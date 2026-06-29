@@ -35,7 +35,7 @@ public final class CajaFragil extends Caja {
         reducirVida();
         if (sinVida()) {
             if (onGameOver != null) {
-                onGameOver.accept("La caja frágil se ha roto :(. Sokoban desempleado.");
+                onGameOver.accept("Caja frágil rota. Sokoban desempleado :(.");
             }
             return false;
         }

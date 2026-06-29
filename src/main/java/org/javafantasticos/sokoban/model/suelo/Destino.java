@@ -8,8 +8,16 @@ public class Destino extends ElementoBase {
         super(coordenada, 'D');
     }
 
+    protected Destino(Coordenada coordenada, char simbolo) {
+        super(coordenada, simbolo);
+    }
+
     @Override
     public boolean esOcupable() {
         return true;
+    }
+
+    public boolean esCerrojo() {
+        return false;
     }
 }

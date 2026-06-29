@@ -22,6 +22,11 @@ public final class Reja extends ElementoBase {
     }
 
     @Override
+    public char getSimbolo() {
+        return estado == Estado.ABIERTO ? 'S' : 'R';
+    }
+
+    @Override
     public boolean bloqueaPaso() {
         return estado == Estado.CERRADO;
     }

@@ -39,6 +39,10 @@ public abstract class Caja extends ElementoBase {
         return true;
     }
 
+    public boolean esCajaLlave() {
+        return false;
+    }
+
     public boolean alSerEmpujada(Consumer<String> onGameOver) {
         return true;
     }

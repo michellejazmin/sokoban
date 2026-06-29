@@ -3,6 +3,7 @@ package org.javafantasticos.sokoban.model;
 import org.javafantasticos.sokoban.model.cajas.Caja;
 import org.javafantasticos.sokoban.model.dto.Coordenada;
 import org.javafantasticos.sokoban.model.player.Jugador;
+import org.javafantasticos.sokoban.model.suelo.Cerrojo;
 import org.javafantasticos.sokoban.model.suelo.Destino;
 import org.javafantasticos.sokoban.model.suelo.Suelo;
 
@@ -59,6 +60,12 @@ public final class TableroFactory {
                         Suelo suelo = elementoFactory.crearSuelo(coordenada);
                         filaSuperior.add(jugador);
                         filaInferior.add(suelo);
+                    }
+                    case 'C' -> {
+                        Cerrojo cerrojo = new Cerrojo(coordenada);
+                        objetivos.add(cerrojo);
+                        filaInferior.add(cerrojo);
+                        filaSuperior.add(null);
                     }
                     default -> {
                         filaInferior.add(elementoFactory.crearElementoEstatico(simbolo, coordenada));
