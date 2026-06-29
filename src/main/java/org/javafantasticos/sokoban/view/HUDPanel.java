@@ -12,7 +12,9 @@ import java.io.IOException;
 public class HUDPanel extends JPanel {
 
     private static Font HUD_FONT;
+    private static Font SCORE_FONT;
 
+    private final JLabel scoreLabel;
     private final JLabel nivelLabel;
     private final JLabel pasosLabel;
     private final JLabel movCajasLabel;
@@ -26,9 +28,10 @@ public class HUDPanel extends JPanel {
         cargarFuente();
 
         setBackground(new Color(0x1E, 0x2A, 0x38));
-        setLayout(new GridLayout(4, 1, 0, 2));
+        setLayout(new GridLayout(5, 1, 0, 2));
         setBorder(new EmptyBorder(6, 12, 6, 12));
 
+        scoreLabel = crearLabel("Puntaje: 0", SCORE_FONT, new Color(0xFF, 0xD7, 0x00));
         nivelLabel = crearLabel("Nivel: -");
         pasosLabel = crearLabel("Pasos: 0");
         movCajasLabel = crearLabel("Mov. cajas: 0");
@@ -39,6 +42,7 @@ public class HUDPanel extends JPanel {
         undoButton = crearBoton("\u2190 Undo", new Color(0x5D, 0x7B, 0x93));
         resetButton = crearBoton("\u21BB Reiniciar", new Color(0xC0, 0x39, 0x2B));
 
+        add(crearFilaCentrada(scoreLabel));
         add(crearFila(nivelLabel, pasosLabel));
         add(crearFila(movCajasLabel, cajasObjetivoLabel));
         add(crearFila(limiteUndoLabel, undosRestantesLabel));
@@ -54,21 +58,34 @@ public class HUDPanel extends JPanel {
         return fila;
     }
 
+    private JPanel crearFilaCentrada(Component unico) {
+        JPanel fila = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        fila.setOpaque(false);
+        fila.add(unico);
+        return fila;
+    }
+
     private void cargarFuente() {
         if (HUD_FONT != null) return;
         try {
             File fontFile = new File("src/main/resources/font/JetBrainsMono-Bold.ttf");
             Font base = Font.createFont(Font.TRUETYPE_FONT, fontFile);
             HUD_FONT = base.deriveFont(Font.PLAIN, 14f);
+            SCORE_FONT = base.deriveFont(Font.BOLD, 18f);
         } catch (IOException | FontFormatException e) {
             HUD_FONT = new Font("Monospaced", Font.PLAIN, 14);
+            SCORE_FONT = new Font("Monospaced", Font.BOLD, 18);
         }
     }
 
     private JLabel crearLabel(String texto) {
+        return crearLabel(texto, HUD_FONT, Color.WHITE);
+    }
+
+    private JLabel crearLabel(String texto, Font font, Color color) {
         JLabel label = new JLabel(texto);
-        label.setFont(HUD_FONT);
-        label.setForeground(Color.WHITE);
+        label.setFont(font);
+        label.setForeground(color);
         return label;
     }
 
@@ -86,6 +103,7 @@ public class HUDPanel extends JPanel {
     }
 
     public void actualizar(GameController ctrl) {
+        scoreLabel.setText("Puntaje: " + ctrl.getScore());
         nivelLabel.setText("Nivel: " + ctrl.getNivelActual() + "/" + ctrl.getTotalNiveles());
         pasosLabel.setText("Pasos: " + ctrl.getSteps());
         movCajasLabel.setText("Mov. cajas: " + ctrl.getPushes());

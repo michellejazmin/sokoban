@@ -18,6 +18,10 @@ public class GameController {
     private VistaJuego vistaJuego;
     private HUDPanel hudPanel;
     private Tablero tablero;
+    private static final int SCORE_PER_LEVEL = 1000;
+    private static final int STEP_PENALTY = 10;
+    private static final int PUSH_PENALTY = 15;
+
     private int steps;
     private int pushes;
     private Runnable onMove;
@@ -144,6 +148,10 @@ public class GameController {
 
     public int getTotalCajas() {
         return tablero.getCajas().size();
+    }
+
+    public int getScore() {
+        return Math.max(0, SCORE_PER_LEVEL - steps * STEP_PENALTY - pushes * PUSH_PENALTY);
     }
 
     public int getUndoRemaining() {

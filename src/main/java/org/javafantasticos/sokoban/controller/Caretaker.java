@@ -6,10 +6,10 @@ import org.javafantasticos.sokoban.model.TableroMemento;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-public class Caretaker {
-    private static final int MAX_HISTORY = 15;
+public class Caretaker { ;
     private static final int UNDO_STEPS = 5;
     private static final int MAX_UNDO_USES = 3;
+    private static final int MAX_HISTORY = UNDO_STEPS * MAX_UNDO_USES + 1;
 
     private final Deque<Snapshot> history;
     private int undoCount;
