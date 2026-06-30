@@ -80,7 +80,7 @@ public class GameController {
             if (onMove != null) onMove.run();
             hudPanel.actualizar(this);
         });
-        tablero.setOnGameOver(reason -> mostrarGameOver(reason));
+        tablero.setOnGameOver(this::mostrarGameOver);
     }
 
     public void setOnMove(Runnable callback) {
@@ -90,7 +90,7 @@ public class GameController {
     private void empezarJuego() {
         ventana.mostrarJuego();
         hudPanel.actualizar(this);
-        this.movimientos = new MovimientoTeclado(this.tablero);
+        this.movimientos = new MovimientoTeclado(this);
         movimientos.registrarEn(vistaJuego);
         vistaJuego.requestFocusInWindow();
     }
@@ -105,6 +105,13 @@ public class GameController {
     public void volverAlMenu() {
         gestorNiveles.reiniciarProgreso();
         tablero = gestorNiveles.getTableroActual();
+        recargarTablero();
+        if (movimientos != null) movimientos.desregistrarDe(vistaJuego);
+        this.movimientos = null;
+        ventana.mostrarMenu();
+    }
+
+    private void recargarTablero() {
         tablero.suscribirVista(vistaJuego.getTableroPanel());
         configurarCallbacksTablero();
         caretaker.reset();
@@ -113,9 +120,6 @@ public class GameController {
         caretaker.saveState(tablero.crearMemento(), steps, pushes);
         hudPanel.actualizar(this);
         vistaJuego.getTableroPanel().actualizar(tablero);
-        if (movimientos != null) movimientos.desregistrarDe(vistaJuego);
-        this.movimientos = null;
-        ventana.mostrarMenu();
     }
 
     public void undo() {
@@ -129,22 +133,35 @@ public class GameController {
     }
 
     public void reiniciarNivel() {
+        if (movimientos != null) {
+            movimientos.desregistrarDe(vistaJuego);
+        }
         tablero = gestorNiveles.reiniciarNivelActual();
-        tablero.suscribirVista(vistaJuego.getTableroPanel());
-        configurarCallbacksTablero();
-        caretaker.reset();
-        steps = 0;
-        pushes = 0;
-        caretaker.saveState(tablero.crearMemento(), steps, pushes);
-        hudPanel.actualizar(this);
-        vistaJuego.getTableroPanel().actualizar(tablero);
-        this.movimientos = new MovimientoTeclado(this.tablero);
+        recargarTablero();
         movimientos.registrarEn(vistaJuego);
         vistaJuego.requestFocusInWindow();
     }
 
     public boolean canUndo() {
         return caretaker.canUndo();
+    }
+
+    // Movimientos
+
+    public void moverArriba() {
+        tablero.mover(0, -1);
+    }
+
+    public void moverAbajo() {
+        tablero.mover(0, 1);
+    }
+
+    public void moverIzquierda() {
+        tablero.mover(-1, 0);
+    }
+
+    public void moverDerecha() {
+        tablero.mover(1, 0);
     }
 
     // TODO: método para avanzar de nivel
