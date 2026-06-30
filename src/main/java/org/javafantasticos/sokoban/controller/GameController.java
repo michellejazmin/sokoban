@@ -276,6 +276,11 @@ public class GameController implements ContextoItem {
         hudPanel.actualizar(this);
     }
 
+    @Override
+    public void terminarPartida(String motivo) {
+        mostrarGameOver(motivo);
+    }
+
     public int getUndoRemaining() {
         return caretaker.getRemainingUndos();
     }
