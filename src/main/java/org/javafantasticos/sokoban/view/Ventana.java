@@ -3,11 +3,17 @@ package org.javafantasticos.sokoban.view;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Patrón Singleton: la ventana principal del juego es única durante toda la
+ * ejecución; tener más de una rompería el CardLayout y el ciclo de vida Swing.
+ */
 public class Ventana extends JFrame {
+    private static Ventana instancia;
+
     private final JPanel contenedor;
     private final CardLayout cardLayout;
 
-    public Ventana() {
+    private Ventana() {
         setTitle("Sokoban");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setMinimumSize(new Dimension(400, 400));
@@ -19,6 +25,13 @@ public class Ventana extends JFrame {
 
         add(contenedor);
         setVisible(true);
+    }
+
+    public static Ventana getInstancia() {
+        if (instancia == null) {
+            instancia = new Ventana();
+        }
+        return instancia;
     }
 
     public void agregarPantalla(JPanel pantalla, String nombre) {

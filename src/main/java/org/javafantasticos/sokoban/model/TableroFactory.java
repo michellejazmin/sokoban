@@ -16,13 +16,23 @@ import java.util.List;
  * Su responsabilidad es organizar estas entidades recién creadas en las
  * estructuras de datos correctas (grilla, lista de cajas, lista de objetivos)
  * para construir y retornar un objeto Tablero listo para ser jugado.
+ *
+ * Patrón Singleton: una única fábrica de tableros para todo el juego.
  */
 public final class TableroFactory {
+    private static TableroFactory instancia;
 
     private final ElementoFactory elementoFactory;
 
-    public TableroFactory() {
-        this.elementoFactory = new ElementoFactory();
+    private TableroFactory() {
+        this.elementoFactory = ElementoFactory.getInstancia();
+    }
+
+    public static TableroFactory getInstancia() {
+        if (instancia == null) {
+            instancia = new TableroFactory();
+        }
+        return instancia;
     }
 
     public Tablero crearTablero(String nombre, List<String> filasTexto) {

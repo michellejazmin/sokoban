@@ -9,12 +9,18 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Patrón Singleton: el menú principal es único; sólo se muestra/oculta vía
+ * CardLayout, nunca hay más de uno.
+ */
 public class Menu extends JPanel {
+    private static Menu instancia;
+
     private final JButton botonJugar;
     private final JButton botonSalir;
     private BufferedImage backgroundImage;
 
-    public Menu() {
+    private Menu() {
         super();
         this.setLayout(new GridBagLayout());
 
@@ -74,6 +80,13 @@ public class Menu extends JPanel {
         gbc.gridy = 0; add(titulo, gbc);
         gbc.gridy = 1; add(botonJugar, gbc);
         gbc.gridy = 2; add(botonSalir, gbc);
+    }
+
+    public static Menu getInstancia() {
+        if (instancia == null) {
+            instancia = new Menu();
+        }
+        return instancia;
     }
 
     // Métodos para que el controlador escuche los botones

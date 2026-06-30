@@ -8,14 +8,20 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Patrón Singleton: la pantalla de Game Over es única durante toda la partida;
+ * se reutiliza y sólo cambia el texto del motivo vía setMotivo.
+ */
 public class GameOverPanel extends JPanel {
+    private static GameOverPanel instancia;
+
     private final JLabel tituloLabel;
     private final JLabel motivoLabel;
     private final JButton botonVolver;
     private final JButton botonSalir;
     private BufferedImage backgroundImage;
 
-    public GameOverPanel(String motivo) {
+    private GameOverPanel(String motivo) {
         super();
         this.setLayout(new GridBagLayout());
 
@@ -76,6 +82,13 @@ public class GameOverPanel extends JPanel {
         add(botonVolver, gbc);
         gbc.gridy = 3;
         add(botonSalir, gbc);
+    }
+
+    public static GameOverPanel getInstancia(String motivo) {
+        if (instancia == null) {
+            instancia = new GameOverPanel(motivo);
+        }
+        return instancia;
     }
 
     public void setMotivo(String motivo) {

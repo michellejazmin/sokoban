@@ -9,7 +9,11 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Patrón Singleton: el HUD es único durante toda la partida.
+ */
 public class HUDPanel extends JPanel {
+    private static HUDPanel instancia;
 
     private static Font HUD_FONT;
     private static Font SCORE_FONT;
@@ -25,7 +29,7 @@ public class HUDPanel extends JPanel {
     private final JButton resetButton;
     private final JButton volverAlMenuButton;
 
-    public HUDPanel() {
+    private HUDPanel() {
         cargarFuente();
 
         setBackground(new Color(0x1E, 0x2A, 0x38));
@@ -49,6 +53,13 @@ public class HUDPanel extends JPanel {
         add(crearFila(movCajasLabel, cajasObjetivoLabel));
         add(crearFila(limiteUndoLabel, undosRestantesLabel));
         add(crearFila(undoButton, resetButton, volverAlMenuButton));
+    }
+
+    public static HUDPanel getInstancia() {
+        if (instancia == null) {
+            instancia = new HUDPanel();
+        }
+        return instancia;
     }
 
     private JPanel crearFila(Component... componentes) {

@@ -9,20 +9,23 @@ import java.awt.*;
 /**
  * Ventana principal del juego.
  * Ensambla el panel de dibujo, el HUD y registra el listener de teclado.
+ *
+ * Patrón Singleton: única vista de juego durante toda la partida.
  */
 public class VistaJuego extends JPanel {
+    private static VistaJuego instancia;
 
     private final TableroPanel tableroPanel;
     private final HUDPanel hudPanel;
 
-    public VistaJuego(Tablero tablero, GameController controller) {
+    private VistaJuego(Tablero tablero, GameController controller) {
         super();
         this.setLayout(new BorderLayout());
 
-        this.tableroPanel = new TableroPanel(tablero);
+        this.tableroPanel = TableroPanel.getInstancia(tablero);
         this.add(tableroPanel, BorderLayout.CENTER);
 
-        this.hudPanel = new HUDPanel();
+        this.hudPanel = HUDPanel.getInstancia();
         this.add(hudPanel, BorderLayout.SOUTH);
 
         hudPanel.onUndo(e -> {
@@ -40,6 +43,13 @@ public class VistaJuego extends JPanel {
         });
 
         controller.setOnMove(() -> tableroPanel.repaint());
+    }
+
+    public static VistaJuego getInstancia(Tablero tablero, GameController controller) {
+        if (instancia == null) {
+            instancia = new VistaJuego(tablero, controller);
+        }
+        return instancia;
     }
 
     public TableroPanel getTableroPanel() {

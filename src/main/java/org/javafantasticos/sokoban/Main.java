@@ -11,10 +11,10 @@ import javax.swing.*;
 public class Main {
     public static void main(String[] args) {
         LectorNiveles lectorTxt = new TxtLevelsExtractor("/TableroXNivel");
-        TableroFactory factory = new TableroFactory();
+        TableroFactory factory = TableroFactory.getInstancia();
 
         GestorNiveles gestor = GestorNiveles.getInstancia(lectorTxt, factory);
 
-        SwingUtilities.invokeLater(() -> new GameController(gestor));
+        SwingUtilities.invokeLater(() -> GameController.getInstancia(gestor));
     }
 }

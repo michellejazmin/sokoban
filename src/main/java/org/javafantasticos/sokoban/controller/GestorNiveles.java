@@ -36,26 +36,9 @@ public final class GestorNiveles {
         this.nivelActualIndex = 0;
     }
 
-    /**
-     * Inicializa el Singleton la primera vez y devuelve la instancia.
-     * Las llamadas posteriores con parámetros ignoran los argumentos y
-     * devuelven la instancia ya creada.
-     */
     public static GestorNiveles getInstancia(LectorNiveles lector, TableroFactory factory) {
         if (instancia == null) {
             instancia = new GestorNiveles(lector, factory);
-        }
-        return instancia;
-    }
-
-    /**
-     * Devuelve la instancia ya creada. Lanza excepción si nunca se inicializó,
-     * para fallar rápido en lugar de devolver null.
-     */
-    public static GestorNiveles getInstancia() {
-        if (instancia == null) {
-            throw new IllegalStateException(
-                    "GestorNiveles no fue inicializado. Llamar primero a getInstancia(lector, factory).");
         }
         return instancia;
     }

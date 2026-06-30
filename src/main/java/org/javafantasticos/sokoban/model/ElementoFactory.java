@@ -17,8 +17,20 @@ import org.javafantasticos.sokoban.model.suelo.Suelo;
  * Traduce un caracter específico ('P', 'S', 'N', 'F', etc.) en su objeto correspondiente
  * (Pared, Suelo, CajaNormal, CajaFragil, etc.) asignándole sus coordenadas por ahora...
  * Centraliza la creación de objetos.
+ *
+ * Patrón Singleton: una única fábrica de elementos para todo el juego.
  */
 public class ElementoFactory {
+    private static ElementoFactory instancia;
+
+    private ElementoFactory() {}
+
+    public static ElementoFactory getInstancia() {
+        if (instancia == null) {
+            instancia = new ElementoFactory();
+        }
+        return instancia;
+    }
 
     public ElementoBase crearElementoEstatico(char simbolo, Coordenada coordenada) {
         return switch (simbolo) {

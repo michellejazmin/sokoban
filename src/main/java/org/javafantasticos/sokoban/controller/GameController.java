@@ -11,8 +11,13 @@ import org.javafantasticos.sokoban.view.VistaJuego;
 /**
  * Orquesta las acciones del juego.
  * No contiene lógica propia, delega al Tablero.
+ *
+ * Patrón Singleton: único orquestador de la partida; centraliza la referencia
+ * al tablero actual y a las vistas durante toda la ejecución.
  */
 public class GameController {
+    private static GameController instancia;
+
     private final GestorNiveles gestorNiveles;
     private final Ventana ventana;
     private final Menu vistaMenu;
@@ -30,19 +35,19 @@ public class GameController {
     private int pushes;
     private Runnable onMove;
 
-    public GameController(GestorNiveles gestorNiveles) {
+    private GameController(GestorNiveles gestorNiveles) {
         this.gestorNiveles = gestorNiveles;
-        this.ventana = new Ventana();
-        this.vistaMenu = new Menu();
+        this.ventana = Ventana.getInstancia();
+        this.vistaMenu = Menu.getInstancia();
         this.caretaker = new Caretaker();
         this.tablero = gestorNiveles.getTableroActual();
         this.steps = 0;
         this.pushes = 0;
 
-        this.vistaJuego = new VistaJuego(tablero, this);
+        this.vistaJuego = VistaJuego.getInstancia(tablero, this);
         this.hudPanel = vistaJuego.getHudPanel();
         this.tablero.suscribirVista(vistaJuego.getTableroPanel());
-        this.gameOverPanel = new GameOverPanel("");
+        this.gameOverPanel = GameOverPanel.getInstancia("");
 
         configurarCallbacksTablero();
         caretaker.saveState(tablero.crearMemento(), steps, pushes);
@@ -58,6 +63,13 @@ public class GameController {
 
         ventana.mostrarMenu();
         ventana.setVisible(true);
+    }
+
+    public static GameController getInstancia(GestorNiveles gestorNiveles) {
+        if (instancia == null) {
+            instancia = new GameController(gestorNiveles);
+        }
+        return instancia;
     }
 
     private void configurarCallbacksTablero() {
