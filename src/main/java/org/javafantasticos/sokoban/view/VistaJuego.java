@@ -56,6 +56,19 @@ public class VistaJuego extends JPanel {
         return tableroPanel;
     }
 
+    /**
+     * Reinserta el TableroPanel en la vista de juego. Necesario porque la pantalla
+     * de reproducción lo toma prestado (un componente Swing sólo puede tener un
+     * contenedor a la vez).
+     */
+    public void recuperarTablero() {
+        if (tableroPanel.getParent() != this) {
+            add(tableroPanel, BorderLayout.CENTER);
+            revalidate();
+            repaint();
+        }
+    }
+
     public HUDPanel getHudPanel() {
         return hudPanel;
     }

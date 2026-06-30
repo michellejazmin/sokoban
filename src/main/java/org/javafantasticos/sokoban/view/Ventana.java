@@ -55,4 +55,12 @@ public class Ventana extends JFrame {
         mostrarPantalla("GAMEOVER");
     }
 
+    public void mostrarVictoria() {
+        mostrarPantalla("VICTORIA");
+    }
+
+    public void mostrarReplay() {
+        mostrarPantalla("REPLAY");
+    }
+
 }

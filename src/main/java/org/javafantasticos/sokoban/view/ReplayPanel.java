@@ -1,0 +1,120 @@
+package org.javafantasticos.sokoban.view;
+
+import org.javafantasticos.sokoban.controller.ReproductorPartida;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.awt.event.ActionListener;
+
+/**
+ * Pantalla de reproducción de la partida grabada.
+ * Muestra el tablero animándose y una barra de controles (anterior, play/pausa,
+ * siguiente y volver al menú).
+ *
+ * Patrón Singleton: única pantalla de reproducción durante toda la ejecución.
+ * Como el {@link TableroPanel} también es único, esta pantalla lo toma prestado
+ * mientras dura la reproducción (ver {@link #cargar}).
+ */
+public class ReplayPanel extends JPanel {
+    private static ReplayPanel instancia;
+
+    private final JPanel contenedorTablero;
+    private final JLabel progresoLabel;
+    private final JButton botonAnterior;
+    private final JButton botonPlayPause;
+    private final JButton botonSiguiente;
+    private final JButton botonVolver;
+
+    private ReproductorPartida reproductor;
+
+    private ReplayPanel() {
+        super(new BorderLayout());
+        setBackground(new Color(0x1E, 0x2A, 0x38));
+
+        contenedorTablero = new JPanel(new GridBagLayout());
+        contenedorTablero.setOpaque(false);
+        add(contenedorTablero, BorderLayout.CENTER);
+
+        Font uiFont = UIResources.cargarFuenteRegular(14);
+
+        progresoLabel = new JLabel("Movimiento 0 / 0");
+        progresoLabel.setFont(uiFont);
+        progresoLabel.setForeground(Color.WHITE);
+
+        botonAnterior = crearBoton("⏮ Anterior", uiFont, new Color(0x5D, 0x7B, 0x93));
+        botonPlayPause = crearBoton("⏸ Pausa", uiFont, new Color(0x27, 0xAE, 0x60));
+        botonSiguiente = crearBoton("Siguiente ⏭", uiFont, new Color(0x5D, 0x7B, 0x93));
+        botonVolver = crearBoton("⌂ Volver al menu", uiFont, new Color(0xC0, 0x39, 0x2B));
+
+        JPanel controles = new JPanel(new FlowLayout(FlowLayout.CENTER, 16, 8));
+        controles.setBackground(new Color(0x16, 0x20, 0x2B));
+        controles.setBorder(new EmptyBorder(6, 12, 6, 12));
+        controles.add(progresoLabel);
+        controles.add(botonAnterior);
+        controles.add(botonPlayPause);
+        controles.add(botonSiguiente);
+        controles.add(botonVolver);
+        add(controles, BorderLayout.SOUTH);
+
+        botonAnterior.addActionListener(e -> { if (reproductor != null) reproductor.anterior(); });
+        botonSiguiente.addActionListener(e -> { if (reproductor != null) reproductor.siguiente(); });
+        botonPlayPause.addActionListener(e -> togglePlay());
+    }
+
+    public static ReplayPanel getInstancia() {
+        if (instancia == null) instancia = new ReplayPanel();
+        return instancia;
+    }
+
+    /**
+     * Monta el tablero (prestado) y su reproductor para una nueva reproducción.
+     */
+    public void cargar(TableroPanel board, ReproductorPartida rep) {
+        contenedorTablero.removeAll();
+        contenedorTablero.add(board);
+        this.reproductor = rep;
+
+        rep.setOnFrameChange(this::actualizarControles);
+        rep.reiniciar();
+
+        revalidate();
+        repaint();
+    }
+
+    public void onVolver(ActionListener listener) {
+        botonVolver.addActionListener(listener);
+    }
+
+    private void togglePlay() {
+        if (reproductor == null) return;
+        if (reproductor.estaReproduciendo()) {
+            reproductor.pausar();
+        } else {
+            reproductor.play();
+        }
+    }
+
+    private void actualizarControles() {
+        if (reproductor == null) return;
+        int actual = reproductor.getIndice();
+        int ultimo = reproductor.getTotalFrames() - 1;
+        progresoLabel.setText("Movimiento " + actual + " / " + Math.max(0, ultimo));
+        botonPlayPause.setText(reproductor.estaReproduciendo() ? "⏸ Pausa" : "▶ Reproducir");
+        botonAnterior.setEnabled(actual > 0);
+        botonSiguiente.setEnabled(actual < ultimo);
+    }
+
+    private JButton crearBoton(String texto, Font font, Color fondo) {
+        JButton btn = new JButton(texto);
+        btn.setFont(font);
+        btn.setBackground(fondo);
+        btn.setForeground(Color.WHITE);
+        btn.setFocusPainted(false);
+        btn.setBorderPainted(false);
+        btn.setOpaque(true);
+        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btn.setBorder(new EmptyBorder(6, 14, 6, 14));
+        return btn;
+    }
+}
