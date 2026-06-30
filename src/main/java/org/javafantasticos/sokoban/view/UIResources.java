@@ -11,6 +11,16 @@ public class UIResources {
     private static final String RUTA_FONDO = "src/main/resources/pixel-8bit-brick-wall-blue.jpg";
     private static final String RUTA_FUENTE_REGULAR = "src/main/resources/font/JetBrainsMono-Regular.ttf";
     private static final String RUTA_FUENTE_BOLD = "src/main/resources/font/JetBrainsMono-Bold.ttf";
+    private static final String RUTA_JUGADOR = "src/main/resources/bloques/jugador_frente.png";
+    private static final String RUTA_CAJA_NORMAL = "src/main/resources/bloques/caja_normal.png";
+    private static final String RUTA_CAJA_FRAGIL = "src/main/resources/bloques/caja_fragil.png";
+    private static final String RUTA_CAJA_LLAVE = "src/main/resources/bloques/caja_llave.png";
+    private static final String RUTA_PARED = "src/main/resources/bloques/pared.png";
+    private static final String RUTA_REJA =  "src/main/resources/bloques/reja.png";
+    private static final String RUTA_SUELO = "src/main/resources/bloques/suelo.png";
+    private static final String RUTA_ACEITE = "src/main/resources/bloques/aceite2.png";
+    private static final String RUTA_OBJETIVO = "src/main/resources/bloques/objetivo.png";
+    private static final String RUTA_CERROJO = "src/main/resources/bloques/cerrojo.png";
 
     private UIResources() {}
 
@@ -19,6 +29,27 @@ public class UIResources {
             return ImageIO.read(new File(RUTA_FONDO));
         } catch (IOException e) {
             System.err.println("Error al cargar imagen de fondo. Se reemplazará por un color plano.");
+            return null;
+        }
+    }
+
+    public static BufferedImage cargarBloque(char simbolo) {
+        try {
+            return switch (simbolo) {
+                case 'P' -> ImageIO.read(new File(RUTA_PARED));
+                case 'S' -> ImageIO.read(new File(RUTA_SUELO));
+                case 'A' -> ImageIO.read(new File(RUTA_ACEITE));
+                case 'D' -> ImageIO.read(new File(RUTA_OBJETIVO));
+                case 'C' -> ImageIO.read(new File(RUTA_CERROJO));
+                case 'R' -> ImageIO.read(new File(RUTA_REJA));
+                case 'N' -> ImageIO.read(new File(RUTA_CAJA_NORMAL));
+                case 'F' -> ImageIO.read(new File(RUTA_CAJA_FRAGIL));
+                case 'K' -> ImageIO.read(new File(RUTA_CAJA_LLAVE));
+                case 'J' -> ImageIO.read(new File(RUTA_JUGADOR));
+                default -> null;
+            };
+        } catch (IOException e) {
+            System.err.println("Error al cargar imagen de bloque para el símbolo: " + simbolo);
             return null;
         }
     }
