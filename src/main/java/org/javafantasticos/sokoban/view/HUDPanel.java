@@ -6,17 +6,12 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
 
-/**
- * Patrón Singleton: el HUD es único durante toda la partida.
- */
 public class HUDPanel extends JPanel {
     private static HUDPanel instancia;
 
-    private static Font HUD_FONT;
-    private static Font SCORE_FONT;
+    private final Font HUD_FONT;
+    private final Font SCORE_FONT;
 
     private final JLabel scoreLabel;
     private final JLabel nivelLabel;
@@ -30,23 +25,24 @@ public class HUDPanel extends JPanel {
     private final JButton volverAlMenuButton;
 
     private HUDPanel() {
-        cargarFuente();
+        HUD_FONT   = UIResources.cargarFuenteRegular(14);
+        SCORE_FONT = UIResources.cargarFuenteBold(18);
 
         setBackground(new Color(0x1E, 0x2A, 0x38));
         setLayout(new GridLayout(5, 1, 0, 2));
         setBorder(new EmptyBorder(6, 12, 6, 12));
 
-        scoreLabel = crearLabel("Puntaje: 0", SCORE_FONT, new Color(0xFF, 0xD7, 0x00));
-        nivelLabel = crearLabel("Nivel: -");
-        pasosLabel = crearLabel("Pasos: 0");
-        movCajasLabel = crearLabel("Mov. cajas: 0");
-        cajasObjetivoLabel = crearLabel("Cajas en obj: 0/0");
-        limiteUndoLabel = crearLabel("Limite undo: -");
+        scoreLabel          = crearLabel("Puntaje: 0", SCORE_FONT, new Color(0xFF, 0xD7, 0x00));
+        nivelLabel          = crearLabel("Nivel: -");
+        pasosLabel          = crearLabel("Pasos: 0");
+        movCajasLabel       = crearLabel("Mov. cajas: 0");
+        cajasObjetivoLabel  = crearLabel("Cajas en obj: 0/0");
+        limiteUndoLabel     = crearLabel("Limite undo: -");
         undosRestantesLabel = crearLabel("Undos restantes: -/-");
 
-        undoButton = crearBoton("\u2190 Undo", new Color(0x5D, 0x7B, 0x93));
-        resetButton = crearBoton("\u21BB Reiniciar", new Color(0xD4, 0xA0, 0x17));
-        volverAlMenuButton = crearBoton("\u2302 Volver al menu", new Color(0xC0, 0x39, 0x2B));
+        undoButton        = crearBoton("← Undo",           new Color(0x5D, 0x7B, 0x93));
+        resetButton       = crearBoton("↻ Reiniciar",      new Color(0xD4, 0xA0, 0x17));
+        volverAlMenuButton = crearBoton("⌂ Volver al menu", new Color(0xC0, 0x39, 0x2B));
 
         add(crearFilaCentrada(scoreLabel));
         add(crearFila(nivelLabel, pasosLabel));
@@ -56,18 +52,14 @@ public class HUDPanel extends JPanel {
     }
 
     public static HUDPanel getInstancia() {
-        if (instancia == null) {
-            instancia = new HUDPanel();
-        }
+        if (instancia == null) instancia = new HUDPanel();
         return instancia;
     }
 
     private JPanel crearFila(Component... componentes) {
         JPanel fila = new JPanel(new FlowLayout(FlowLayout.CENTER, 24, 0));
         fila.setOpaque(false);
-        for (Component c : componentes) {
-            fila.add(c);
-        }
+        for (Component c : componentes) fila.add(c);
         return fila;
     }
 
@@ -76,19 +68,6 @@ public class HUDPanel extends JPanel {
         fila.setOpaque(false);
         fila.add(unico);
         return fila;
-    }
-
-    private void cargarFuente() {
-        if (HUD_FONT != null) return;
-        try {
-            File fontFile = new File("src/main/resources/font/JetBrainsMono-Bold.ttf");
-            Font base = Font.createFont(Font.TRUETYPE_FONT, fontFile);
-            HUD_FONT = base.deriveFont(Font.PLAIN, 14f);
-            SCORE_FONT = base.deriveFont(Font.BOLD, 18f);
-        } catch (IOException | FontFormatException e) {
-            HUD_FONT = new Font("Monospaced", Font.PLAIN, 14);
-            SCORE_FONT = new Font("Monospaced", Font.BOLD, 18);
-        }
     }
 
     private JLabel crearLabel(String texto) {
@@ -126,15 +105,7 @@ public class HUDPanel extends JPanel {
         undoButton.setEnabled(ctrl.canUndo());
     }
 
-    public void onUndo(ActionListener listener) {
-        undoButton.addActionListener(listener);
-    }
-
-    public void onReset(ActionListener listener) {
-        resetButton.addActionListener(listener);
-    }
-
-    public void onVolverAlMenu(ActionListener listener) {
-        volverAlMenuButton.addActionListener(listener);
-    }
+    public void onUndo(ActionListener listener)         { undoButton.addActionListener(listener); }
+    public void onReset(ActionListener listener)        { resetButton.addActionListener(listener); }
+    public void onVolverAlMenu(ActionListener listener) { volverAlMenuButton.addActionListener(listener); }
 }
