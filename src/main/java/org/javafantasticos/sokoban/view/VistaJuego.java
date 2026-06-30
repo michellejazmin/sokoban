@@ -2,11 +2,9 @@ package org.javafantasticos.sokoban.view;
 
 import org.javafantasticos.sokoban.controller.GameController;
 import org.javafantasticos.sokoban.model.Tablero;
-import org.javafantasticos.sokoban.controller.MovimientoTeclado;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyListener;
 
 /**
  * Ventana principal del juego.
@@ -42,13 +40,6 @@ public class VistaJuego extends JPanel {
         });
 
         controller.setOnMove(() -> tableroPanel.repaint());
-    }
-
-    public void conectarTeclado(MovimientoTeclado teclado) {
-        for (KeyListener kl : getKeyListeners()) {
-            removeKeyListener(kl);
-        }
-        addKeyListener(teclado);
     }
 
     public TableroPanel getTableroPanel() {

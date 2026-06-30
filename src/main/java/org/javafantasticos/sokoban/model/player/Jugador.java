@@ -1,7 +1,6 @@
 package org.javafantasticos.sokoban.model.player;
 
-import org.javafantasticos.sokoban.interfaces.IMovimientos;
-import org.javafantasticos.sokoban.interfaces.Suscriptor;
+
 import org.javafantasticos.sokoban.model.ElementoBase;
 import org.javafantasticos.sokoban.model.dto.Coordenada;
 

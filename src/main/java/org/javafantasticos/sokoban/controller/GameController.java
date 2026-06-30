@@ -1,5 +1,6 @@
 package org.javafantasticos.sokoban.controller;
 
+import org.javafantasticos.sokoban.interfaces.IMovimientos;
 import org.javafantasticos.sokoban.model.Tablero;
 import org.javafantasticos.sokoban.view.GameOverPanel;
 import org.javafantasticos.sokoban.view.HUDPanel;
@@ -20,10 +21,10 @@ public class GameController {
     private HUDPanel hudPanel;
     private Tablero tablero;
     private GameOverPanel gameOverPanel;
-    private MovimientoTeclado teclado;
     private static final int SCORE_PER_LEVEL = 1000;
     private static final int STEP_PENALTY = 10;
     private static final int PUSH_PENALTY = 15;
+    private IMovimientos movimientos;
 
     private int steps;
     private int pushes;
@@ -77,15 +78,16 @@ public class GameController {
     private void empezarJuego() {
         ventana.mostrarJuego();
         hudPanel.actualizar(this);
-        teclado = new MovimientoTeclado(this);
-        vistaJuego.conectarTeclado(teclado);
+        this.movimientos = new MovimientoTeclado(this.tablero);
+        movimientos.registrarEn(vistaJuego);
         vistaJuego.requestFocusInWindow();
     }
 
     private void mostrarGameOver(String motivo) {
         gameOverPanel.setMotivo(motivo);
         ventana.mostrarGameOver();
-        teclado = null;
+        if (movimientos != null) movimientos.desregistrarDe(vistaJuego);
+        this.movimientos = null;
     }
 
     public void volverAlMenu() {
@@ -99,7 +101,8 @@ public class GameController {
         caretaker.saveState(tablero.crearMemento(), steps, pushes);
         hudPanel.actualizar(this);
         vistaJuego.getTableroPanel().actualizar(tablero);
-        teclado = null;
+        if (movimientos != null) movimientos.desregistrarDe(vistaJuego);
+        this.movimientos = null;
         ventana.mostrarMenu();
     }
 
@@ -123,6 +126,8 @@ public class GameController {
         caretaker.saveState(tablero.crearMemento(), steps, pushes);
         hudPanel.actualizar(this);
         vistaJuego.getTableroPanel().actualizar(tablero);
+        this.movimientos = new MovimientoTeclado(this.tablero);
+        movimientos.registrarEn(vistaJuego);
         vistaJuego.requestFocusInWindow();
     }
 
@@ -131,23 +136,6 @@ public class GameController {
     }
 
     // TODO: método para avanzar de nivel
-    // Movimiento
-
-    public void moverArriba() {
-        tablero.mover(0, -1);
-    }
-
-    public void moverAbajo() {
-        tablero.mover(0, 1);
-    }
-
-    public void moverIzquierda() {
-        tablero.mover(-1, 0);
-    }
-
-    public void moverDerecha() {
-        tablero.mover(1, 0);
-    }
 
     // Getters para el HUD
 
