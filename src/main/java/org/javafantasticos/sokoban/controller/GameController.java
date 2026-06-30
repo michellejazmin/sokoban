@@ -5,7 +5,10 @@ import org.javafantasticos.sokoban.model.Tablero;
 import org.javafantasticos.sokoban.view.GameOverPanel;
 import org.javafantasticos.sokoban.view.HUDPanel;
 import org.javafantasticos.sokoban.view.Menu;
+import org.javafantasticos.sokoban.view.ReplayPanel;
+import org.javafantasticos.sokoban.view.TableroPanel;
 import org.javafantasticos.sokoban.view.Ventana;
+import org.javafantasticos.sokoban.view.VictoriaPanel;
 import org.javafantasticos.sokoban.view.VistaJuego;
 
 /**
@@ -22,10 +25,14 @@ public class GameController {
     private final Ventana ventana;
     private final Menu vistaMenu;
     private final Caretaker caretaker;
+    private final Grabacion grabacion;
     private VistaJuego vistaJuego;
     private HUDPanel hudPanel;
     private Tablero tablero;
     private GameOverPanel gameOverPanel;
+    private VictoriaPanel victoriaPanel;
+    private ReplayPanel replayPanel;
+    private ReproductorPartida reproductor;
     private static final int SCORE_PER_LEVEL = 1000;
     private static final int STEP_PENALTY = 10;
     private static final int PUSH_PENALTY = 15;
@@ -33,6 +40,7 @@ public class GameController {
 
     private int steps;
     private int pushes;
+    private boolean partidaTerminada;
     private Runnable onMove;
 
     private GameController(GestorNiveles gestorNiveles) {
@@ -40,26 +48,37 @@ public class GameController {
         this.ventana = Ventana.getInstancia();
         this.vistaMenu = Menu.getInstancia();
         this.caretaker = new Caretaker();
+        this.grabacion = new Grabacion();
         this.tablero = gestorNiveles.getTableroActual();
         this.steps = 0;
         this.pushes = 0;
+        this.partidaTerminada = false;
 
         this.vistaJuego = VistaJuego.getInstancia(tablero, this);
         this.hudPanel = vistaJuego.getHudPanel();
         this.tablero.suscribirVista(vistaJuego.getTableroPanel());
         this.gameOverPanel = GameOverPanel.getInstancia("");
+        this.victoriaPanel = VictoriaPanel.getInstancia("");
+        this.replayPanel = ReplayPanel.getInstancia();
 
         configurarCallbacksTablero();
-        caretaker.saveState(tablero.crearMemento(), steps, pushes);
+        guardarEstadoInicial();
 
         ventana.agregarPantalla(vistaMenu, "MENU");
         ventana.agregarPantalla(vistaJuego, "JUEGO");
         ventana.agregarPantalla(gameOverPanel, "GAMEOVER");
+        ventana.agregarPantalla(victoriaPanel, "VICTORIA");
+        ventana.agregarPantalla(replayPanel, "REPLAY");
 
         this.vistaMenu.escucharBotonJugar(e -> empezarJuego());
         this.vistaMenu.escucharBotonSalir(e -> System.exit(0));
+        this.gameOverPanel.escucharBotonReproducir(e -> reproducirPartida());
         this.gameOverPanel.escucharBotonVolver(e -> volverAlMenu());
         this.gameOverPanel.escucharBotonSalir(e -> System.exit(0));
+        this.victoriaPanel.escucharBotonReproducir(e -> reproducirPartida());
+        this.victoriaPanel.escucharBotonVolver(e -> volverAlMenu());
+        this.victoriaPanel.escucharBotonSalir(e -> System.exit(0));
+        this.replayPanel.onVolver(e -> volverAlMenu());
 
         ventana.mostrarMenu();
         ventana.setVisible(true);
@@ -72,13 +91,22 @@ public class GameController {
         return instancia;
     }
 
+    /** Guarda el estado inicial del tablero tanto en el undo como en la grabación. */
+    private void guardarEstadoInicial() {
+        var inicial = tablero.crearMemento();
+        caretaker.saveState(inicial, steps, pushes);
+        grabacion.grabar(inicial, steps, pushes);
+    }
+
     private void configurarCallbacksTablero() {
         tablero.setOnStateChange((memento, pushCount) -> {
             steps++;
             pushes += pushCount;
             caretaker.saveState(memento, steps, pushes);
+            grabacion.grabar(memento, steps, pushes);
             if (onMove != null) onMove.run();
             hudPanel.actualizar(this);
+            verificarVictoria();
         });
         tablero.setOnGameOver(this::mostrarGameOver);
     }
@@ -96,13 +124,48 @@ public class GameController {
     }
 
     private void mostrarGameOver(String motivo) {
+        if (partidaTerminada) return;
+        partidaTerminada = true;
         gameOverPanel.setMotivo(motivo);
         ventana.mostrarGameOver();
         if (movimientos != null) movimientos.desregistrarDe(vistaJuego);
         this.movimientos = null;
     }
 
+    private void verificarVictoria() {
+        if (partidaTerminada) return;
+        if (getTotalCajas() > 0 && getCajasEnDestino() == getTotalCajas()) {
+            partidaTerminada = true;
+            victoriaPanel.setMensaje("Puntaje: " + getScore()
+                    + "  |  Pasos: " + steps + "  |  Mov. cajas: " + pushes);
+            ventana.mostrarVictoria();
+            if (movimientos != null) movimientos.desregistrarDe(vistaJuego);
+            this.movimientos = null;
+        }
+    }
+
+    /**
+     * Reproduce la partida grabada. Como el TableroPanel es único, la pantalla de
+     * reproducción lo toma prestado y el reproductor restaura los mementos en orden
+     * sobre el mismo Tablero en el que se grabó.
+     */
+    private void reproducirPartida() {
+        if (grabacion.isEmpty()) return;
+        if (reproductor != null) reproductor.detener();
+
+        TableroPanel board = vistaJuego.getTableroPanel();
+        reproductor = new ReproductorPartida(tablero, grabacion, board);
+        replayPanel.cargar(board, reproductor);
+        ventana.mostrarReplay();
+        reproductor.play();
+    }
+
     public void volverAlMenu() {
+        if (reproductor != null) {
+            reproductor.detener();
+            reproductor = null;
+        }
+        vistaJuego.recuperarTablero();
         gestorNiveles.reiniciarProgreso();
         tablero = gestorNiveles.getTableroActual();
         recargarTablero();
@@ -115,9 +178,11 @@ public class GameController {
         tablero.suscribirVista(vistaJuego.getTableroPanel());
         configurarCallbacksTablero();
         caretaker.reset();
+        grabacion.reset();
         steps = 0;
         pushes = 0;
-        caretaker.saveState(tablero.crearMemento(), steps, pushes);
+        partidaTerminada = false;
+        guardarEstadoInicial();
         hudPanel.actualizar(this);
         vistaJuego.getTableroPanel().actualizar(tablero);
     }
