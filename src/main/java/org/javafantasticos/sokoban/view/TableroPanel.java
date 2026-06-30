@@ -12,7 +12,6 @@ import java.util.List;
 /**
  * Panel que dibuja el estado actual del tablero.
  * Cada celda se representa con un color según su símbolo.
- *
  * Patrón Singleton: único panel de dibujo del tablero durante toda la partida.
  * Al cambiar de nivel se actualiza vía {@link #actualizar(Tablero)} (Observer).
  */
@@ -54,15 +53,21 @@ public class TableroPanel extends JPanel implements Suscriptor {
 
         for (int fila = 0; fila < grillaInferior.size(); fila++) {
             for (int col = 0; col < grillaInferior.get(fila).size(); col++) {
-                char simbolo = (grillaSuperior.get(fila).get(col) == null) ?
-                        grillaInferior.get(fila).get(col).getSimbolo() :
-                        grillaSuperior.get(fila).get(col).getSimbolo();
-
                 int x = col  * TAMANIO_CELDA;
                 int y = fila * TAMANIO_CELDA;
 
-                BufferedImage imagen = UIResources.cargarBloque(simbolo);
-                dibujarCelda(g, simbolo, x, y, imagen);
+                // 1) Dibuja siempre el fondo/base
+                char simboloBase = grillaInferior.get(fila).get(col).getSimbolo();
+                BufferedImage imagenBase = UIResources.cargarBloque(simboloBase);
+                dibujarCelda(g, simboloBase, x, y, imagenBase);
+
+                // 2) Dibuja arriba el elemento superior si existe
+                ElementoBase superior = grillaSuperior.get(fila).get(col);
+                if (superior != null) {
+                    char simboloSuperior = superior.getSimbolo();
+                    BufferedImage imagenSuperior = UIResources.cargarBloque(simboloSuperior);
+                    dibujarCelda(g, simboloSuperior, x, y, imagenSuperior);
+                }
             }
         }
     }
@@ -91,9 +96,6 @@ public class TableroPanel extends JPanel implements Suscriptor {
         g.setColor(fondo);
         g.fillRect(x, y, TAMANIO_CELDA, TAMANIO_CELDA);
 
-        // Borde
-        //g.setColor(new Color(0, 0, 0, 40));
-        //g.drawRect(x, y, TAMANIO_CELDA, TAMANIO_CELDA);
 
         if (imagen != null) {
             g.drawImage(imagen, x, y, TAMANIO_CELDA, TAMANIO_CELDA, null);
