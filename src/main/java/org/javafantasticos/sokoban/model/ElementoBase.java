@@ -2,6 +2,7 @@ package org.javafantasticos.sokoban.model;
 
 import org.javafantasticos.sokoban.enumerados.Estado;
 import org.javafantasticos.sokoban.model.dto.Coordenada;
+import org.javafantasticos.sokoban.model.items.ContextoItem;
 
 import java.util.function.Consumer;
 
@@ -56,5 +57,9 @@ public abstract class ElementoBase {
 
     public boolean alSerEmpujada(Consumer<String> onGameOver) {
         return true;
+    }
+
+    public ElementoBase aplicar(ContextoItem ctx) {
+        return this;
     }
 }

@@ -9,6 +9,7 @@ import org.javafantasticos.sokoban.model.suelo.Destino;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.UnaryOperator;
 
 /**
  * Representa el estado actual de un nivel del juego.
@@ -25,6 +26,7 @@ public class Tablero {
     private ElementoBase elementoBajoJugador; // lo que había en la celda antes de que el jugador la pisara
     private BiConsumer<TableroMemento, Integer> onStateChange;
     private Consumer<String> onGameOver;
+    private UnaryOperator<ElementoBase> onPisada;
     private Suscriptor tableroPanel;
 
     public Tablero(String nombre,
@@ -92,6 +94,10 @@ public class Tablero {
         this.onGameOver = callback;
     }
 
+    public void setOnPisada(UnaryOperator<ElementoBase> callback) {
+        this.onPisada = callback;
+    }
+
     public TableroMemento crearMemento() {
         return new TableroMemento(this);
     }
@@ -137,6 +143,14 @@ public class Tablero {
         jugador.getCoordenada().setPosY(yDestinoJugador);
         grillaSuperior.get(yJugador).set(xJugador, null);
         grillaSuperior.get(yDestinoJugador).set(xDestinoJugador, jugador);
+
+        if (onPisada != null) {
+            ElementoBase pisoActual = grillaInferior.get(yDestinoJugador).get(xDestinoJugador);
+            ElementoBase nuevoPiso = onPisada.apply(pisoActual);
+            if (nuevoPiso != pisoActual) {
+                grillaInferior.get(yDestinoJugador).set(xDestinoJugador, nuevoPiso);
+            }
+        }
 
         int pushes = 0;
         if (pushEnEstePaso) {

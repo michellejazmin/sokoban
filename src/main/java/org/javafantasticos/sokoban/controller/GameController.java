@@ -2,6 +2,7 @@ package org.javafantasticos.sokoban.controller;
 
 import org.javafantasticos.sokoban.interfaces.IMovimientos;
 import org.javafantasticos.sokoban.model.Tablero;
+import org.javafantasticos.sokoban.model.items.ContextoItem;
 import org.javafantasticos.sokoban.view.GameOverPanel;
 import org.javafantasticos.sokoban.view.HUDPanel;
 import org.javafantasticos.sokoban.view.Menu;
@@ -18,7 +19,7 @@ import org.javafantasticos.sokoban.view.VistaJuego;
  * Patrón Singleton: único orquestador de la partida; centraliza la referencia
  * al tablero actual y a las vistas durante toda la ejecución.
  */
-public class GameController {
+public class GameController implements ContextoItem {
     private static GameController instancia;
 
     private final GestorNiveles gestorNiveles;
@@ -40,6 +41,7 @@ public class GameController {
 
     private int steps;
     private int pushes;
+    private int bonus;
     private boolean partidaTerminada;
     private Runnable onMove;
 
@@ -52,6 +54,7 @@ public class GameController {
         this.tablero = gestorNiveles.getTableroActual();
         this.steps = 0;
         this.pushes = 0;
+        this.bonus = 0;
         this.partidaTerminada = false;
 
         this.vistaJuego = VistaJuego.getInstancia(tablero, this);
@@ -109,6 +112,7 @@ public class GameController {
             verificarVictoria();
         });
         tablero.setOnGameOver(this::mostrarGameOver);
+        tablero.setOnPisada(piso -> piso.aplicar(this));
     }
 
     public void setOnMove(Runnable callback) {
@@ -181,6 +185,7 @@ public class GameController {
         grabacion.reset();
         steps = 0;
         pushes = 0;
+        bonus = 0;
         partidaTerminada = false;
         guardarEstadoInicial();
         hudPanel.actualizar(this);
@@ -262,7 +267,18 @@ public class GameController {
     }
 
     public int getScore() {
-        return Math.max(0, SCORE_PER_LEVEL - steps * STEP_PENALTY - pushes * PUSH_PENALTY);
+        return Math.max(0, SCORE_PER_LEVEL + bonus - steps * STEP_PENALTY - pushes * PUSH_PENALTY);
+    }
+
+    @Override
+    public void sumarBonus(int monto) {
+        bonus += monto;
+        hudPanel.actualizar(this);
+    }
+
+    @Override
+    public void terminarPartida(String motivo) {
+        mostrarGameOver(motivo);
     }
 
     public int getUndoRemaining() {

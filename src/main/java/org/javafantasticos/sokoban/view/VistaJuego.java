@@ -42,7 +42,7 @@ public class VistaJuego extends JPanel {
             controller.volverAlMenu();
         });
 
-        controller.setOnMove(() -> tableroPanel.repaint());
+        controller.setOnMove(tableroPanel::repaint);
     }
 
     public static VistaJuego getInstancia(Tablero tablero, GameController controller) {
