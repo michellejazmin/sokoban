@@ -5,6 +5,7 @@ import org.javafantasticos.sokoban.model.cajas.CajaFragil;
 import org.javafantasticos.sokoban.model.cajas.CajaLlave;
 import org.javafantasticos.sokoban.model.cajas.CajaNormal;
 import org.javafantasticos.sokoban.model.dto.Coordenada;
+import org.javafantasticos.sokoban.model.items.ItemMoneda;
 import org.javafantasticos.sokoban.model.muros.Pared;
 import org.javafantasticos.sokoban.model.muros.Reja;
 import org.javafantasticos.sokoban.model.player.Jugador;
@@ -39,6 +40,7 @@ public class ElementoFactory {
             case 'C' -> new Cerrojo(coordenada);
             case 'R' -> new Reja(coordenada);
             case 'A' -> new Aceite(coordenada);
+            case 'M' -> new ItemMoneda(coordenada);
             default -> throw new IllegalArgumentException("Simbolo de tablero desconocido: " + simbolo);
         };
     }

@@ -79,6 +79,7 @@ public class TableroPanel extends JPanel implements Suscriptor {
             case 'N' -> { fondo = new Color(210, 140, 60);  texto = "■"; }  // Caja normal
             case 'F' -> { fondo = new Color(240, 200, 100); texto = "◧"; }  // Caja frágil
             case 'K' -> { fondo = new Color(255, 220, 50);  texto = "🔑";}  // Caja llave
+            case 'M' -> { fondo = new Color(255, 215, 0);   texto = "$"; }  // Moneda
             case 'J' -> { fondo = new Color(70, 130, 180);  texto = "☺"; }  // Jugador
             default  -> { fondo = Color.LIGHT_GRAY;         texto = "?"; }
         }
