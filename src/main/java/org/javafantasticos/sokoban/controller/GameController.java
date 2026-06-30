@@ -85,13 +85,10 @@ public class GameController {
     private void mostrarGameOver(String motivo) {
         gameOverPanel.setMotivo(motivo);
         ventana.mostrarGameOver();
-        if (teclado != null) {
-            vistaJuego.removeKeyListener(teclado);
-            teclado = null;
-        }
+        teclado = null;
     }
 
-    private void volverAlMenu() {
+    public void volverAlMenu() {
         gestorNiveles.reiniciarProgreso();
         tablero = gestorNiveles.getTableroActual();
         tablero.suscribirVista(vistaJuego.getTableroPanel());

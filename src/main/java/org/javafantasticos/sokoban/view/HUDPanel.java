@@ -23,6 +23,7 @@ public class HUDPanel extends JPanel {
     private final JLabel undosRestantesLabel;
     private final JButton undoButton;
     private final JButton resetButton;
+    private final JButton volverAlMenuButton;
 
     public HUDPanel() {
         cargarFuente();
@@ -40,13 +41,14 @@ public class HUDPanel extends JPanel {
         undosRestantesLabel = crearLabel("Undos restantes: -/-");
 
         undoButton = crearBoton("\u2190 Undo", new Color(0x5D, 0x7B, 0x93));
-        resetButton = crearBoton("\u21BB Reiniciar", new Color(0xC0, 0x39, 0x2B));
+        resetButton = crearBoton("\u21BB Reiniciar", new Color(0xD4, 0xA0, 0x17));
+        volverAlMenuButton = crearBoton("\u2302 Volver al menu", new Color(0xC0, 0x39, 0x2B));
 
         add(crearFilaCentrada(scoreLabel));
         add(crearFila(nivelLabel, pasosLabel));
         add(crearFila(movCajasLabel, cajasObjetivoLabel));
         add(crearFila(limiteUndoLabel, undosRestantesLabel));
-        add(crearFila(undoButton, resetButton));
+        add(crearFila(undoButton, resetButton, volverAlMenuButton));
     }
 
     private JPanel crearFila(Component... componentes) {
@@ -119,5 +121,9 @@ public class HUDPanel extends JPanel {
 
     public void onReset(ActionListener listener) {
         resetButton.addActionListener(listener);
+    }
+
+    public void onVolverAlMenu(ActionListener listener) {
+        volverAlMenuButton.addActionListener(listener);
     }
 }
