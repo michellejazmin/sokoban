@@ -5,7 +5,6 @@ import org.javafantasticos.sokoban.interfaces.Suscriptor;
 import org.javafantasticos.sokoban.model.cajas.Caja;
 import org.javafantasticos.sokoban.model.player.Jugador;
 import org.javafantasticos.sokoban.model.suelo.Destino;
-import org.javafantasticos.sokoban.view.TableroPanel;
 
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -203,7 +202,7 @@ public class Tablero {
         return pushes;
     }
 
-    public void suscribirVista(TableroPanel tableroPanel) {
+    public void suscribirVista(Suscriptor tableroPanel) {
         this.tableroPanel = tableroPanel;
     }
 
