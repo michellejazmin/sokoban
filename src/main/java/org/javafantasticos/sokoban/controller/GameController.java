@@ -302,6 +302,12 @@ public class GameController implements ContextoItem {
         mostrarGameOver(motivo);
     }
 
+    @Override
+    public void sumarUndoExtra() {
+        caretaker.agregarUsoUndo();
+        hudPanel.actualizar(this);
+    }
+
     public int getUndoRemaining() {
         return caretaker.getRemainingUndos();
     }

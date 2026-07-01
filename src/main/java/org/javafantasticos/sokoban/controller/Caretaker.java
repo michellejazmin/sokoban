@@ -8,29 +8,34 @@ import java.util.Deque;
 
 public class Caretaker { ;
     private static final int UNDO_STEPS = 5;
-    private static final int MAX_UNDO_USES = 3;
-    private static final int MAX_HISTORY = UNDO_STEPS * MAX_UNDO_USES + 1;
+    private static final int MAX_UNDO_USES_INICIAL = 3;
 
     private final Deque<Snapshot> history;
     private int undoCount;
+    private int maxUndoUses;
 
     public record Snapshot(TableroMemento memento, int steps, int pushes) {}
 
     public Caretaker() {
         this.history = new ArrayDeque<>();
         this.undoCount = 0;
+        this.maxUndoUses = MAX_UNDO_USES_INICIAL;
     }
 
     public void saveState(TableroMemento memento, int steps, int pushes) {
         history.addLast(new Snapshot(memento, steps, pushes));
 
-        if (history.size() > MAX_HISTORY) {
+        if (history.size() > UNDO_STEPS * maxUndoUses + 1) {
             history.removeFirst();
         }
     }
 
     public boolean canUndo() {
-        return undoCount < MAX_UNDO_USES && history.size() > UNDO_STEPS;
+        return undoCount < maxUndoUses && history.size() > UNDO_STEPS;
+    }
+
+    public void agregarUsoUndo() {
+        maxUndoUses++;
     }
 
     public Snapshot undo(Tablero tablero) {
@@ -51,10 +56,11 @@ public class Caretaker { ;
     public void reset() {
         history.clear();
         undoCount = 0;
+        maxUndoUses = MAX_UNDO_USES_INICIAL;
     }
 
     public int getRemainingUndos() {
-        return MAX_UNDO_USES - undoCount;
+        return maxUndoUses - undoCount;
     }
 
     public int getUndoStepSize() {
@@ -62,6 +68,6 @@ public class Caretaker { ;
     }
 
     public int getMaxUndoUses() {
-        return MAX_UNDO_USES;
+        return maxUndoUses;
     }
 }
