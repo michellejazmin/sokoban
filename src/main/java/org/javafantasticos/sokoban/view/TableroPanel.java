@@ -1,6 +1,6 @@
 package org.javafantasticos.sokoban.view;
 
-import org.javafantasticos.sokoban.interfaces.Suscriptor;
+import org.javafantasticos.sokoban.interfaces.ISuscriptor;
 import org.javafantasticos.sokoban.model.ElementoBase;
 import org.javafantasticos.sokoban.model.Tablero;
 import org.javafantasticos.sokoban.model.player.Orientacion;
@@ -14,7 +14,7 @@ import java.util.List;
  * Cada celda se representa con un color según su símbolo.
  * Al cambiar de nivel se actualiza vía {@link #actualizar(Tablero)} (Observer).
  */
-public class TableroPanel extends JPanel implements Suscriptor {
+public class TableroPanel extends JPanel implements ISuscriptor {
     private static final int TAMANIO_CELDA = 50;
 
     private Tablero tablero;

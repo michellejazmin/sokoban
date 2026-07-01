@@ -1,5 +1,5 @@
 package org.javafantasticos.sokoban.interfaces;
 
-public interface MoveCallback {
+public interface IMoveCallback {
     void setOnMove(Runnable callback);
 }

@@ -2,10 +2,10 @@ package org.javafantasticos.sokoban.view;
 
 import javax.swing.*;
 import java.awt.*;
-import org.javafantasticos.sokoban.interfaces.PantallaGameOver;
+import org.javafantasticos.sokoban.interfaces.IPantallaGameOver;
 import java.awt.event.ActionListener;
 
-public class GameOverPanel extends BaseOverlayPanel implements PantallaGameOver {
+public class GameOverPanel extends BaseOverlayPanel implements IPantallaGameOver {
     private static GameOverPanel instancia;
 
     private final JButton botonReproducir;

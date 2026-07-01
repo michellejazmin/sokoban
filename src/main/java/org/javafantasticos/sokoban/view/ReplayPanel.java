@@ -1,8 +1,8 @@
 package org.javafantasticos.sokoban.view;
 
 import org.javafantasticos.sokoban.interfaces.IReproductorVista;
-import org.javafantasticos.sokoban.interfaces.Suscriptor;
-import org.javafantasticos.sokoban.interfaces.VistaReplay;
+import org.javafantasticos.sokoban.interfaces.ISuscriptor;
+import org.javafantasticos.sokoban.interfaces.IVistaReplay;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -18,7 +18,7 @@ import java.util.Arrays;
  * Como el {@link TableroPanel} también es único, esta pantalla lo toma prestado
  * mientras dura la reproducción (ver {@link #cargar}).
  */
-public class ReplayPanel extends JPanel implements VistaReplay {
+public class ReplayPanel extends JPanel implements IVistaReplay {
     private static ReplayPanel instancia;
 
     private final JPanel contenedorTablero;
@@ -93,7 +93,7 @@ public class ReplayPanel extends JPanel implements VistaReplay {
      * @param alContinuar callback para el botón "Continuar" (se ignora si mostrarContinuar=false)
      */
     @Override
-    public void cargar(Suscriptor board, IReproductorVista rep, boolean mostrarContinuar,
+    public void cargar(ISuscriptor board, IReproductorVista rep, boolean mostrarContinuar,
                        ActionListener alVolver, ActionListener alContinuar) {
         contenedorTablero.removeAll();
         contenedorTablero.add((TableroPanel) board);

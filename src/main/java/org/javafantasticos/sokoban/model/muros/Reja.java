@@ -1,11 +1,11 @@
 package org.javafantasticos.sokoban.model.muros;
 
-import org.javafantasticos.sokoban.interfaces.EstadoReja;
+import org.javafantasticos.sokoban.interfaces.IEstadoReja;
 import org.javafantasticos.sokoban.model.ElementoBase;
 import org.javafantasticos.sokoban.model.dto.Coordenada;
 
 public final class Reja extends ElementoBase {
-    private EstadoReja estado;
+    private IEstadoReja estado;
     public Reja (Coordenada coordenada){
         super(coordenada,'R');
         this.estado = new RejaCerrada();
@@ -31,12 +31,12 @@ public final class Reja extends ElementoBase {
     }
 
     @Override
-    public EstadoReja getEstadoReja() {
+    public IEstadoReja getEstadoReja() {
         return estado;
     }
 
     @Override
-    public void setEstadoReja(EstadoReja estado) {
+    public void setEstadoReja(IEstadoReja estado) {
         this.estado = estado;
     }
 }

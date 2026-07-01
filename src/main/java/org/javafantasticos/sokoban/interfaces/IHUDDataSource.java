@@ -1,6 +1,6 @@
 package org.javafantasticos.sokoban.interfaces;
 
-public interface HUDDataSource {
+public interface IHUDDataSource {
     int getScore();
     int getNivelActual();
     int getTotalNiveles();

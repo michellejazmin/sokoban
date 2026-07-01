@@ -1,8 +1,8 @@
 package org.javafantasticos.sokoban.model.muros;
 
-import org.javafantasticos.sokoban.interfaces.EstadoReja;
+import org.javafantasticos.sokoban.interfaces.IEstadoReja;
 
-public class RejaAbierta implements EstadoReja {
+public class RejaAbierta implements IEstadoReja {
 
     public RejaAbierta() {
         // Constructor vacío, no se necesita hacer nada con el contexto en este caso

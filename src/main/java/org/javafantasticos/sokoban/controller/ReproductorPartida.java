@@ -1,7 +1,7 @@
 package org.javafantasticos.sokoban.controller;
 
 import org.javafantasticos.sokoban.interfaces.IReproductorVista;
-import org.javafantasticos.sokoban.interfaces.Suscriptor;
+import org.javafantasticos.sokoban.interfaces.ISuscriptor;
 import org.javafantasticos.sokoban.model.Tablero;
 
 import javax.swing.Timer;
@@ -12,12 +12,12 @@ public class ReproductorPartida implements IReproductorVista {
 
     private final Tablero tablero;
     private final Grabacion grabacion;
-    private final Suscriptor panelVista;
+    private final ISuscriptor panelVista;
     private final Timer timer;
     private Runnable onFrameChange;
     private int indice;
 
-    public ReproductorPartida(Tablero tablero, Grabacion grabacion, Suscriptor panelVista) {
+    public ReproductorPartida(Tablero tablero, Grabacion grabacion, ISuscriptor panelVista) {
         this.tablero = tablero;
         this.grabacion = grabacion;
         this.panelVista = panelVista;

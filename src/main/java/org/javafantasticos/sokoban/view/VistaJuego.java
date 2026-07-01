@@ -1,14 +1,14 @@
 package org.javafantasticos.sokoban.view;
 
-import org.javafantasticos.sokoban.interfaces.MoveCallback;
-import org.javafantasticos.sokoban.interfaces.VistaDeJuego;
-import org.javafantasticos.sokoban.interfaces.VistaHUD;
+import org.javafantasticos.sokoban.interfaces.IMoveCallback;
+import org.javafantasticos.sokoban.interfaces.IVistaDeJuego;
+import org.javafantasticos.sokoban.interfaces.IVistaHUD;
 import org.javafantasticos.sokoban.model.Tablero;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class VistaJuego extends JPanel implements VistaDeJuego {
+public class VistaJuego extends JPanel implements IVistaDeJuego {
 
     private final TableroPanel tableroPanel;
     private final HUDPanel hudPanel;
@@ -16,7 +16,7 @@ public class VistaJuego extends JPanel implements VistaDeJuego {
     private final JPanel centerWrapper;
 
     public VistaJuego(Tablero tablero, Runnable onUndo, Runnable onReset,
-                      Runnable onVolverAlMenu, MoveCallback moveCallback) {
+                      Runnable onVolverAlMenu, IMoveCallback moveCallback) {
         super();
         this.setLayout(new BorderLayout());
         this.setBackground(COLOR_FONDO);
@@ -53,7 +53,7 @@ public class VistaJuego extends JPanel implements VistaDeJuego {
     }
 
     @Override
-    public VistaHUD getHudPanel() {
+    public IVistaHUD getHudPanel() {
         return hudPanel;
     }
 }

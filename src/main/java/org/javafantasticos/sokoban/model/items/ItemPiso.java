@@ -1,6 +1,6 @@
 package org.javafantasticos.sokoban.model.items;
 
-import org.javafantasticos.sokoban.interfaces.ContextoItem;
+import org.javafantasticos.sokoban.interfaces.IContextoItem;
 import org.javafantasticos.sokoban.model.ElementoBase;
 import org.javafantasticos.sokoban.model.dto.Coordenada;
 import org.javafantasticos.sokoban.model.suelo.Suelo;
@@ -17,10 +17,10 @@ public abstract class ItemPiso extends ElementoBase {
     }
 
     @Override
-    public ElementoBase aplicar(ContextoItem ctx) {
+    public ElementoBase aplicar(IContextoItem ctx) {
         aplicarEfecto(ctx);
         return new Suelo(coordenada);
     }
 
-    protected abstract void aplicarEfecto(ContextoItem ctx);
+    protected abstract void aplicarEfecto(IContextoItem ctx);
 }

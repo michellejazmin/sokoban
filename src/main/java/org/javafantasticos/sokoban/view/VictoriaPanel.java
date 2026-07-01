@@ -2,10 +2,10 @@ package org.javafantasticos.sokoban.view;
 
 import javax.swing.*;
 import java.awt.*;
-import org.javafantasticos.sokoban.interfaces.PantallaVictoria;
+import org.javafantasticos.sokoban.interfaces.IPantallaVictoria;
 import java.awt.event.ActionListener;
 
-public class VictoriaPanel extends BaseOverlayPanel implements PantallaVictoria {
+public class VictoriaPanel extends BaseOverlayPanel implements IPantallaVictoria {
     private static VictoriaPanel instancia;
 
     private final JButton botonReproducir;

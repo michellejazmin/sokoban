@@ -1,6 +1,6 @@
 package org.javafantasticos.sokoban.interfaces;
 
-public interface ReproductorSonido {
+public interface IReproductorSonido {
     String MOVIMIENTO = "movimiento";
     String EMPUJE = "empuje";
     String MONEDA = "moneda";

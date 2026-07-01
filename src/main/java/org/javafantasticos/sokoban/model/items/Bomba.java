@@ -1,6 +1,6 @@
 package org.javafantasticos.sokoban.model.items;
 
-import org.javafantasticos.sokoban.interfaces.ContextoItem;
+import org.javafantasticos.sokoban.interfaces.IContextoItem;
 import org.javafantasticos.sokoban.model.dto.Coordenada;
 
 public final class Bomba extends ItemPiso {
@@ -11,7 +11,7 @@ public final class Bomba extends ItemPiso {
     }
 
     @Override
-    protected void aplicarEfecto(ContextoItem ctx) {
+    protected void aplicarEfecto(IContextoItem ctx) {
         ctx.terminarPartida(MOTIVO);
     }
 }

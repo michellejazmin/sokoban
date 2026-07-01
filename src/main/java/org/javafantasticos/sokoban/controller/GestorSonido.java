@@ -1,6 +1,6 @@
 package org.javafantasticos.sokoban.controller;
 
-import org.javafantasticos.sokoban.interfaces.ReproductorSonido;
+import org.javafantasticos.sokoban.interfaces.IReproductorSonido;
 
 import javax.sound.sampled.*;
 import java.io.File;
@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GestorSonido implements ReproductorSonido {
+public class GestorSonido implements IReproductorSonido {
     private static final String RUTA_SONIDOS = "src/main/resources/sonidos/";
     private static GestorSonido instancia;
 

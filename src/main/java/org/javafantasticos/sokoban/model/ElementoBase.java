@@ -1,8 +1,8 @@
 package org.javafantasticos.sokoban.model;
 
-import org.javafantasticos.sokoban.interfaces.EstadoReja;
+import org.javafantasticos.sokoban.interfaces.IEstadoReja;
 import org.javafantasticos.sokoban.model.dto.Coordenada;
-import org.javafantasticos.sokoban.interfaces.ContextoItem;
+import org.javafantasticos.sokoban.interfaces.IContextoItem;
 
 import java.util.function.Consumer;
 
@@ -48,18 +48,18 @@ public abstract class ElementoBase {
         return;
     }
 
-    public EstadoReja getEstadoReja() {
+    public IEstadoReja getEstadoReja() {
         return null;
     }
 
-    public void setEstadoReja(EstadoReja estado) {
+    public void setEstadoReja(IEstadoReja estado) {
     }
 
     public boolean alSerEmpujada(Consumer<String> onGameOver) {
         return true;
     }
 
-    public ElementoBase aplicar(ContextoItem ctx) {
+    public ElementoBase aplicar(IContextoItem ctx) {
         return this;
     }
 

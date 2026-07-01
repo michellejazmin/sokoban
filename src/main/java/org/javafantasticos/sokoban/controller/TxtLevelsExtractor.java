@@ -1,6 +1,6 @@
 package org.javafantasticos.sokoban.controller;
 
-import org.javafantasticos.sokoban.interfaces.LectorNiveles;
+import org.javafantasticos.sokoban.interfaces.ILectorNiveles;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,10 +12,10 @@ import java.util.List;
 
 /**
  * Implementación concreta que extrae niveles leyendo un archivo de texto (.txt).
- * e inyecta a través de la interfaz {@link LectorNiveles}, lo que permite reemplazarlo
+ * e inyecta a través de la interfaz {@link ILectorNiveles}, lo que permite reemplazarlo
  * (p. ej. por un lector JSON o un mock para tests) sin tocar al resto del sistema.
  */
-public final class TxtLevelsExtractor implements LectorNiveles {
+public final class TxtLevelsExtractor implements ILectorNiveles {
     private static TxtLevelsExtractor instancia;
     private String rutaArchivo;
 

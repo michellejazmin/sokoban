@@ -1,15 +1,15 @@
 package org.javafantasticos.sokoban.controller;
 
-import org.javafantasticos.sokoban.interfaces.MoveCallback;
-import org.javafantasticos.sokoban.interfaces.NavegadorPantallas;
-import org.javafantasticos.sokoban.interfaces.PantallaGameOver;
-import org.javafantasticos.sokoban.interfaces.PantallaPasoNivel;
-import org.javafantasticos.sokoban.interfaces.PantallaVictoria;
-import org.javafantasticos.sokoban.interfaces.ReproductorSonido;
-import org.javafantasticos.sokoban.interfaces.VistaMenu;
-import org.javafantasticos.sokoban.interfaces.VistaReplay;
+import org.javafantasticos.sokoban.interfaces.IMoveCallback;
+import org.javafantasticos.sokoban.interfaces.INavegadorPantallas;
+import org.javafantasticos.sokoban.interfaces.IPantallaGameOver;
+import org.javafantasticos.sokoban.interfaces.IPantallaPasoNivel;
+import org.javafantasticos.sokoban.interfaces.IPantallaVictoria;
+import org.javafantasticos.sokoban.interfaces.IReproductorSonido;
+import org.javafantasticos.sokoban.interfaces.IVistaMenu;
+import org.javafantasticos.sokoban.interfaces.IVistaReplay;
 import org.javafantasticos.sokoban.model.Tablero;
-import org.javafantasticos.sokoban.interfaces.ContextoItem;
+import org.javafantasticos.sokoban.interfaces.IContextoItem;
 import org.javafantasticos.sokoban.view.GameOverPanel;
 import org.javafantasticos.sokoban.view.Menu;
 import org.javafantasticos.sokoban.view.PasoNivelPanel;
@@ -18,21 +18,21 @@ import org.javafantasticos.sokoban.view.Ventana;
 import org.javafantasticos.sokoban.view.VictoriaPanel;
 import org.javafantasticos.sokoban.view.VistaJuego;
 
-public class GameController implements ContextoItem, MoveCallback {
+public class GameController implements IContextoItem, IMoveCallback {
     private static GameController instancia;
 
     private final InputController inputController;
     private final GameFlowController flowController;
-    private final NavegadorPantallas navegador;
-    private final VistaMenu vistaMenu;
+    private final INavegadorPantallas navegador;
+    private final IVistaMenu vistaMenu;
     private final VistaJuego vistaJuego;
     private Tablero tableroParaReplay;
-    private PantallaGameOver gameOverPanel;
-    private PantallaVictoria victoriaPanel;
-    private PantallaPasoNivel pasoNivelPanel;
-    private VistaReplay replayPanel;
+    private IPantallaGameOver gameOverPanel;
+    private IPantallaVictoria victoriaPanel;
+    private IPantallaPasoNivel pasoNivelPanel;
+    private IVistaReplay replayPanel;
     private ReproductorPartida reproductor;
-    private ReproductorSonido reproductorSonido;
+    private IReproductorSonido reproductorSonido;
     private Runnable onMove;
 
     private GameController() {
@@ -85,17 +85,17 @@ public class GameController implements ContextoItem, MoveCallback {
 
     private void configurarCallbacks() {
         flowController.configurarCallbacks(
-            () -> reproductorSonido.reproducir(ReproductorSonido.REJA),
+            () -> reproductorSonido.reproducir(IReproductorSonido.REJA),
             (pushCount, tablero) -> {
                 if (onMove != null) onMove.run();
                 if (pushCount > 0) {
-                    reproductorSonido.reproducir(ReproductorSonido.EMPUJE);
+                    reproductorSonido.reproducir(IReproductorSonido.EMPUJE);
                 } else {
-                    reproductorSonido.reproducir(ReproductorSonido.MOVIMIENTO);
+                    reproductorSonido.reproducir(IReproductorSonido.MOVIMIENTO);
                 }
             },
             motivo -> {
-                reproductorSonido.reproducir(ReproductorSonido.CAJA_ROTA);
+                reproductorSonido.reproducir(IReproductorSonido.CAJA_ROTA);
                 mostrarGameOver(motivo);
             },
             piso -> piso.aplicar(this),
@@ -104,11 +104,11 @@ public class GameController implements ContextoItem, MoveCallback {
                 boolean hayMasNiveles = GestorNiveles.getInstancia().getNivelActualIndex()
                         < GestorNiveles.getInstancia().getTotalNiveles() - 1;
                 if (hayMasNiveles) {
-                    reproductorSonido.reproducir(ReproductorSonido.PASO_NIVEL);
+                    reproductorSonido.reproducir(IReproductorSonido.PASO_NIVEL);
                     pasoNivelPanel.setMensaje("Nivel " + flowController.getNivelActual()
                             + " completado  ·  Puntaje: " + flowController.getScore());
                 } else {
-                    reproductorSonido.reproducir(ReproductorSonido.VICTORIA);
+                    reproductorSonido.reproducir(IReproductorSonido.VICTORIA);
                     victoriaPanel.setMensaje("Puntaje: " + flowController.getScore()
                             + "  |  Pasos: " + flowController.getSteps()
                             + "  |  Mov. cajas: " + flowController.getPushes());
@@ -141,7 +141,7 @@ public class GameController implements ContextoItem, MoveCallback {
 
     private void mostrarGameOver(String motivo) {
         if (flowController.isPartidaTerminada()) return;
-        reproductorSonido.reproducir(ReproductorSonido.GAME_OVER);
+        reproductorSonido.reproducir(IReproductorSonido.GAME_OVER);
         flowController.mostrarGameOver(msg -> gameOverPanel.setMotivo(msg), motivo);
         inputController.desregistrar(vistaJuego);
     }
@@ -151,7 +151,7 @@ public class GameController implements ContextoItem, MoveCallback {
     public void undo() {
         flowController.undo();
         if (onMove != null) onMove.run();
-        reproductorSonido.reproducir(ReproductorSonido.UNDO);
+        reproductorSonido.reproducir(IReproductorSonido.UNDO);
     }
 
     // ── Replay ──
@@ -196,13 +196,13 @@ public class GameController implements ContextoItem, MoveCallback {
     @Override
     public void sumarBonus(int monto) {
         gestorDePartida().sumarBonus(monto);
-        reproductorSonido.reproducir(ReproductorSonido.MONEDA);
+        reproductorSonido.reproducir(IReproductorSonido.MONEDA);
         vistaJuego.getHudPanel().actualizar(flowController);
     }
 
     @Override
     public void terminarPartida(String motivo) {
-        reproductorSonido.reproducir(ReproductorSonido.BOMBA);
+        reproductorSonido.reproducir(IReproductorSonido.BOMBA);
         if (reproductor != null) {
             reproductor.detener();
             reproductor = null;
@@ -217,7 +217,7 @@ public class GameController implements ContextoItem, MoveCallback {
     @Override
     public void sumarUndoExtra() {
         gestorDePartida().sumarUndoExtra();
-        reproductorSonido.reproducir(ReproductorSonido.UNDO_ITEM);
+        reproductorSonido.reproducir(IReproductorSonido.UNDO_ITEM);
         vistaJuego.getHudPanel().actualizar(flowController);
     }
 

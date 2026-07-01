@@ -1,9 +1,9 @@
 package org.javafantasticos.sokoban.controller;
 
-import org.javafantasticos.sokoban.interfaces.HUDDataSource;
-import org.javafantasticos.sokoban.interfaces.NavegadorPantallas;
-import org.javafantasticos.sokoban.interfaces.VistaDeJuego;
-import org.javafantasticos.sokoban.interfaces.VistaHUD;
+import org.javafantasticos.sokoban.interfaces.IHUDDataSource;
+import org.javafantasticos.sokoban.interfaces.INavegadorPantallas;
+import org.javafantasticos.sokoban.interfaces.IVistaDeJuego;
+import org.javafantasticos.sokoban.interfaces.IVistaHUD;
 import org.javafantasticos.sokoban.model.ElementoBase;
 import org.javafantasticos.sokoban.model.Tablero;
 import org.javafantasticos.sokoban.model.player.Jugador;
@@ -13,18 +13,18 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
-public class GameFlowController implements HUDDataSource {
+public class GameFlowController implements IHUDDataSource {
     private final GestorNiveles gestorNiveles;
     private final GestorDePartida gestorDePartida;
-    private final NavegadorPantallas navegador;
-    private final VistaDeJuego vistaJuego;
-    private final VistaHUD hudPanel;
+    private final INavegadorPantallas navegador;
+    private final IVistaDeJuego vistaJuego;
+    private final IVistaHUD hudPanel;
 
     private Tablero tablero;
     private Jugador jugador;
 
-    public GameFlowController(GestorNiveles gestorNiveles, NavegadorPantallas navegador,
-                              VistaDeJuego vistaJuego) {
+    public GameFlowController(GestorNiveles gestorNiveles, INavegadorPantallas navegador,
+                              IVistaDeJuego vistaJuego) {
         this.gestorNiveles = gestorNiveles;
         this.gestorDePartida = new GestorDePartida();
         this.navegador = navegador;

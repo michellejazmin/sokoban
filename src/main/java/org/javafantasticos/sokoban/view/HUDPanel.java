@@ -1,14 +1,14 @@
 package org.javafantasticos.sokoban.view;
 
-import org.javafantasticos.sokoban.interfaces.HUDDataSource;
-import org.javafantasticos.sokoban.interfaces.VistaHUD;
+import org.javafantasticos.sokoban.interfaces.IHUDDataSource;
+import org.javafantasticos.sokoban.interfaces.IVistaHUD;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-public class HUDPanel extends JPanel implements VistaHUD {
+public class HUDPanel extends JPanel implements IVistaHUD {
     private static HUDPanel instancia;
 
     private final Font HUD_FONT;
@@ -94,7 +94,7 @@ public class HUDPanel extends JPanel implements VistaHUD {
         return btn;
     }
 
-    public void actualizar(HUDDataSource ctrl) {
+    public void actualizar(IHUDDataSource ctrl) {
         scoreLabel.setText("Puntaje: " + ctrl.getScore());
         nivelLabel.setText("Nivel: " + ctrl.getNivelActual() + "/" + ctrl.getTotalNiveles());
         pasosLabel.setText("Pasos: " + ctrl.getSteps());

@@ -2,8 +2,8 @@ package org.javafantasticos.sokoban.interfaces;
 
 import java.awt.event.ActionListener;
 
-public interface PantallaVictoria {
-    void setMensaje(String mensaje);
+public interface IPantallaGameOver {
+    void setMotivo(String motivo);
     void escucharBotonReproducir(ActionListener listener);
     void escucharBotonVolver(ActionListener listener);
     void escucharBotonSalir(ActionListener listener);

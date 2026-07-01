@@ -2,10 +2,10 @@ package org.javafantasticos.sokoban.view;
 
 import javax.swing.*;
 import java.awt.*;
-import org.javafantasticos.sokoban.interfaces.PantallaPasoNivel;
+import org.javafantasticos.sokoban.interfaces.IPantallaPasoNivel;
 import java.awt.event.ActionListener;
 
-public class PasoNivelPanel extends BaseOverlayPanel implements PantallaPasoNivel {
+public class PasoNivelPanel extends BaseOverlayPanel implements IPantallaPasoNivel {
     private static PasoNivelPanel instancia;
 
     private final JButton botonSiguiente;

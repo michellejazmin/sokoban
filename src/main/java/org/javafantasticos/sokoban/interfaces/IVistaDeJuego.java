@@ -1,8 +1,8 @@
 package org.javafantasticos.sokoban.interfaces;
 
-public interface VistaDeJuego {
-    Suscriptor getTableroPanel();
-    VistaHUD getHudPanel();
+public interface IVistaDeJuego {
+    ISuscriptor getTableroPanel();
+    IVistaHUD getHudPanel();
     void recuperarTablero();
     boolean requestFocusInWindow();
 }

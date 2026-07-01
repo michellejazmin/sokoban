@@ -1,9 +1,8 @@
 package org.javafantasticos.sokoban.interfaces;
 
 import javax.swing.*;
-import java.awt.event.ActionListener;
 
-public interface NavegadorPantallas {
+public interface INavegadorPantallas {
     void agregarPantalla(JPanel pantalla, String nombre);
     void mostrarMenu();
     void mostrarJuego();

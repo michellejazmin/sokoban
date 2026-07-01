@@ -1,6 +1,6 @@
 package org.javafantasticos.sokoban.interfaces;
 
-public interface EstadoReja {
+public interface IEstadoReja {
     char getSimbolo();
     boolean bloqueaPaso();
     boolean esOcupable();

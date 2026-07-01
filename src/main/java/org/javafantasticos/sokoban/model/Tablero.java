@@ -1,7 +1,7 @@
 package org.javafantasticos.sokoban.model;
 
 import org.javafantasticos.sokoban.interfaces.ITableroFisico;
-import org.javafantasticos.sokoban.interfaces.Suscriptor;
+import org.javafantasticos.sokoban.interfaces.ISuscriptor;
 import org.javafantasticos.sokoban.model.cajas.Caja;
 import org.javafantasticos.sokoban.model.muros.Reja;
 import org.javafantasticos.sokoban.model.muros.RejaAbierta;
@@ -32,7 +32,7 @@ public class Tablero implements ITableroFisico {
     private Consumer<String> onGameOver;
     private UnaryOperator<ElementoBase> onPisada;
     private Runnable onRejasCambiadas;
-    private Suscriptor tableroPanel;
+    private ISuscriptor tableroPanel;
     private final MotorFisico motorFisico = new MotorFisico();
 
     public Tablero(String nombre,
@@ -146,7 +146,7 @@ public class Tablero implements ITableroFisico {
     // Package-private accessors
     BiConsumer<TableroMemento, Integer> getOnStateChange() { return onStateChange; }
     Runnable getOnRejasCambiadas() { return onRejasCambiadas; }
-    Suscriptor getTableroPanel() { return tableroPanel; }
+    ISuscriptor getTableroPanel() { return tableroPanel; }
 
     public TableroMemento crearMemento() {
         return new TableroMemento(this);
@@ -160,7 +160,7 @@ public class Tablero implements ITableroFisico {
         return motorFisico.mover(this, dx, dy);
     }
 
-    public void suscribirVista(Suscriptor tableroPanel) {
+    public void suscribirVista(ISuscriptor tableroPanel) {
         this.tableroPanel = tableroPanel;
     }
 
