@@ -3,6 +3,8 @@ package org.javafantasticos.sokoban.controller;
 import org.javafantasticos.sokoban.interfaces.IMovimientos;
 import org.javafantasticos.sokoban.model.Tablero;
 import org.javafantasticos.sokoban.model.items.ContextoItem;
+import org.javafantasticos.sokoban.model.player.Jugador;
+import org.javafantasticos.sokoban.model.player.Orientacion;
 import org.javafantasticos.sokoban.view.GameOverPanel;
 import org.javafantasticos.sokoban.view.HUDPanel;
 import org.javafantasticos.sokoban.view.Menu;
@@ -16,7 +18,6 @@ import org.javafantasticos.sokoban.view.VistaJuego;
 /**
  * Orquesta las acciones del juego.
  * No contiene lógica propia, delega al Tablero.
- *
  * Patrón Singleton: único orquestador de la partida; centraliza la referencia
  * al tablero actual y a las vistas durante toda la ejecución.
  */
@@ -31,6 +32,7 @@ public class GameController implements ContextoItem {
     private VistaJuego vistaJuego;
     private HUDPanel hudPanel;
     private Tablero tablero;
+    private Jugador jugador;
     private GameOverPanel gameOverPanel;
     private VictoriaPanel victoriaPanel;
     private PasoNivelPanel pasoNivelPanel;
@@ -47,13 +49,14 @@ public class GameController implements ContextoItem {
     private boolean partidaTerminada;
     private Runnable onMove;
 
-    private GameController(GestorNiveles gestorNiveles) {
-        this.gestorNiveles = gestorNiveles;
+    private GameController() {
+        this.gestorNiveles = GestorNiveles.getInstancia();
         this.ventana = Ventana.getInstancia();
         this.vistaMenu = Menu.getInstancia();
         this.caretaker = new Caretaker();
         this.grabacion = new Grabacion();
         this.tablero = gestorNiveles.getTableroActual();
+        this.jugador = tablero.getJugador();
         this.steps = 0;
         this.pushes = 0;
         this.bonus = 0;
@@ -93,9 +96,9 @@ public class GameController implements ContextoItem {
         ventana.setVisible(true);
     }
 
-    public static GameController getInstancia(GestorNiveles gestorNiveles) {
+    public static GameController getInstancia() {
         if (instancia == null) {
-            instancia = new GameController(gestorNiveles);
+            instancia = new GameController();
         }
         return instancia;
     }
@@ -233,18 +236,26 @@ public class GameController implements ContextoItem {
 
     public void moverArriba() {
         tablero.mover(0, -1);
+        jugador.setOrientacion(Orientacion.ESPALDA);
     }
 
     public void moverAbajo() {
         tablero.mover(0, 1);
+        jugador.setOrientacion(Orientacion.FRENTE);
     }
 
     public void moverIzquierda() {
         tablero.mover(-1, 0);
+        jugador.setOrientacion(Orientacion.IZQUIERDA);
     }
 
     public void moverDerecha() {
         tablero.mover(1, 0);
+        jugador.setOrientacion(Orientacion.DERECHA);
+    }
+
+    public Orientacion getOrientacion() {
+        return jugador.getOrientacion();
     }
 
     private void siguienteNivel() {

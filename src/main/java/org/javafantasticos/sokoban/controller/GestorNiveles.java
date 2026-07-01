@@ -1,6 +1,5 @@
 package org.javafantasticos.sokoban.controller;
 
-import org.javafantasticos.sokoban.interfaces.LectorNiveles;
 import org.javafantasticos.sokoban.model.Tablero;
 import org.javafantasticos.sokoban.model.TableroFactory;
 
@@ -11,13 +10,11 @@ import java.util.List;
  * Administra los niveles del juego.
  * Orquesta la lectura de datos crudos (vía LectorNiveles) y la
  * instanciación de los mapas (vía TableroFactory).
- *
  * Patrón Singleton: existe una única instancia durante toda la partida que
  * conserva el progreso del jugador (lista de tableros cargados y nivel actual).
  * Garantizar una sola instancia evita inconsistencias entre el nivel que ve la
  * vista y el que tiene el controller, y permite cargar los tableros del .txt
  * una única vez.
- *
  * No se usa sincronización porque toda la aplicación Swing corre en el EDT
  * (Event Dispatch Thread), por lo que no hay acceso concurrente.
  */
@@ -29,16 +26,16 @@ public final class GestorNiveles {
     private final List<Tablero> tableros;
     private int nivelActualIndex;
 
-    private GestorNiveles(LectorNiveles lector, TableroFactory factory) {
-        this.factory = factory;
-        this.nivelesTexto = lector.extraerNivelesTexto();
+    private GestorNiveles() {
+        this.factory = TableroFactory.getInstancia();
+        this.nivelesTexto = TxtLevelsExtractor.getInstancia().extraerNivelesTexto();
         this.tableros = inicializarTableros();
         this.nivelActualIndex = 0;
     }
 
-    public static GestorNiveles getInstancia(LectorNiveles lector, TableroFactory factory) {
+    public static GestorNiveles getInstancia() {
         if (instancia == null) {
-            instancia = new GestorNiveles(lector, factory);
+            instancia = new GestorNiveles();
         }
         return instancia;
     }

@@ -1,5 +1,8 @@
 package org.javafantasticos.sokoban.view;
 
+import org.javafantasticos.sokoban.controller.GameController;
+import org.javafantasticos.sokoban.model.player.Orientacion;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -8,10 +11,14 @@ import java.io.IOException;
 
 public class UIResources {
 
+    private static final GameController controller = GameController.getInstancia();
     private static final String RUTA_FONDO = "src/main/resources/pixel-8bit-brick-wall-blue.jpg";
     private static final String RUTA_FUENTE_REGULAR = "src/main/resources/font/JetBrainsMono-Regular.ttf";
     private static final String RUTA_FUENTE_BOLD = "src/main/resources/font/JetBrainsMono-Bold.ttf";
-    private static final String RUTA_JUGADOR = "src/main/resources/bloques/jugador_frente.png";
+    private static final String RUTA_JUGADOR_FRENTE = "src/main/resources/bloques/jugador_frente.png";
+    private static final String RUTA_JUGADOR_ESPALDA = "src/main/resources/bloques/jugador_espalda.png";
+    private static final String RUTA_JUGADOR_IZQUIERDA = "src/main/resources/bloques/jugador_izquierda.png";
+    private static final String RUTA_JUGADOR_DERECHA = "src/main/resources/bloques/jugador_derecha.png";
     private static final String RUTA_CAJA_NORMAL = "src/main/resources/bloques/caja_normal.png";
     private static final String RUTA_CAJA_FRAGIL = "src/main/resources/bloques/caja_fragil.png";
     private static final String RUTA_CAJA_LLAVE = "src/main/resources/bloques/caja_llave.png";
@@ -19,7 +26,7 @@ public class UIResources {
     private static final String RUTA_REJA =  "src/main/resources/bloques/reja.png";
     private static final String RUTA_SUELO = "src/main/resources/bloques/suelo.png";
     private static final String RUTA_ACEITE = "src/main/resources/bloques/aceite2.png";
-    private static final String RUTA_OBJETIVO = "src/main/resources/bloques/objetivo.png";
+    private static final String RUTA_DESTINO = "src/main/resources/bloques/destino.png";
     private static final String RUTA_CERROJO = "src/main/resources/bloques/cerrojo.png";
     private static final String RUTA_MONEDA = "src/main/resources/bloques/moneda.png";
     private static final String RUTA_BOMBA =  "src/main/resources/bloques/bomba.png";
@@ -41,13 +48,21 @@ public class UIResources {
                 case 'P' -> ImageIO.read(new File(RUTA_PARED));
                 case 'S' -> ImageIO.read(new File(RUTA_SUELO));
                 case 'A' -> ImageIO.read(new File(RUTA_ACEITE));
-                case 'D' -> ImageIO.read(new File(RUTA_OBJETIVO));
+                case 'D' -> ImageIO.read(new File(RUTA_DESTINO));
                 case 'C' -> ImageIO.read(new File(RUTA_CERROJO));
                 case 'R' -> ImageIO.read(new File(RUTA_REJA));
                 case 'N' -> ImageIO.read(new File(RUTA_CAJA_NORMAL));
                 case 'F' -> ImageIO.read(new File(RUTA_CAJA_FRAGIL));
                 case 'K' -> ImageIO.read(new File(RUTA_CAJA_LLAVE));
-                case 'J' -> ImageIO.read(new File(RUTA_JUGADOR));
+                case 'J' -> {
+                    Orientacion orientacion = controller.getOrientacion();
+                    yield switch (orientacion) {
+                        case FRENTE -> ImageIO.read(new File(RUTA_JUGADOR_FRENTE));
+                        case ESPALDA -> ImageIO.read(new File(RUTA_JUGADOR_ESPALDA));
+                        case IZQUIERDA -> ImageIO.read(new File(RUTA_JUGADOR_IZQUIERDA));
+                        case DERECHA -> ImageIO.read(new File(RUTA_JUGADOR_DERECHA));
+                    };
+                }
                 case 'B' -> ImageIO.read(new File(RUTA_BOMBA));
                 case 'M' ->  ImageIO.read(new File(RUTA_MONEDA));
                 default -> null;

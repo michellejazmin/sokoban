@@ -17,10 +17,20 @@ import java.util.List;
  * o un mock para tests) sin tocar al resto del sistema.
  */
 public final class TxtLevelsExtractor implements LectorNiveles {
-    private final String rutaArchivo;
+    private static TxtLevelsExtractor instancia;
+    private String rutaArchivo;
 
-    public TxtLevelsExtractor(String rutaArchivo) {
-        this.rutaArchivo = rutaArchivo;
+    private TxtLevelsExtractor() {}
+
+    public void setRutaArchivo(String ruta) {
+        this.rutaArchivo = ruta;
+    }
+
+    public static TxtLevelsExtractor getInstancia() {
+        if (instancia == null) {
+            instancia = new TxtLevelsExtractor();
+        }
+        return instancia;
     }
 
     @Override
