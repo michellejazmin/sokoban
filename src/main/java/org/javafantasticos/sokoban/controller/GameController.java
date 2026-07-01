@@ -238,23 +238,23 @@ public class GameController implements ContextoItem {
     // Movimientos
 
     public void moverArriba() {
-        tablero.mover(0, -1);
         jugador.setOrientacion(Orientacion.ESPALDA);
+        tablero.mover(0, -1);
     }
 
     public void moverAbajo() {
-        tablero.mover(0, 1);
         jugador.setOrientacion(Orientacion.FRENTE);
+        tablero.mover(0, 1);
     }
 
     public void moverIzquierda() {
-        tablero.mover(-1, 0);
         jugador.setOrientacion(Orientacion.IZQUIERDA);
+        tablero.mover(-1, 0);
     }
 
     public void moverDerecha() {
-        tablero.mover(1, 0);
         jugador.setOrientacion(Orientacion.DERECHA);
+        tablero.mover(1, 0);
     }
 
     public Orientacion getOrientacion() {

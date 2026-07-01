@@ -3,7 +3,8 @@ package org.javafantasticos.sokoban.view;
 import org.javafantasticos.sokoban.interfaces.Suscriptor;
 import org.javafantasticos.sokoban.model.ElementoBase;
 import org.javafantasticos.sokoban.model.Tablero;
-
+import org.javafantasticos.sokoban.model.player.Orientacion;
+import java.util.function.Supplier;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -16,14 +17,14 @@ import java.util.List;
  * Al cambiar de nivel se actualiza vía {@link #actualizar(Tablero)} (Observer).
  */
 public class TableroPanel extends JPanel implements Suscriptor {
-    //private static TableroPanel instancia;
-
+    private final Supplier<Orientacion> orientacionJugador;
     private static final int TAMANIO_CELDA = 50;
 
     private Tablero tablero;
 
-    public TableroPanel(Tablero tablero) {
+    public TableroPanel(Tablero tablero, Supplier<Orientacion> orientacionJugador) {
         this.tablero = tablero;
+        this.orientacionJugador = orientacionJugador;
         ajustarTamanio();
     }
 
@@ -70,8 +71,13 @@ public class TableroPanel extends JPanel implements Suscriptor {
                 // 2) Dibuja arriba el elemento superior si existe
                 ElementoBase superior = grillaSuperior.get(fila).get(col);
                 if (superior != null) {
+                    BufferedImage imagenSuperior;
                     char simboloSuperior = superior.getSimbolo();
-                    BufferedImage imagenSuperior = UIResources.cargarBloque(simboloSuperior);
+                    if (superior.getSimbolo() == 'J') {
+                        imagenSuperior = UIResources.cargarJugador(orientacionJugador.get());
+                    } else {
+                        imagenSuperior = UIResources.cargarBloque(superior.getSimbolo());
+                    }
                     dibujarCelda(g, simboloSuperior, x, y, imagenSuperior);
                 }
             }

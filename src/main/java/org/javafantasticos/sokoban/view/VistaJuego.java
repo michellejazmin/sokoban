@@ -2,6 +2,8 @@ package org.javafantasticos.sokoban.view;
 
 import org.javafantasticos.sokoban.controller.GameController;
 import org.javafantasticos.sokoban.model.Tablero;
+import org.javafantasticos.sokoban.model.player.Orientacion;
+import java.util.function.Supplier;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,7 +24,7 @@ public class VistaJuego extends JPanel {
         super();
         this.setLayout(new BorderLayout());
 
-        this.tableroPanel = new TableroPanel(tablero);
+        this.tableroPanel = new TableroPanel(tablero, controller::getOrientacion);
         this.add(tableroPanel, BorderLayout.CENTER);
 
         this.hudPanel = HUDPanel.getInstancia();

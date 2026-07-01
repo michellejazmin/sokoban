@@ -1,6 +1,5 @@
 package org.javafantasticos.sokoban.view;
 
-import org.javafantasticos.sokoban.controller.GameController;
 import org.javafantasticos.sokoban.model.player.Orientacion;
 
 import javax.imageio.ImageIO;
@@ -11,7 +10,6 @@ import java.io.IOException;
 
 public class UIResources {
 
-    private static final GameController controller = GameController.getInstancia();
     private static final String RUTA_FONDO = "src/main/resources/pixel-8bit-brick-wall-blue.jpg";
     private static final String RUTA_FUENTE_REGULAR = "src/main/resources/font/JetBrainsMono-Regular.ttf";
     private static final String RUTA_FUENTE_BOLD = "src/main/resources/font/JetBrainsMono-Bold.ttf";
@@ -54,21 +52,26 @@ public class UIResources {
                 case 'N' -> ImageIO.read(new File(RUTA_CAJA_NORMAL));
                 case 'F' -> ImageIO.read(new File(RUTA_CAJA_FRAGIL));
                 case 'K' -> ImageIO.read(new File(RUTA_CAJA_LLAVE));
-                case 'J' -> {
-                    Orientacion orientacion = controller.getOrientacion();
-                    yield switch (orientacion) {
-                        case FRENTE -> ImageIO.read(new File(RUTA_JUGADOR_FRENTE));
-                        case ESPALDA -> ImageIO.read(new File(RUTA_JUGADOR_ESPALDA));
-                        case IZQUIERDA -> ImageIO.read(new File(RUTA_JUGADOR_IZQUIERDA));
-                        case DERECHA -> ImageIO.read(new File(RUTA_JUGADOR_DERECHA));
-                    };
-                }
                 case 'B' -> ImageIO.read(new File(RUTA_BOMBA));
                 case 'M' ->  ImageIO.read(new File(RUTA_MONEDA));
                 default -> null;
             };
         } catch (IOException e) {
             System.err.println("Error al cargar imagen de bloque para el símbolo: " + simbolo);
+            return null;
+        }
+    }
+
+    public static BufferedImage cargarJugador(Orientacion orientacion) {
+        try {
+            return switch (orientacion) {
+                case FRENTE -> ImageIO.read(new File(RUTA_JUGADOR_FRENTE));
+                case ESPALDA -> ImageIO.read(new File(RUTA_JUGADOR_ESPALDA));
+                case IZQUIERDA -> ImageIO.read(new File(RUTA_JUGADOR_IZQUIERDA));
+                case DERECHA -> ImageIO.read(new File(RUTA_JUGADOR_DERECHA));
+            };
+        } catch (IOException e) {
+            System.err.println("Error al cargar imagen del jugador.");
             return null;
         }
     }
