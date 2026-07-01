@@ -59,6 +59,10 @@ public class Ventana extends JFrame {
         mostrarPantalla("VICTORIA");
     }
 
+    public void mostrarPasoNivel() {
+        mostrarPantalla("PASONIVEL");
+    }
+
     public void mostrarReplay() {
         mostrarPantalla("REPLAY");
     }
