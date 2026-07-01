@@ -24,6 +24,10 @@ public class TableroPanel extends JPanel implements Suscriptor {
 
     private TableroPanel(Tablero tablero) {
         this.tablero = tablero;
+        ajustarTamanio();
+    }
+
+    private void ajustarTamanio() {
         int ancho = tablero.getGrillaInferior().getFirst().size() * TAMANIO_CELDA;
         int alto  = tablero.getGrillaInferior().size() * TAMANIO_CELDA;
         setPreferredSize(new Dimension(ancho, alto));
@@ -42,6 +46,8 @@ public class TableroPanel extends JPanel implements Suscriptor {
     @Override
     public void actualizar(Tablero tablero) {
         this.tablero = tablero;
+        ajustarTamanio();
+        revalidate();
         repaint();
     }
 

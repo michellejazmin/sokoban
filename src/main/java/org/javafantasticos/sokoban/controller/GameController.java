@@ -6,6 +6,7 @@ import org.javafantasticos.sokoban.model.items.ContextoItem;
 import org.javafantasticos.sokoban.view.GameOverPanel;
 import org.javafantasticos.sokoban.view.HUDPanel;
 import org.javafantasticos.sokoban.view.Menu;
+import org.javafantasticos.sokoban.view.PasoNivelPanel;
 import org.javafantasticos.sokoban.view.ReplayPanel;
 import org.javafantasticos.sokoban.view.TableroPanel;
 import org.javafantasticos.sokoban.view.Ventana;
@@ -32,6 +33,7 @@ public class GameController implements ContextoItem {
     private Tablero tablero;
     private GameOverPanel gameOverPanel;
     private VictoriaPanel victoriaPanel;
+    private PasoNivelPanel pasoNivelPanel;
     private ReplayPanel replayPanel;
     private ReproductorPartida reproductor;
     private static final int SCORE_PER_LEVEL = 1000;
@@ -62,6 +64,7 @@ public class GameController implements ContextoItem {
         this.tablero.suscribirVista(vistaJuego.getTableroPanel());
         this.gameOverPanel = GameOverPanel.getInstancia("");
         this.victoriaPanel = VictoriaPanel.getInstancia("");
+        this.pasoNivelPanel = PasoNivelPanel.getInstancia("");
         this.replayPanel = ReplayPanel.getInstancia();
 
         configurarCallbacksTablero();
@@ -71,6 +74,7 @@ public class GameController implements ContextoItem {
         ventana.agregarPantalla(vistaJuego, "JUEGO");
         ventana.agregarPantalla(gameOverPanel, "GAMEOVER");
         ventana.agregarPantalla(victoriaPanel, "VICTORIA");
+        ventana.agregarPantalla(pasoNivelPanel, "PASONIVEL");
         ventana.agregarPantalla(replayPanel, "REPLAY");
 
         this.vistaMenu.escucharBotonJugar(e -> empezarJuego());
@@ -81,6 +85,8 @@ public class GameController implements ContextoItem {
         this.victoriaPanel.escucharBotonReproducir(e -> reproducirPartida());
         this.victoriaPanel.escucharBotonVolver(e -> volverAlMenu());
         this.victoriaPanel.escucharBotonSalir(e -> System.exit(0));
+        this.pasoNivelPanel.escucharBotonSiguiente(e -> siguienteNivel());
+        this.pasoNivelPanel.escucharBotonVolver(e -> volverAlMenu());
         this.replayPanel.onVolver(e -> volverAlMenu());
 
         ventana.mostrarMenu();
@@ -109,7 +115,7 @@ public class GameController implements ContextoItem {
             grabacion.grabar(memento, steps, pushes);
             if (onMove != null) onMove.run();
             hudPanel.actualizar(this);
-            verificarVictoria();
+            verificarNivelCompletado();
         });
         tablero.setOnGameOver(this::mostrarGameOver);
         tablero.setOnPisada(piso -> piso.aplicar(this));
@@ -136,15 +142,22 @@ public class GameController implements ContextoItem {
         this.movimientos = null;
     }
 
-    private void verificarVictoria() {
+    private void verificarNivelCompletado() {
         if (partidaTerminada) return;
         if (getTotalCajas() > 0 && getCajasEnDestino() == getTotalCajas()) {
             partidaTerminada = true;
-            victoriaPanel.setMensaje("Puntaje: " + getScore()
-                    + "  |  Pasos: " + steps + "  |  Mov. cajas: " + pushes);
-            ventana.mostrarVictoria();
             if (movimientos != null) movimientos.desregistrarDe(vistaJuego);
             this.movimientos = null;
+
+            boolean hayMasNiveles = gestorNiveles.getNivelActualIndex() < gestorNiveles.getTotalNiveles() - 1;
+            if (hayMasNiveles) {
+                pasoNivelPanel.setMensaje("Nivel " + getNivelActual() + " completado  ·  Puntaje: " + getScore());
+                ventana.mostrarPasoNivel();
+            } else {
+                victoriaPanel.setMensaje("Puntaje: " + getScore()
+                        + "  |  Pasos: " + steps + "  |  Mov. cajas: " + pushes);
+                ventana.mostrarVictoria();
+            }
         }
     }
 
@@ -234,7 +247,15 @@ public class GameController implements ContextoItem {
         tablero.mover(1, 0);
     }
 
-    // TODO: método para avanzar de nivel
+    private void siguienteNivel() {
+        gestorNiveles.avanzarNivel();
+        tablero = gestorNiveles.getTableroActual();
+        recargarTablero();
+        ventana.mostrarJuego();
+        this.movimientos = new MovimientoTeclado(this);
+        movimientos.registrarEn(vistaJuego);
+        vistaJuego.requestFocusInWindow();
+    }
 
     // Getters para el HUD
 

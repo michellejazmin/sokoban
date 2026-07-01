@@ -33,9 +33,6 @@ public class Caretaker { ;
         return undoCount < MAX_UNDO_USES && history.size() > UNDO_STEPS;
     }
 
-    /**
-     * @return el Snapshot restaurado, o null si no se puede deshacer
-     */
     public Snapshot undo(Tablero tablero) {
         if (!canUndo()) {
             return null;

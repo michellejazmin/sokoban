@@ -5,13 +5,7 @@ import org.javafantasticos.sokoban.view.TableroPanel;
 
 import javax.swing.Timer;
 
-/**
- * Reproduce una {@link Grabacion} restaurando, frame a frame, los mementos sobre
- * el mismo Tablero en el que se grabó la partida y repintando un TableroPanel.
- *
- * La reproducción es automática (un {@link Timer} de Swing avanza los frames),
- * pero puede pausarse y avanzarse/retrocederse manualmente.
- */
+
 public class ReproductorPartida {
     private static final int DELAY_MS = 350;
 
@@ -30,7 +24,7 @@ public class ReproductorPartida {
         this.timer = new Timer(DELAY_MS, e -> avanzarAutomatico());
     }
 
-    /** Callback que se dispara cada vez que cambia el frame o el estado de reproducción. */
+    // Callback que se dispara cada vez que cambia el frame o el estado de reproducción.
     public void setOnFrameChange(Runnable callback) {
         this.onFrameChange = callback;
     }
@@ -71,14 +65,14 @@ public class ReproductorPartida {
         }
     }
 
-    /** Posiciona el reproductor en el primer frame y lo dibuja. */
+    // Posiciona el reproductor en el primer frame y lo dibuja.
     public void reiniciar() {
         timer.stop();
         indice = 0;
         mostrarFrameActual();
     }
 
-    /** Detiene el timer sin redibujar (para soltar el reproductor). */
+    // Detiene el timer sin redibujar (para soltar el reproductor).
     public void detener() {
         timer.stop();
     }
@@ -100,7 +94,7 @@ public class ReproductorPartida {
             indice++;
             mostrarFrameActual();
         } else {
-            pausar(); // llegó al final
+            pausar(); // Llegó al final.
         }
     }
 
