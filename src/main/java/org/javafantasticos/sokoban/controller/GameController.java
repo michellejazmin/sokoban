@@ -1,6 +1,7 @@
 package org.javafantasticos.sokoban.controller;
 
 import org.javafantasticos.sokoban.interfaces.IMovimientos;
+import org.javafantasticos.sokoban.interfaces.ReproductorSonido;
 import org.javafantasticos.sokoban.model.Tablero;
 import org.javafantasticos.sokoban.model.items.ContextoItem;
 import org.javafantasticos.sokoban.model.player.Jugador;
@@ -42,6 +43,7 @@ public class GameController implements ContextoItem {
     private static final int STEP_PENALTY = 10;
     private static final int PUSH_PENALTY = 15;
     private IMovimientos movimientos;
+    private ReproductorSonido reproductorSonido;
 
     private int steps;
     private int pushes;
@@ -65,6 +67,7 @@ public class GameController implements ContextoItem {
         this.vistaJuego = new VistaJuego(tablero, this);
         this.hudPanel = vistaJuego.getHudPanel();
         this.tablero.suscribirVista(vistaJuego.getTableroPanel());
+        this.reproductorSonido = AdaptadorClip.getInstancia();
         this.gameOverPanel = GameOverPanel.getInstancia("");
         this.victoriaPanel = VictoriaPanel.getInstancia("");
         this.pasoNivelPanel = PasoNivelPanel.getInstancia("");
@@ -111,6 +114,7 @@ public class GameController implements ContextoItem {
     }
 
     private void configurarCallbacksTablero() {
+        tablero.setOnRejasCambiadas(() -> reproductorSonido.reproducirReja());
         tablero.setOnStateChange((memento, pushCount) -> {
             steps++;
             pushes += pushCount;
@@ -118,9 +122,17 @@ public class GameController implements ContextoItem {
             grabacion.grabar(memento, steps, pushes);
             if (onMove != null) onMove.run();
             hudPanel.actualizar(this);
+            if (pushCount > 0) {
+                reproductorSonido.reproducirEmpuje();
+            } else {
+                reproductorSonido.reproducirMovimiento();
+            }
             verificarNivelCompletado();
         });
-        tablero.setOnGameOver(this::mostrarGameOver);
+        tablero.setOnGameOver(motivo -> {
+            reproductorSonido.reproducirCajaRota();
+            mostrarGameOver(motivo);
+        });
         tablero.setOnPisada(piso -> piso.aplicar(this));
     }
 
@@ -139,6 +151,7 @@ public class GameController implements ContextoItem {
     private void mostrarGameOver(String motivo) {
         if (partidaTerminada) return;
         partidaTerminada = true;
+        reproductorSonido.reproducirGameOver(motivo);
         gameOverPanel.setMotivo(motivo);
         ventana.mostrarGameOver();
         if (movimientos != null) movimientos.desregistrarDe(vistaJuego);
@@ -154,9 +167,11 @@ public class GameController implements ContextoItem {
 
             boolean hayMasNiveles = gestorNiveles.getNivelActualIndex() < gestorNiveles.getTotalNiveles() - 1;
             if (hayMasNiveles) {
+                reproductorSonido.reproducirPasoNivel();
                 pasoNivelPanel.setMensaje("Nivel " + getNivelActual() + " completado  ·  Puntaje: " + getScore());
                 ventana.mostrarPasoNivel();
             } else {
+                reproductorSonido.reproducirVictoria();
                 victoriaPanel.setMensaje("Puntaje: " + getScore()
                         + "  |  Pasos: " + steps + "  |  Mov. cajas: " + pushes);
                 ventana.mostrarVictoria();
@@ -215,6 +230,7 @@ public class GameController implements ContextoItem {
             pushes = snap.pushes();
             if (onMove != null) onMove.run();
             hudPanel.actualizar(this);
+            reproductorSonido.reproducirUndo();
         }
     }
 
@@ -307,12 +323,14 @@ public class GameController implements ContextoItem {
 
     @Override
     public void sumarBonus(int monto) {
+        reproductorSonido.reproducirItemMoneda();
         bonus += monto;
         hudPanel.actualizar(this);
     }
 
     @Override
     public void terminarPartida(String motivo) {
+        reproductorSonido.reproducirItemBomba();
         if (reproductor != null) {
             reproductor.detener();
             reproductor = null;
@@ -327,6 +345,7 @@ public class GameController implements ContextoItem {
 
     @Override
     public void sumarUndoExtra() {
+        reproductorSonido.reproducirItemUndo();
         caretaker.agregarUsoUndo();
         hudPanel.actualizar(this);
     }

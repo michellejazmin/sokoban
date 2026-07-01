@@ -21,4 +21,9 @@ public class RejaCerrada extends EstadoReja {
         return false;
     }
 
+    @Override
+    public boolean estaAbierta() {
+        return false;
+    }
+
 }

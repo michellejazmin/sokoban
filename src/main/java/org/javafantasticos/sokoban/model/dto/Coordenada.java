@@ -30,7 +30,8 @@ public final class Coordenada {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Coordenada that)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
+        Coordenada that = (Coordenada) o;
         return posX == that.posX && posY == that.posY;
     }
 

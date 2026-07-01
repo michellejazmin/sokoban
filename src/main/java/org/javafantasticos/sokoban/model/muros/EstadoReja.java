@@ -14,4 +14,5 @@ public abstract class EstadoReja {
     abstract char getSimbolo();
     abstract boolean bloqueaPaso();
     abstract boolean esOcupable();
+    abstract boolean estaAbierta();
 }

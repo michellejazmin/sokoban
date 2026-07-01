@@ -30,6 +30,7 @@ public class Tablero {
     private BiConsumer<TableroMemento, Integer> onStateChange;
     private Consumer<String> onGameOver;
     private UnaryOperator<ElementoBase> onPisada;
+    private Runnable onRejasCambiadas;
     private Suscriptor tableroPanel;
 
     public Tablero(String nombre,
@@ -101,6 +102,10 @@ public class Tablero {
 
     public void setOnPisada(UnaryOperator<ElementoBase> callback) {
         this.onPisada = callback;
+    }
+
+    public void setOnRejasCambiadas(Runnable callback) {
+        this.onRejasCambiadas = callback;
     }
 
     public TableroMemento crearMemento() {
@@ -252,9 +257,21 @@ public class Tablero {
 
     private void actualizarRejas() {
         boolean cerrar = !hayCajaLlaveSobreCerrojo();
+        boolean huboCambio = false;
 
         for (Reja reja : rejas) {
-            reja.setEstadoReja(cerrar ? new RejaCerrada(reja) : new RejaAbierta(reja));
+            boolean estabaAbierta = reja.estaAbierta();
+            if (cerrar && estabaAbierta) {
+                reja.setEstadoReja(new RejaCerrada(reja));
+                huboCambio = true;
+            } else if (!cerrar && !estabaAbierta) {
+                reja.setEstadoReja(new RejaAbierta(reja));
+                huboCambio = true;
+            }
+        }
+
+        if (huboCambio && onRejasCambiadas != null) {
+            onRejasCambiadas.run();
         }
     }
 
