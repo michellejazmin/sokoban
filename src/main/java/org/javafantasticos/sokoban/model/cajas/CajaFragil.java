@@ -8,7 +8,7 @@ public final class CajaFragil extends Caja {
     private int ttl;
     public CajaFragil(Coordenada coordenada) {
         super(coordenada, 'F');
-        this.ttl = 10;
+        this.ttl = 15;
     }
 
     public boolean sinVida(){
