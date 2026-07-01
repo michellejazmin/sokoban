@@ -33,7 +33,7 @@ public class GameOverPanel extends JPanel {
         motivoLabel.setFont(bodyFont);
         motivoLabel.setForeground(Color.WHITE);
 
-        botonReproducir = crearBoton("▶ Reproducir partida", bodyFont, new Color(0x27, 0xAE, 0x60));
+        botonReproducir = crearBoton("Reproducir partida", bodyFont, new Color(0x27, 0xAE, 0x60));
         botonVolver = crearBoton("Volver al menú principal", bodyFont, new Color(0x5D, 0x7B, 0x93));
         botonSalir = crearBoton("Salir", bodyFont, new Color(0xC0, 0x39, 0x2B));
 

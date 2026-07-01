@@ -39,9 +39,9 @@ public class HUDPanel extends JPanel {
         limiteUndoLabel     = crearLabel("Limite undo: -");
         undosRestantesLabel = crearLabel("Undos restantes: -/-");
 
-        undoButton        = crearBoton("← Undo",           new Color(0x5D, 0x7B, 0x93));
-        resetButton       = crearBoton("↻ Reiniciar",      new Color(0xD4, 0xA0, 0x17));
-        volverAlMenuButton = crearBoton("⌂ Volver al menu", new Color(0xC0, 0x39, 0x2B));
+        undoButton        = crearBoton("Deshacer",        new Color(0x5D, 0x7B, 0x93));
+        resetButton       = crearBoton("Reiniciar",       new Color(0xD4, 0xA0, 0x17));
+        volverAlMenuButton = crearBoton("Volver al menú", new Color(0xC0, 0x39, 0x2B));
 
         add(crearFilaCentrada(scoreLabel));
         add(crearFila(nivelLabel, pasosLabel));
@@ -99,8 +99,8 @@ public class HUDPanel extends JPanel {
         pasosLabel.setText("Pasos: " + ctrl.getSteps());
         movCajasLabel.setText("Mov. cajas: " + ctrl.getPushes());
         cajasObjetivoLabel.setText("Cajas en obj: " + ctrl.getCajasEnDestino() + "/" + ctrl.getTotalCajas());
-        limiteUndoLabel.setText("Limite undo: " + ctrl.getUndoStepSize() + " pasos");
-        undosRestantesLabel.setText("Undos restantes: " + ctrl.getUndoRemaining() + "/" + ctrl.getMaxUndoUses());
+        limiteUndoLabel.setText("Límite deshacer: " + ctrl.getUndoStepSize() + " pasos");
+        undosRestantesLabel.setText("Deshacer restantes: " + ctrl.getUndoRemaining() + "/" + ctrl.getMaxUndoUses());
         undoButton.setEnabled(ctrl.canUndo());
     }
 
