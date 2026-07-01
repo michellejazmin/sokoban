@@ -6,6 +6,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 
 /**
  * Pantalla de reproducción de la partida grabada.
@@ -24,6 +25,7 @@ public class ReplayPanel extends JPanel {
     private final JButton botonPlayPause;
     private final JButton botonSiguiente;
     private final JButton botonVolver;
+    private final JButton botonContinuar;
 
     private ReproductorPartida reproductor;
 
@@ -45,6 +47,7 @@ public class ReplayPanel extends JPanel {
         botonPlayPause = crearBoton("⏸ Pausa", uiFont, new Color(0x27, 0xAE, 0x60));
         botonSiguiente = crearBoton("Siguiente →", uiFont, new Color(0x5D, 0x7B, 0x93));
         botonVolver = crearBoton("⌂ Volver al menu", uiFont, new Color(0xC0, 0x39, 0x2B));
+        botonContinuar = crearBoton("Siguiente nivel ▶", uiFont, new Color(0x27, 0xAE, 0x60));
 
         JPanel controles = new JPanel(new GridLayout(3, 1, 16, 8));
         controles.setBackground(new Color(0x16, 0x20, 0x2B));
@@ -65,6 +68,7 @@ public class ReplayPanel extends JPanel {
         JPanel fila3 = new JPanel(new FlowLayout(FlowLayout.CENTER));
         fila3.setOpaque(false);
         fila3.add(botonVolver);
+        fila3.add(botonContinuar);
         controles.add(fila3);
 
         add(controles, BorderLayout.SOUTH);
@@ -81,8 +85,13 @@ public class ReplayPanel extends JPanel {
 
     /**
      * Monta el tablero (prestado) y su reproductor para una nueva reproducción.
+     * @param mostrarContinuar true para mostrar "Continuar" (nivel completado),
+     *                         false para mostrar "Volver al menú" (game over / final).
+     * @param alVolver callback para el botón "Volver al menú"
+     * @param alContinuar callback para el botón "Continuar" (se ignora si mostrarContinuar=false)
      */
-    public void cargar(TableroPanel board, ReproductorPartida rep) {
+    public void cargar(TableroPanel board, ReproductorPartida rep, boolean mostrarContinuar,
+                       ActionListener alVolver, ActionListener alContinuar) {
         contenedorTablero.removeAll();
         contenedorTablero.add(board);
         this.reproductor = rep;
@@ -90,12 +99,16 @@ public class ReplayPanel extends JPanel {
         rep.setOnFrameChange(this::actualizarControles);
         rep.reiniciar();
 
+        Arrays.stream(botonVolver.getActionListeners()).forEach(botonVolver::removeActionListener);
+        Arrays.stream(botonContinuar.getActionListeners()).forEach(botonContinuar::removeActionListener);
+        botonVolver.addActionListener(alVolver);
+        botonContinuar.addActionListener(alContinuar);
+
+        botonVolver.setVisible(!mostrarContinuar);
+        botonContinuar.setVisible(mostrarContinuar);
+
         revalidate();
         repaint();
-    }
-
-    public void onVolver(ActionListener listener) {
-        botonVolver.addActionListener(listener);
     }
 
     private void togglePlay() {

@@ -11,6 +11,7 @@ public class PasoNivelPanel extends JPanel {
     private final JLabel tituloLabel;
     private final JLabel mensajeLabel;
     private final JButton botonSiguiente;
+    private final JButton botonReproducir;
     private final JButton botonVolver;
     private final BufferedImage backgroundImage;
 
@@ -33,6 +34,7 @@ public class PasoNivelPanel extends JPanel {
         mensajeLabel.setForeground(Color.WHITE);
 
         botonSiguiente = crearBoton("Siguiente nivel ▶", bodyFont, new Color(0x27, 0xAE, 0x60));
+        botonReproducir = crearBoton("Reproducir partida", bodyFont, new Color(0x29, 0x80, 0xB9));
         botonVolver = crearBoton("Volver al menú principal", bodyFont, new Color(0x5D, 0x7B, 0x93));
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -42,7 +44,8 @@ public class PasoNivelPanel extends JPanel {
         gbc.gridy = 0; add(tituloLabel, gbc);
         gbc.gridy = 1; add(mensajeLabel, gbc);
         gbc.gridy = 2; add(botonSiguiente, gbc);
-        gbc.gridy = 3; add(botonVolver, gbc);
+        gbc.gridy = 3; add(botonReproducir, gbc);
+        gbc.gridy = 4; add(botonVolver, gbc);
     }
 
     public static PasoNivelPanel getInstancia(String mensaje) {
@@ -64,6 +67,7 @@ public class PasoNivelPanel extends JPanel {
 
     public void setMensaje(String mensaje) { mensajeLabel.setText(mensaje); }
     public void escucharBotonSiguiente(ActionListener listener) { botonSiguiente.addActionListener(listener); }
+    public void escucharBotonReproducir(ActionListener listener) { botonReproducir.addActionListener(listener); }
     public void escucharBotonVolver(ActionListener listener) { botonVolver.addActionListener(listener); }
 
     @Override

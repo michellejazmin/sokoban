@@ -85,15 +85,15 @@ public class GameController implements ContextoItem {
 
         this.vistaMenu.escucharBotonJugar(e -> empezarJuego());
         this.vistaMenu.escucharBotonSalir(e -> System.exit(0));
-        this.gameOverPanel.escucharBotonReproducir(e -> reproducirPartida());
+        this.gameOverPanel.escucharBotonReproducir(e -> reproducirPartida(false));
         this.gameOverPanel.escucharBotonVolver(e -> volverAlMenu());
         this.gameOverPanel.escucharBotonSalir(e -> System.exit(0));
-        this.victoriaPanel.escucharBotonReproducir(e -> reproducirPartida());
+        this.victoriaPanel.escucharBotonReproducir(e -> reproducirPartida(false));
         this.victoriaPanel.escucharBotonVolver(e -> volverAlMenu());
         this.victoriaPanel.escucharBotonSalir(e -> System.exit(0));
         this.pasoNivelPanel.escucharBotonSiguiente(e -> siguienteNivel());
+        this.pasoNivelPanel.escucharBotonReproducir(e -> reproducirPartida(true));
         this.pasoNivelPanel.escucharBotonVolver(e -> volverAlMenu());
-        this.replayPanel.onVolver(e -> volverAlMenu());
 
         ventana.mostrarMenu();
         ventana.setVisible(true);
@@ -183,14 +183,17 @@ public class GameController implements ContextoItem {
      * Reproduce la partida grabada. Como el TableroPanel es único, la pantalla de
      * reproducción lo toma prestado y el reproductor restaura los mementos en orden
      * sobre el mismo Tablero en el que se grabó.
+     * @param mostrarContinuar true muestra "Siguiente nivel" (paso de nivel),
+     *                         false muestra "Volver al menú" (game over / final).
      */
-    private void reproducirPartida() {
+    private void reproducirPartida(boolean mostrarContinuar) {
         if (grabacion.isEmpty()) return;
         if (reproductor != null) reproductor.detener();
 
         TableroPanel board = vistaJuego.getTableroPanel();
         reproductor = new ReproductorPartida(tablero, grabacion, board);
-        replayPanel.cargar(board, reproductor);
+        replayPanel.cargar(board, reproductor, mostrarContinuar,
+                e -> volverAlMenu(), e -> siguienteNivel());
         ventana.mostrarReplay();
         reproductor.play();
     }
@@ -278,6 +281,7 @@ public class GameController implements ContextoItem {
     }
 
     private void siguienteNivel() {
+        vistaJuego.recuperarTablero();
         gestorNiveles.avanzarNivel();
         tablero = gestorNiveles.getTableroActual();
         recargarTablero();
