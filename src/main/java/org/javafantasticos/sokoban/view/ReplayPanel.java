@@ -11,7 +11,6 @@ import java.awt.event.ActionListener;
  * Pantalla de reproducción de la partida grabada.
  * Muestra el tablero animándose y una barra de controles (anterior, play/pausa,
  * siguiente y volver al menú).
- *
  * Patrón Singleton: única pantalla de reproducción durante toda la ejecución.
  * Como el {@link TableroPanel} también es único, esta pantalla lo toma prestado
  * mientras dura la reproducción (ver {@link #cargar}).
@@ -42,19 +41,32 @@ public class ReplayPanel extends JPanel {
         progresoLabel.setFont(uiFont);
         progresoLabel.setForeground(Color.WHITE);
 
-        botonAnterior = crearBoton("⏮ Anterior", uiFont, new Color(0x5D, 0x7B, 0x93));
+        botonAnterior = crearBoton("← Anterior", uiFont, new Color(0x5D, 0x7B, 0x93));
         botonPlayPause = crearBoton("⏸ Pausa", uiFont, new Color(0x27, 0xAE, 0x60));
-        botonSiguiente = crearBoton("Siguiente ⏭", uiFont, new Color(0x5D, 0x7B, 0x93));
+        botonSiguiente = crearBoton("Siguiente →", uiFont, new Color(0x5D, 0x7B, 0x93));
         botonVolver = crearBoton("⌂ Volver al menu", uiFont, new Color(0xC0, 0x39, 0x2B));
 
-        JPanel controles = new JPanel(new FlowLayout(FlowLayout.CENTER, 16, 8));
+        JPanel controles = new JPanel(new GridLayout(3, 1, 16, 8));
         controles.setBackground(new Color(0x16, 0x20, 0x2B));
         controles.setBorder(new EmptyBorder(6, 12, 6, 12));
-        controles.add(progresoLabel);
-        controles.add(botonAnterior);
-        controles.add(botonPlayPause);
-        controles.add(botonSiguiente);
-        controles.add(botonVolver);
+
+        JPanel fila1 = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        fila1.setOpaque(false);
+        fila1.add(progresoLabel);
+        controles.add(fila1);
+
+        JPanel fila2 = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 0));
+        fila2.setOpaque(false);
+        fila2.add(botonAnterior);
+        fila2.add(botonPlayPause);
+        fila2.add(botonSiguiente);
+        controles.add(fila2);
+
+        JPanel fila3 = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        fila3.setOpaque(false);
+        fila3.add(botonVolver);
+        controles.add(fila3);
+
         add(controles, BorderLayout.SOUTH);
 
         botonAnterior.addActionListener(e -> { if (reproductor != null) reproductor.anterior(); });
@@ -115,6 +127,7 @@ public class ReplayPanel extends JPanel {
         btn.setOpaque(true);
         btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btn.setBorder(new EmptyBorder(6, 14, 6, 14));
+        btn.setMinimumSize(new Dimension(150, 32));
         return btn;
     }
 }

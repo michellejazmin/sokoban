@@ -2,8 +2,6 @@ package org.javafantasticos.sokoban.view;
 
 import org.javafantasticos.sokoban.controller.GameController;
 import org.javafantasticos.sokoban.model.Tablero;
-import org.javafantasticos.sokoban.model.player.Orientacion;
-import java.util.function.Supplier;
 
 import javax.swing.*;
 import java.awt.*;
@@ -63,7 +61,7 @@ public class VistaJuego extends JPanel {
      */
     public void recuperarTablero() {
         if (tableroPanel.getParent() != this.centerWrapper) {
-            centerWrapper.add(tableroPanel, BorderLayout.CENTER);
+            centerWrapper.add(tableroPanel);
             revalidate();
             repaint();
         }

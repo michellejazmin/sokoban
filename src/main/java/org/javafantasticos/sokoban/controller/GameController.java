@@ -313,6 +313,15 @@ public class GameController implements ContextoItem {
 
     @Override
     public void terminarPartida(String motivo) {
+        if (reproductor != null) {
+            reproductor.detener();
+            reproductor = null;
+        }
+        vistaJuego.recuperarTablero();
+        gestorNiveles.reiniciarProgreso();
+        tablero = gestorNiveles.getTableroActual();
+        if (movimientos != null) movimientos.desregistrarDe(vistaJuego);
+        this.movimientos = null;
         mostrarGameOver(motivo);
     }
 
@@ -334,7 +343,4 @@ public class GameController implements ContextoItem {
         return caretaker.getMaxUndoUses();
     }
 
-    public VistaJuego getVistaJuego() {
-        return vistaJuego;
-    }
 }

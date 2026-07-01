@@ -23,7 +23,7 @@ public final class GestorNiveles {
 
     private final TableroFactory factory;
     private final List<List<String>> nivelesTexto;
-    private final List<Tablero> tableros;
+    private List<Tablero> tableros;
     private int nivelActualIndex;
 
     private GestorNiveles() {
@@ -52,10 +52,6 @@ public final class GestorNiveles {
 
     public Tablero getTableroActual() {
         return tableros.get(nivelActualIndex);
-    }
-
-    public List<Tablero> getTodosLosTableros() {
-        return List.copyOf(tableros);
     }
 
     public int getNivelActualIndex() {
@@ -87,6 +83,7 @@ public final class GestorNiveles {
      * Reinicia el progreso del juego al nivel 1 con un tablero fresco.
      */
     public void reiniciarProgreso() {
+        this.tableros = inicializarTableros();
         nivelActualIndex = 0;
         reiniciarNivelActual();
     }
