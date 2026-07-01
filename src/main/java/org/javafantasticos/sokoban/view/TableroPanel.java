@@ -71,6 +71,14 @@ public class TableroPanel extends JPanel implements Suscriptor {
                         imagenSuperior = UIResources.cargarBloque(superior.getSimbolo());
                     }
                     dibujarCelda(g, simboloSuperior, x, y, imagenSuperior);
+
+                    String overlay = superior.getOverlayTexto();
+                    if (overlay != null) {
+                        g.setColor(Color.WHITE);
+                        g.setFont(new Font("Dialog", Font.BOLD, 14));
+                        FontMetrics fm = g.getFontMetrics();
+                        g.drawString(overlay, x + 2, y + fm.getAscent() + 2);
+                    }
                 }
             }
         }

@@ -11,8 +11,8 @@ public class TableroMemento {
     private final int jugadorX;
     private final int jugadorY;
     private final Orientacion orientacion;
-    private final Map<Caja, int[]> cajasCoords;
-    private final Map<Caja, Integer> cajasTtl;
+    private final List<int[]> cajasCoords;
+    private final List<Integer> cajasTtl;
     private final List<List<ElementoBase>> grillaInferior;
     private final List<List<ElementoBase>> grillaSuperior;
     private final Map<ElementoBase, EstadoReja> estadosReja;
@@ -24,15 +24,16 @@ public class TableroMemento {
         this.jugadorY = jugador.getCoordenada().getPosY();
         this.orientacion = jugador.getOrientacion();
 
-        this.cajasCoords = new IdentityHashMap<>();
-        this.cajasTtl = new IdentityHashMap<>();
-        for (Caja caja : tablero.getCajas()) {
-            cajasCoords.put(caja, new int[]{caja.getCoordenada().getPosX(), caja.getCoordenada().getPosY()});
-            cajasTtl.put(caja, caja.getTtl());
+        List<Caja> cajas = tablero.getCajas();
+        this.cajasCoords = new ArrayList<>(cajas.size());
+        this.cajasTtl = new ArrayList<>(cajas.size());
+        for (Caja caja : cajas) {
+            this.cajasCoords.add(new int[]{caja.getCoordenada().getPosX(), caja.getCoordenada().getPosY()});
+            this.cajasTtl.add(caja.getTtl());
         }
 
-        this.grillaInferior = copiarConEstados(tablero.getGrillaInferior());
-        this.grillaSuperior = copiarConEstados(tablero.getGrillaSuperior());
+        this.grillaInferior = copiarGrilla(tablero.getGrillaInferior());
+        this.grillaSuperior = copiarGrilla(tablero.getGrillaSuperior());
         this.estadosReja = new IdentityHashMap<>();
         recolectarEstadosReja(tablero.getGrillaInferior());
         recolectarEstadosReja(tablero.getGrillaSuperior());
@@ -40,7 +41,7 @@ public class TableroMemento {
         this.elementoBajoJugador = tablero.getElementoBajoJugador();
     }
 
-    private List<List<ElementoBase>> copiarConEstados(List<List<ElementoBase>> grilla) {
+    private List<List<ElementoBase>> copiarGrilla(List<List<ElementoBase>> grilla) {
         List<List<ElementoBase>> copia = new ArrayList<>();
         for (List<ElementoBase> fila : grilla) {
             copia.add(new ArrayList<>(fila));
@@ -65,15 +66,17 @@ public class TableroMemento {
         tablero.getJugador().getCoordenada().setPosY(jugadorY);
         tablero.getJugador().setOrientacion(orientacion);
 
-        for (Caja caja : tablero.getCajas()) {
-            int[] coords = cajasCoords.get(caja);
-            if (coords != null) {
-                caja.getCoordenada().setPosX(coords[0]);
-                caja.getCoordenada().setPosY(coords[1]);
-            }
-            Integer ttl = cajasTtl.get(caja);
-            if (ttl != null) {
-                caja.setTtl(ttl);
+        for (int i = 0; i < cajasCoords.size(); i++) {
+            int[] coords = cajasCoords.get(i);
+            Integer ttl = cajasTtl.get(i);
+
+            if (ttl != null && coords[1] >= 0 && coords[1] < grillaSuperior.size()
+                && coords[0] >= 0 && coords[0] < grillaSuperior.get(coords[1]).size()) {
+                ElementoBase elem = grillaSuperior.get(coords[1]).get(coords[0]);
+
+                if (elem != null) {
+                    elem.setTtl(ttl);
+                }
             }
         }
 

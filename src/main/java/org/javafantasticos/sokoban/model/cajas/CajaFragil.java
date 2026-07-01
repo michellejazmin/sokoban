@@ -31,6 +31,11 @@ public final class CajaFragil extends Caja {
     }
 
     @Override
+    public String getOverlayTexto() {
+        return String.valueOf(ttl);
+    }
+
+    @Override
     public boolean alSerEmpujada(Consumer<String> onGameOver) {
         reducirVida();
         if (sinVida()) {

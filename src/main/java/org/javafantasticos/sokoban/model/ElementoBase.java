@@ -62,4 +62,11 @@ public abstract class ElementoBase {
     public ElementoBase aplicar(ContextoItem ctx) {
         return this;
     }
+
+    public String getOverlayTexto() {
+        return null;
+    }
+
+    public void setTtl(int ttl) {
+    }
 }
