@@ -16,7 +16,7 @@ public class Ventana extends JFrame {
     private Ventana() {
         setTitle("Sokoban");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setMinimumSize(new Dimension(600, 600));
+        setMinimumSize(new Dimension(650, 600));
         setResizable(false);
 
         cardLayout = new CardLayout();
