@@ -16,20 +16,13 @@ import org.javafantasticos.sokoban.view.Ventana;
 import org.javafantasticos.sokoban.view.VictoriaPanel;
 import org.javafantasticos.sokoban.view.VistaJuego;
 
-/**
- * Orquesta las acciones del juego.
- * No contiene lógica propia, delega al Tablero.
- * Patrón Singleton: único orquestador de la partida; centraliza la referencia
- * al tablero actual y a las vistas durante toda la ejecución.
- */
 public class GameController implements ContextoItem, ControladorVista {
     private static GameController instancia;
 
     private final GestorNiveles gestorNiveles;
+    private final GestorDePartida gestorDePartida;
     private final Ventana ventana;
     private final Menu vistaMenu;
-    private final Caretaker caretaker;
-    private final Grabacion grabacion;
     private VistaJuego vistaJuego;
     private HUDPanel hudPanel;
     private Tablero tablero;
@@ -39,30 +32,18 @@ public class GameController implements ContextoItem, ControladorVista {
     private PasoNivelPanel pasoNivelPanel;
     private ReplayPanel replayPanel;
     private ReproductorPartida reproductor;
-    private static final int SCORE_PER_LEVEL = 1000;
-    private static final int STEP_PENALTY = 10;
-    private static final int PUSH_PENALTY = 15;
     private IMovimientos movimientos;
     private ReproductorSonido reproductorSonido;
 
-    private int steps;
-    private int pushes;
-    private int bonus;
-    private boolean partidaTerminada;
     private Runnable onMove;
 
     private GameController() {
         this.gestorNiveles = GestorNiveles.getInstancia();
+        this.gestorDePartida = new GestorDePartida();
         this.ventana = Ventana.getInstancia();
         this.vistaMenu = Menu.getInstancia();
-        this.caretaker = new Caretaker();
-        this.grabacion = new Grabacion();
         this.tablero = gestorNiveles.getTableroActual();
         this.jugador = tablero.getJugador();
-        this.steps = 0;
-        this.pushes = 0;
-        this.bonus = 0;
-        this.partidaTerminada = false;
 
         this.vistaJuego = new VistaJuego(tablero, this);
         this.hudPanel = vistaJuego.getHudPanel();
@@ -74,7 +55,7 @@ public class GameController implements ContextoItem, ControladorVista {
         this.replayPanel = ReplayPanel.getInstancia();
 
         configurarCallbacksTablero();
-        guardarEstadoInicial();
+        gestorDePartida.guardarInicial(tablero);
 
         ventana.agregarPantalla(vistaMenu, "MENU");
         ventana.agregarPantalla(vistaJuego, "JUEGO");
@@ -106,20 +87,10 @@ public class GameController implements ContextoItem, ControladorVista {
         return instancia;
     }
 
-    /** Guarda el estado inicial del tablero tanto en el undo como en la grabación. */
-    private void guardarEstadoInicial() {
-        var inicial = tablero.crearMemento();
-        caretaker.saveState(inicial, steps, pushes);
-        grabacion.grabar(inicial, steps, pushes);
-    }
-
     private void configurarCallbacksTablero() {
         tablero.setOnRejasCambiadas(() -> reproductorSonido.reproducirReja());
         tablero.setOnStateChange((memento, pushCount) -> {
-            steps++;
-            pushes += pushCount;
-            caretaker.saveState(memento, steps, pushes);
-            grabacion.grabar(memento, steps, pushes);
+            gestorDePartida.registrarMovimiento(memento, pushCount);
             if (onMove != null) onMove.run();
             hudPanel.actualizar(this);
             if (pushCount > 0) {
@@ -149,8 +120,8 @@ public class GameController implements ContextoItem, ControladorVista {
     }
 
     private void mostrarGameOver(String motivo) {
-        if (partidaTerminada) return;
-        partidaTerminada = true;
+        if (gestorDePartida.isPartidaTerminada()) return;
+        gestorDePartida.setPartidaTerminada(true);
         reproductorSonido.reproducirGameOver(motivo);
         gameOverPanel.setMotivo(motivo);
         ventana.mostrarGameOver();
@@ -159,9 +130,9 @@ public class GameController implements ContextoItem, ControladorVista {
     }
 
     private void verificarNivelCompletado() {
-        if (partidaTerminada) return;
+        if (gestorDePartida.isPartidaTerminada()) return;
         if (getTotalCajas() > 0 && getCajasEnDestino() == getTotalCajas()) {
-            partidaTerminada = true;
+            gestorDePartida.setPartidaTerminada(true);
             if (movimientos != null) movimientos.desregistrarDe(vistaJuego);
             this.movimientos = null;
 
@@ -173,7 +144,7 @@ public class GameController implements ContextoItem, ControladorVista {
             } else {
                 reproductorSonido.reproducirVictoria();
                 victoriaPanel.setMensaje("Puntaje: " + getScore()
-                        + "  |  Pasos: " + steps + "  |  Mov. cajas: " + pushes);
+                        + "  |  Pasos: " + getSteps() + "  |  Mov. cajas: " + getPushes());
                 ventana.mostrarVictoria();
             }
         }
@@ -187,10 +158,10 @@ public class GameController implements ContextoItem, ControladorVista {
      *                         false muestra "Volver al menú" (game over / final).
      */
     private void reproducirPartida(boolean mostrarContinuar) {
-        if (grabacion.isEmpty()) return;
+        if (gestorDePartida.isGrabacionVacia()) return;
         if (reproductor != null) reproductor.detener();
 
-        reproductor = new ReproductorPartida(tablero, grabacion, vistaJuego.getTableroPanel());
+        reproductor = new ReproductorPartida(tablero, gestorDePartida.getGrabacion(), vistaJuego.getTableroPanel());
         replayPanel.cargar(vistaJuego.getTableroPanel(), reproductor, mostrarContinuar,
                 e -> volverAlMenu(), e -> siguienteNivel());
         ventana.mostrarReplay();
@@ -214,22 +185,14 @@ public class GameController implements ContextoItem, ControladorVista {
     private void recargarTablero() {
         tablero.suscribirVista(vistaJuego.getTableroPanel());
         configurarCallbacksTablero();
-        caretaker.reset();
-        grabacion.reset();
-        steps = 0;
-        pushes = 0;
-        bonus = 0;
-        partidaTerminada = false;
-        guardarEstadoInicial();
+        gestorDePartida.reiniciar();
+        gestorDePartida.guardarInicial(tablero);
         hudPanel.actualizar(this);
         vistaJuego.getTableroPanel().actualizar(tablero);
     }
 
     public void undo() {
-        Caretaker.Snapshot snap = caretaker.undo(tablero);
-        if (snap != null) {
-            steps = snap.steps();
-            pushes = snap.pushes();
+        if (gestorDePartida.undo(tablero)) {
             if (onMove != null) onMove.run();
             hudPanel.actualizar(this);
             reproductorSonido.reproducirUndo();
@@ -250,7 +213,7 @@ public class GameController implements ContextoItem, ControladorVista {
     }
 
     public boolean canUndo() {
-        return caretaker.canUndo();
+        return gestorDePartida.canUndo();
     }
 
     // Movimientos
@@ -293,11 +256,11 @@ public class GameController implements ContextoItem, ControladorVista {
     // Getters para el HUD
 
     public int getSteps() {
-        return steps;
+        return gestorDePartida.getSteps();
     }
 
     public int getPushes() {
-        return pushes;
+        return gestorDePartida.getPushes();
     }
 
     public int getNivelActual() {
@@ -321,13 +284,13 @@ public class GameController implements ContextoItem, ControladorVista {
     }
 
     public int getScore() {
-        return Math.max(0, SCORE_PER_LEVEL + bonus - steps * STEP_PENALTY - pushes * PUSH_PENALTY);
+        return gestorDePartida.getScore();
     }
 
     @Override
     public void sumarBonus(int monto) {
+        gestorDePartida.sumarBonus(monto);
         reproductorSonido.reproducirItemMoneda();
-        bonus += monto;
         hudPanel.actualizar(this);
     }
 
@@ -348,21 +311,21 @@ public class GameController implements ContextoItem, ControladorVista {
 
     @Override
     public void sumarUndoExtra() {
+        gestorDePartida.sumarUndoExtra();
         reproductorSonido.reproducirItemUndo();
-        caretaker.agregarUsoUndo();
         hudPanel.actualizar(this);
     }
 
     public int getUndoRemaining() {
-        return caretaker.getRemainingUndos();
+        return gestorDePartida.getUndoRemaining();
     }
 
     public int getUndoStepSize() {
-        return caretaker.getUndoStepSize();
+        return gestorDePartida.getUndoStepSize();
     }
 
     public int getMaxUndoUses() {
-        return caretaker.getMaxUndoUses();
+        return gestorDePartida.getMaxUndoUses();
     }
 
 }
