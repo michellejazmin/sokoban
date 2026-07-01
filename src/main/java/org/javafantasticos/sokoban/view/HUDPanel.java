@@ -1,6 +1,6 @@
 package org.javafantasticos.sokoban.view;
 
-import org.javafantasticos.sokoban.controller.GameController;
+import org.javafantasticos.sokoban.interfaces.ControladorVista;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -93,7 +93,7 @@ public class HUDPanel extends JPanel {
         return btn;
     }
 
-    public void actualizar(GameController ctrl) {
+    public void actualizar(ControladorVista ctrl) {
         scoreLabel.setText("Puntaje: " + ctrl.getScore());
         nivelLabel.setText("Nivel: " + ctrl.getNivelActual() + "/" + ctrl.getTotalNiveles());
         pasosLabel.setText("Pasos: " + ctrl.getSteps());

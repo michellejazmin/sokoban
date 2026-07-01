@@ -1,6 +1,6 @@
 package org.javafantasticos.sokoban.view;
 
-import org.javafantasticos.sokoban.controller.GameController;
+import org.javafantasticos.sokoban.interfaces.ControladorVista;
 import org.javafantasticos.sokoban.model.Tablero;
 
 import javax.swing.*;
@@ -18,7 +18,7 @@ public class VistaJuego extends JPanel {
     private static final Color COLOR_FONDO = new Color(0x1e2a38);
     private final JPanel centerWrapper;
 
-    public VistaJuego(Tablero tablero, GameController controller) {
+    public VistaJuego(Tablero tablero, ControladorVista controller) {
         super();
         this.setLayout(new BorderLayout());
         this.setBackground(COLOR_FONDO);

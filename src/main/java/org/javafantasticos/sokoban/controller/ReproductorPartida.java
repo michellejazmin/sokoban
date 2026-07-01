@@ -1,7 +1,7 @@
 package org.javafantasticos.sokoban.controller;
 
+import org.javafantasticos.sokoban.interfaces.Suscriptor;
 import org.javafantasticos.sokoban.model.Tablero;
-import org.javafantasticos.sokoban.view.TableroPanel;
 
 import javax.swing.Timer;
 
@@ -11,15 +11,15 @@ public class ReproductorPartida {
 
     private final Tablero tablero;
     private final Grabacion grabacion;
-    private final TableroPanel tableroPanel;
+    private final Suscriptor panelVista;
     private final Timer timer;
     private Runnable onFrameChange;
     private int indice;
 
-    public ReproductorPartida(Tablero tablero, Grabacion grabacion, TableroPanel tableroPanel) {
+    public ReproductorPartida(Tablero tablero, Grabacion grabacion, Suscriptor panelVista) {
         this.tablero = tablero;
         this.grabacion = grabacion;
-        this.tableroPanel = tableroPanel;
+        this.panelVista = panelVista;
         this.indice = 0;
         this.timer = new Timer(DELAY_MS, e -> avanzarAutomatico());
     }
@@ -100,7 +100,7 @@ public class ReproductorPartida {
 
     private void mostrarFrameActual() {
         tablero.restaurar(grabacion.get(indice).memento());
-        tableroPanel.actualizar(tablero);
+        panelVista.actualizar(tablero);
         notificar();
     }
 

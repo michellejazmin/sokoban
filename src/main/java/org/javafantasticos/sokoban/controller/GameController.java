@@ -1,5 +1,6 @@
 package org.javafantasticos.sokoban.controller;
 
+import org.javafantasticos.sokoban.interfaces.ControladorVista;
 import org.javafantasticos.sokoban.interfaces.IMovimientos;
 import org.javafantasticos.sokoban.interfaces.ReproductorSonido;
 import org.javafantasticos.sokoban.model.Tablero;
@@ -11,7 +12,6 @@ import org.javafantasticos.sokoban.view.HUDPanel;
 import org.javafantasticos.sokoban.view.Menu;
 import org.javafantasticos.sokoban.view.PasoNivelPanel;
 import org.javafantasticos.sokoban.view.ReplayPanel;
-import org.javafantasticos.sokoban.view.TableroPanel;
 import org.javafantasticos.sokoban.view.Ventana;
 import org.javafantasticos.sokoban.view.VictoriaPanel;
 import org.javafantasticos.sokoban.view.VistaJuego;
@@ -22,7 +22,7 @@ import org.javafantasticos.sokoban.view.VistaJuego;
  * Patrón Singleton: único orquestador de la partida; centraliza la referencia
  * al tablero actual y a las vistas durante toda la ejecución.
  */
-public class GameController implements ContextoItem {
+public class GameController implements ContextoItem, ControladorVista {
     private static GameController instancia;
 
     private final GestorNiveles gestorNiveles;
@@ -190,9 +190,8 @@ public class GameController implements ContextoItem {
         if (grabacion.isEmpty()) return;
         if (reproductor != null) reproductor.detener();
 
-        TableroPanel board = vistaJuego.getTableroPanel();
-        reproductor = new ReproductorPartida(tablero, grabacion, board);
-        replayPanel.cargar(board, reproductor, mostrarContinuar,
+        reproductor = new ReproductorPartida(tablero, grabacion, vistaJuego.getTableroPanel());
+        replayPanel.cargar(vistaJuego.getTableroPanel(), reproductor, mostrarContinuar,
                 e -> volverAlMenu(), e -> siguienteNivel());
         ventana.mostrarReplay();
         reproductor.play();
