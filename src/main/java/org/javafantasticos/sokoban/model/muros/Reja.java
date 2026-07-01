@@ -7,8 +7,7 @@ public final class Reja extends ElementoBase {
     private EstadoReja estado;
     public Reja (Coordenada coordenada){
         super(coordenada,'R');
-        this.estado = new RejaCerrada(this);
-        estado.setContexto(this);
+        this.estado = new RejaCerrada();
     }
 
     @Override

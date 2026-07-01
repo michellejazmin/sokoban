@@ -27,13 +27,13 @@ public class PasoNivelPanel extends JPanel {
 
         tituloLabel = new JLabel("¡Nivel completado!");
         tituloLabel.setFont(titleFont);
-        tituloLabel.setForeground(new Color(0xF1, 0xC4, 0x0F));
+        tituloLabel.setForeground(Color.WHITE);
 
         mensajeLabel = new JLabel(mensaje);
         mensajeLabel.setFont(bodyFont);
         mensajeLabel.setForeground(Color.WHITE);
 
-        botonSiguiente = crearBoton("Siguiente nivel ▶", bodyFont, new Color(0x27, 0xAE, 0x60));
+        botonSiguiente = crearBoton("Siguiente nivel →", bodyFont, new Color(0x27, 0xAE, 0x60));
         botonReproducir = crearBoton("Reproducir partida", bodyFont, new Color(0x29, 0x80, 0xB9));
         botonVolver = crearBoton("Volver al menú principal", bodyFont, new Color(0x5D, 0x7B, 0x93));
 

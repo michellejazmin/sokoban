@@ -200,6 +200,7 @@ public class GameController implements ContextoItem, ControladorVista {
     }
 
     public void reiniciarNivel() {
+        jugador.setOrientacion(Orientacion.FRENTE);
         tablero = gestorNiveles.reiniciarNivelActual();
         if (movimientos != null) {
             movimientos.desregistrarDe(vistaJuego);
@@ -246,6 +247,7 @@ public class GameController implements ContextoItem, ControladorVista {
         vistaJuego.recuperarTablero();
         gestorNiveles.avanzarNivel();
         tablero = gestorNiveles.getTableroActual();
+        jugador.setOrientacion(Orientacion.FRENTE);
         recargarTablero();
         ventana.mostrarJuego();
         this.movimientos = new MovimientoTeclado(this);
