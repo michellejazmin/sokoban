@@ -1,48 +1,47 @@
 package org.javafantasticos.sokoban.model.muros;
 
-import org.javafantasticos.sokoban.enumerados.Estado;
 import org.javafantasticos.sokoban.model.ElementoBase;
 import org.javafantasticos.sokoban.model.dto.Coordenada;
 
 // TODO: crear RejaAbierta y RejaCerrada
 public final class Reja extends ElementoBase {
-    private Estado estado;
+    private EstadoReja estado;
     public Reja (Coordenada coordenada){
         super(coordenada,'R');
-        this.estado=Estado.CERRADO;
+        this.estado= EstadoReja.CERRADO;
 
     }
 
-    public void setEstado(Estado estado) {
+    public void setEstado(EstadoReja estado) {
         this.estado = estado;
     }
 
-    public Estado getEstado() {
+    public EstadoReja getEstado() {
         return estado;
     }
 
     @Override
     public char getSimbolo() {
-        return estado == Estado.ABIERTO ? 'S' : 'R';
+        return estado == EstadoReja.ABIERTO ? 'S' : 'R';
     }
 
     @Override
     public boolean bloqueaPaso() {
-        return estado == Estado.CERRADO;
+        return estado == EstadoReja.CERRADO;
     }
 
     @Override
     public boolean esOcupable() {
-        return estado == Estado.ABIERTO;
+        return estado == EstadoReja.ABIERTO;
     }
 
     @Override
-    public Estado getEstadoReja() {
+    public EstadoReja getEstadoReja() {
         return estado;
     }
 
     @Override
-    public void setEstadoReja(Estado estado) {
+    public void setEstadoReja(EstadoReja estado) {
         this.estado = estado;
     }
 }

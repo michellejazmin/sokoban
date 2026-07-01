@@ -1,6 +1,6 @@
 package org.javafantasticos.sokoban.model;
 
-import org.javafantasticos.sokoban.enumerados.Estado;
+import org.javafantasticos.sokoban.model.muros.EstadoReja;
 import org.javafantasticos.sokoban.model.dto.Coordenada;
 import org.javafantasticos.sokoban.model.items.ContextoItem;
 
@@ -48,11 +48,11 @@ public abstract class ElementoBase {
         return;
     }
 
-    public Estado getEstadoReja() {
+    public EstadoReja getEstadoReja() {
         return null;
     }
 
-    public void setEstadoReja(Estado estado) {
+    public void setEstadoReja(EstadoReja estado) {
     }
 
     public boolean alSerEmpujada(Consumer<String> onGameOver) {

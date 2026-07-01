@@ -1,6 +1,6 @@
 package org.javafantasticos.sokoban.model;
 
-import org.javafantasticos.sokoban.enumerados.Estado;
+import org.javafantasticos.sokoban.model.muros.EstadoReja;
 import org.javafantasticos.sokoban.interfaces.Suscriptor;
 import org.javafantasticos.sokoban.model.cajas.Caja;
 import org.javafantasticos.sokoban.model.player.Jugador;
@@ -251,7 +251,7 @@ public class Tablero {
         if (cerrar) {
             for (List<ElementoBase> fila : grillaInferior) {
                 for (ElementoBase elem : fila) {
-                    if (elem.getEstadoReja() == Estado.ABIERTO) {
+                    if (elem.getEstadoReja() == EstadoReja.ABIERTO) {
                         int rx = elem.getCoordenada().getPosX();
                         int ry = elem.getCoordenada().getPosY();
                         if (grillaSuperior.get(ry).get(rx) != null) {
@@ -262,7 +262,7 @@ public class Tablero {
             }
         }
 
-        Estado nuevoEstado = cerrar ? Estado.CERRADO : Estado.ABIERTO;
+        EstadoReja nuevoEstado = cerrar ? EstadoReja.CERRADO : EstadoReja.ABIERTO;
         for (List<ElementoBase> fila : grillaInferior) {
             for (ElementoBase elem : fila) {
                 if (elem.getEstadoReja() != null) {

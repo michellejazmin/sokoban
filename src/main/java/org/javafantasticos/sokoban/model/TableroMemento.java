@@ -1,6 +1,6 @@
 package org.javafantasticos.sokoban.model;
 
-import org.javafantasticos.sokoban.enumerados.Estado;
+import org.javafantasticos.sokoban.model.muros.EstadoReja;
 import org.javafantasticos.sokoban.model.cajas.Caja;
 import org.javafantasticos.sokoban.model.player.Jugador;
 
@@ -13,7 +13,7 @@ public class TableroMemento {
     private final Map<Caja, Integer> cajasTtl;
     private final List<List<ElementoBase>> grillaInferior;
     private final List<List<ElementoBase>> grillaSuperior;
-    private final Map<ElementoBase, Estado> estadosReja;
+    private final Map<ElementoBase, EstadoReja> estadosReja;
     private final ElementoBase elementoBajoJugador;
 
     TableroMemento(Tablero tablero) {
@@ -49,7 +49,7 @@ public class TableroMemento {
         for (List<ElementoBase> fila : grilla) {
             for (ElementoBase elem : fila) {
                 if (elem == null) continue;
-                Estado estadoReja = elem.getEstadoReja();
+                EstadoReja estadoReja = elem.getEstadoReja();
                 if (estadoReja != null) {
                     estadosReja.put(elem, estadoReja);
                 }
@@ -76,7 +76,7 @@ public class TableroMemento {
         restaurarGrilla(tablero.getGrillaInferior(), grillaInferior);
         restaurarGrilla(tablero.getGrillaSuperior(), grillaSuperior);
 
-        for (Map.Entry<ElementoBase, Estado> entry : estadosReja.entrySet()) {
+        for (Map.Entry<ElementoBase, EstadoReja> entry : estadosReja.entrySet()) {
             entry.getKey().setEstadoReja(entry.getValue());
         }
 
