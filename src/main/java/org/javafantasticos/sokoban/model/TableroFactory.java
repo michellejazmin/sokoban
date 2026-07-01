@@ -2,6 +2,7 @@ package org.javafantasticos.sokoban.model;
 
 import org.javafantasticos.sokoban.model.cajas.Caja;
 import org.javafantasticos.sokoban.model.dto.Coordenada;
+import org.javafantasticos.sokoban.model.muros.Reja;
 import org.javafantasticos.sokoban.model.player.Jugador;
 import org.javafantasticos.sokoban.model.suelo.Cerrojo;
 import org.javafantasticos.sokoban.model.suelo.Destino;
@@ -16,7 +17,6 @@ import java.util.List;
  * Su responsabilidad es organizar estas entidades recién creadas en las
  * estructuras de datos correctas (grilla, lista de cajas, lista de objetivos)
  * para construir y retornar un objeto Tablero listo para ser jugado.
- *
  * Patrón Singleton: una única fábrica de tableros para todo el juego.
  */
 public final class TableroFactory {
@@ -40,6 +40,7 @@ public final class TableroFactory {
         List<List<ElementoBase>> grillaSuperior = new ArrayList<>();
         List<Caja> cajas = new ArrayList<>();
         List<Destino> objetivos = new ArrayList<>();
+        List<Reja> rejas = new ArrayList<>();
         Jugador jugador = null;
 
         for (int posY = 0; posY < filasTexto.size(); posY++) {
@@ -77,6 +78,12 @@ public final class TableroFactory {
                         filaInferior.add(cerrojo);
                         filaSuperior.add(null);
                     }
+                    case 'R' -> {
+                        Reja reja = new Reja(coordenada);
+                        rejas.add(reja);
+                        filaInferior.add(reja);
+                        filaSuperior.add(null);
+                    }
                     default -> {
                         filaInferior.add(elementoFactory.crearElementoEstatico(simbolo, coordenada));
                         filaSuperior.add(null);
@@ -88,6 +95,6 @@ public final class TableroFactory {
             grillaSuperior.add(filaSuperior);
         }
 
-        return new Tablero(nombre, grillaInferior, grillaSuperior, cajas, objetivos, jugador);
+        return new Tablero(nombre, grillaInferior, grillaSuperior, cajas, objetivos, rejas, jugador);
     }
 }

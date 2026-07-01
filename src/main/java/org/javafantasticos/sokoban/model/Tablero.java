@@ -1,8 +1,10 @@
 package org.javafantasticos.sokoban.model;
 
-import org.javafantasticos.sokoban.model.muros.EstadoReja;
 import org.javafantasticos.sokoban.interfaces.Suscriptor;
 import org.javafantasticos.sokoban.model.cajas.Caja;
+import org.javafantasticos.sokoban.model.muros.Reja;
+import org.javafantasticos.sokoban.model.muros.RejaAbierta;
+import org.javafantasticos.sokoban.model.muros.RejaCerrada;
 import org.javafantasticos.sokoban.model.player.Jugador;
 import org.javafantasticos.sokoban.model.suelo.Destino;
 
@@ -22,6 +24,7 @@ public class Tablero {
     private final List<List<ElementoBase>> grillaSuperior;
     private final List<Caja> cajas;
     private final List<Destino> objetivos;
+    private final List<Reja> rejas;
     private final Jugador jugador;
     private ElementoBase elementoBajoJugador; // lo que había en la celda antes de que el jugador la pisara
     private BiConsumer<TableroMemento, Integer> onStateChange;
@@ -34,6 +37,7 @@ public class Tablero {
                    List<List<ElementoBase>> grillaSuperior,
                    List<Caja> cajas,
                    List<Destino> objetivos,
+                   List<Reja> rejas,
                    Jugador jugador) {
         if (jugador == null) {
             throw new IllegalArgumentException("El tablero no tiene jugador");
@@ -44,6 +48,7 @@ public class Tablero {
         this.grillaSuperior = grillaSuperior;
         this.cajas = cajas;
         this.objetivos = List.copyOf(objetivos);
+        this.rejas = rejas;
         this.jugador = jugador;
     }
 
@@ -248,27 +253,8 @@ public class Tablero {
     private void actualizarRejas() {
         boolean cerrar = !hayCajaLlaveSobreCerrojo();
 
-        if (cerrar) {
-            for (List<ElementoBase> fila : grillaInferior) {
-                for (ElementoBase elem : fila) {
-                    if (elem.getEstadoReja() == EstadoReja.ABIERTO) {
-                        int rx = elem.getCoordenada().getPosX();
-                        int ry = elem.getCoordenada().getPosY();
-                        if (grillaSuperior.get(ry).get(rx) != null) {
-                            cerrar = false;
-                        }
-                    }
-                }
-            }
-        }
-
-        EstadoReja nuevoEstado = cerrar ? EstadoReja.CERRADO : EstadoReja.ABIERTO;
-        for (List<ElementoBase> fila : grillaInferior) {
-            for (ElementoBase elem : fila) {
-                if (elem.getEstadoReja() != null) {
-                    elem.setEstadoReja(nuevoEstado);
-                }
-            }
+        for (Reja reja : rejas) {
+            reja.setEstadoReja(cerrar ? new RejaCerrada(reja) : new RejaAbierta(reja));
         }
     }
 

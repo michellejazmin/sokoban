@@ -3,12 +3,14 @@ package org.javafantasticos.sokoban.model;
 import org.javafantasticos.sokoban.model.muros.EstadoReja;
 import org.javafantasticos.sokoban.model.cajas.Caja;
 import org.javafantasticos.sokoban.model.player.Jugador;
+import org.javafantasticos.sokoban.model.player.Orientacion;
 
 import java.util.*;
 
 public class TableroMemento {
     private final int jugadorX;
     private final int jugadorY;
+    private final Orientacion orientacion;
     private final Map<Caja, int[]> cajasCoords;
     private final Map<Caja, Integer> cajasTtl;
     private final List<List<ElementoBase>> grillaInferior;
@@ -20,6 +22,7 @@ public class TableroMemento {
         Jugador jugador = tablero.getJugador();
         this.jugadorX = jugador.getCoordenada().getPosX();
         this.jugadorY = jugador.getCoordenada().getPosY();
+        this.orientacion = jugador.getOrientacion();
 
         this.cajasCoords = new IdentityHashMap<>();
         this.cajasTtl = new IdentityHashMap<>();
@@ -60,6 +63,7 @@ public class TableroMemento {
     void restaurar(Tablero tablero) {
         tablero.getJugador().getCoordenada().setPosX(jugadorX);
         tablero.getJugador().getCoordenada().setPosY(jugadorY);
+        tablero.getJugador().setOrientacion(orientacion);
 
         for (Caja caja : tablero.getCajas()) {
             int[] coords = cajasCoords.get(caja);
