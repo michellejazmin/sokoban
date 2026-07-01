@@ -23,11 +23,12 @@ public class UIResources {
     private static final String RUTA_PARED = "src/main/resources/bloques/pared.png";
     private static final String RUTA_REJA =  "src/main/resources/bloques/reja.png";
     private static final String RUTA_SUELO = "src/main/resources/bloques/suelo.png";
-    private static final String RUTA_ACEITE = "src/main/resources/bloques/aceite2.png";
+    private static final String RUTA_ACEITE = "src/main/resources/bloques/aceite.png";
     private static final String RUTA_DESTINO = "src/main/resources/bloques/destino.png";
     private static final String RUTA_CERROJO = "src/main/resources/bloques/cerrojo.png";
     private static final String RUTA_MONEDA = "src/main/resources/bloques/moneda.png";
     private static final String RUTA_BOMBA =  "src/main/resources/bloques/bomba.png";
+    private static final String RUTA_DESHACER = "src/main/resources/bloques/deshacer.png";
 
     private UIResources() {}
 
@@ -54,6 +55,7 @@ public class UIResources {
                 case 'K' -> ImageIO.read(new File(RUTA_CAJA_LLAVE));
                 case 'B' -> ImageIO.read(new File(RUTA_BOMBA));
                 case 'M' ->  ImageIO.read(new File(RUTA_MONEDA));
+                case 'U' -> ImageIO.read(new File(RUTA_DESHACER));
                 default -> null;
             };
         } catch (IOException e) {
