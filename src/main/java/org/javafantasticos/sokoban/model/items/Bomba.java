@@ -1,5 +1,6 @@
 package org.javafantasticos.sokoban.model.items;
 
+import org.javafantasticos.sokoban.interfaces.ContextoItem;
 import org.javafantasticos.sokoban.model.dto.Coordenada;
 
 public final class Bomba extends ItemPiso {

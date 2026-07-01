@@ -4,7 +4,6 @@ import org.javafantasticos.sokoban.interfaces.Suscriptor;
 import org.javafantasticos.sokoban.model.ElementoBase;
 import org.javafantasticos.sokoban.model.Tablero;
 import org.javafantasticos.sokoban.model.player.Orientacion;
-import java.util.function.Supplier;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -16,14 +15,12 @@ import java.util.List;
  * Al cambiar de nivel se actualiza vía {@link #actualizar(Tablero)} (Observer).
  */
 public class TableroPanel extends JPanel implements Suscriptor {
-    private final Supplier<Orientacion> orientacionJugador;
     private static final int TAMANIO_CELDA = 50;
 
     private Tablero tablero;
 
-    public TableroPanel(Tablero tablero, Supplier<Orientacion> orientacionJugador) {
+    public TableroPanel(Tablero tablero) {
         this.tablero = tablero;
-        this.orientacionJugador = orientacionJugador;
         ajustarTamanio();
     }
 
@@ -66,7 +63,10 @@ public class TableroPanel extends JPanel implements Suscriptor {
                     BufferedImage imagenSuperior;
                     char simboloSuperior = superior.getSimbolo();
                     if (superior.getSimbolo() == 'J') {
-                        imagenSuperior = UIResources.cargarJugador(orientacionJugador.get());
+                        Orientacion orientacion = (tablero.getJugador() != null)
+                                ? tablero.getJugador().getOrientacion()
+                                : Orientacion.FRENTE;
+                        imagenSuperior = UIResources.cargarJugador(orientacion);
                     } else {
                         imagenSuperior = UIResources.cargarBloque(superior.getSimbolo());
                     }

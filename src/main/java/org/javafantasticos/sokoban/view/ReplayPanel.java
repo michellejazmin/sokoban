@@ -1,6 +1,6 @@
 package org.javafantasticos.sokoban.view;
 
-import org.javafantasticos.sokoban.controller.ReproductorPartida;
+import org.javafantasticos.sokoban.interfaces.IReproductorVista;
 import org.javafantasticos.sokoban.interfaces.Suscriptor;
 import org.javafantasticos.sokoban.interfaces.VistaReplay;
 
@@ -29,7 +29,7 @@ public class ReplayPanel extends JPanel implements VistaReplay {
     private final JButton botonVolver;
     private final JButton botonContinuar;
 
-    private ReproductorPartida reproductor;
+    private IReproductorVista reproductor;
 
     private ReplayPanel() {
         super(new BorderLayout());
@@ -93,7 +93,7 @@ public class ReplayPanel extends JPanel implements VistaReplay {
      * @param alContinuar callback para el botón "Continuar" (se ignora si mostrarContinuar=false)
      */
     @Override
-    public void cargar(Suscriptor board, ReproductorPartida rep, boolean mostrarContinuar,
+    public void cargar(Suscriptor board, IReproductorVista rep, boolean mostrarContinuar,
                        ActionListener alVolver, ActionListener alContinuar) {
         contenedorTablero.removeAll();
         contenedorTablero.add((TableroPanel) board);

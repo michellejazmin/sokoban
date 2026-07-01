@@ -1,5 +1,6 @@
 package org.javafantasticos.sokoban.model;
 
+import org.javafantasticos.sokoban.interfaces.ITableroFisico;
 import org.javafantasticos.sokoban.interfaces.Suscriptor;
 import org.javafantasticos.sokoban.model.cajas.Caja;
 import org.javafantasticos.sokoban.model.muros.Reja;
@@ -18,7 +19,7 @@ import java.util.function.UnaryOperator;
  * Mantiene la disposición de la grilla, las cajas, los objetivos y el jugador.
  */
 
-public class Tablero {
+public class Tablero implements ITableroFisico {
     private final String nombre;
     private final List<List<ElementoBase>> grillaInferior;
     private final List<List<ElementoBase>> grillaSuperior;
@@ -109,9 +110,40 @@ public class Tablero {
         this.onRejasCambiadas = callback;
     }
 
-    // Package-private accessors for MotorFisico (same package)
-    Consumer<String> getOnGameOver() { return onGameOver; }
-    UnaryOperator<ElementoBase> getOnPisada() { return onPisada; }
+    @Override
+    public void limpiarSuperior(int x, int y) {
+        grillaSuperior.get(y).set(x, null);
+    }
+
+    @Override
+    public void asignarSuperior(int x, int y, ElementoBase elem) {
+        grillaSuperior.get(y).set(x, elem);
+    }
+
+    @Override
+    public ElementoBase getInferior(int x, int y) {
+        return grillaInferior.get(y).get(x);
+    }
+
+    @Override
+    public void asignarInferior(int x, int y, ElementoBase elem) {
+        grillaInferior.get(y).set(x, elem);
+    }
+
+    @Override
+    public void notificarStateChange(TableroMemento memento, int pushes) {
+        if (onStateChange != null) {
+            onStateChange.accept(memento, pushes);
+        }
+    }
+
+    @Override
+    public Consumer<String> getOnGameOver() { return onGameOver; }
+
+    @Override
+    public UnaryOperator<ElementoBase> getOnPisada() { return onPisada; }
+
+    // Package-private accessors
     BiConsumer<TableroMemento, Integer> getOnStateChange() { return onStateChange; }
     Runnable getOnRejasCambiadas() { return onRejasCambiadas; }
     Suscriptor getTableroPanel() { return tableroPanel; }
@@ -136,13 +168,13 @@ public class Tablero {
         this.tableroPanel = null;
     }
 
-    void notificarVista() {
+    public void notificarVista() {
         if (tableroPanel != null) {
             tableroPanel.actualizar(this);
         }
     }
 
-    void actualizarRejas() {
+    public void actualizarRejas() {
         boolean cerrar = !ReglasDelJuego.hayCajaLlaveSobreCerrojo(cajas, objetivos);
         boolean huboCambio = false;
 

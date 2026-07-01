@@ -1,8 +1,8 @@
 package org.javafantasticos.sokoban.model;
 
-import org.javafantasticos.sokoban.model.muros.EstadoReja;
+import org.javafantasticos.sokoban.interfaces.EstadoReja;
 import org.javafantasticos.sokoban.model.dto.Coordenada;
-import org.javafantasticos.sokoban.model.items.ContextoItem;
+import org.javafantasticos.sokoban.interfaces.ContextoItem;
 
 import java.util.function.Consumer;
 

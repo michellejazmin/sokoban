@@ -1,5 +1,6 @@
 package org.javafantasticos.sokoban.model.muros;
 
+import org.javafantasticos.sokoban.interfaces.EstadoReja;
 import org.javafantasticos.sokoban.model.ElementoBase;
 import org.javafantasticos.sokoban.model.dto.Coordenada;
 

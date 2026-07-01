@@ -1,6 +1,6 @@
 package org.javafantasticos.sokoban.view;
 
-import org.javafantasticos.sokoban.interfaces.ControladorVista;
+import org.javafantasticos.sokoban.interfaces.MoveCallback;
 import org.javafantasticos.sokoban.interfaces.VistaDeJuego;
 import org.javafantasticos.sokoban.interfaces.VistaHUD;
 import org.javafantasticos.sokoban.model.Tablero;
@@ -8,24 +8,20 @@ import org.javafantasticos.sokoban.model.Tablero;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * Ventana principal del juego.
- * Ensambla el panel de dibujo, el HUD y registra el listener de teclado.
- */
-    public class VistaJuego extends JPanel implements VistaDeJuego {
-    //private static VistaJuego instancia;
+public class VistaJuego extends JPanel implements VistaDeJuego {
 
     private final TableroPanel tableroPanel;
     private final HUDPanel hudPanel;
     private static final Color COLOR_FONDO = new Color(0x1e2a38);
     private final JPanel centerWrapper;
 
-    public VistaJuego(Tablero tablero, ControladorVista controller) {
+    public VistaJuego(Tablero tablero, Runnable onUndo, Runnable onReset,
+                      Runnable onVolverAlMenu, MoveCallback moveCallback) {
         super();
         this.setLayout(new BorderLayout());
         this.setBackground(COLOR_FONDO);
 
-        this.tableroPanel = new TableroPanel(tablero, controller::getOrientacion);
+        this.tableroPanel = new TableroPanel(tablero);
         this.centerWrapper = new JPanel(new GridBagLayout());
         this.centerWrapper.setOpaque(false);
         this.centerWrapper.add(tableroPanel);
@@ -35,21 +31,11 @@ import java.awt.*;
         this.hudPanel.setOpaque(false);
         this.add(hudPanel, BorderLayout.SOUTH);
 
-        hudPanel.onUndo(e -> {
-            controller.undo();
-            requestFocusInWindow();
-        });
+        hudPanel.onUndo(e -> { onUndo.run(); requestFocusInWindow(); });
+        hudPanel.onReset(e -> { onReset.run(); requestFocusInWindow(); });
+        hudPanel.onVolverAlMenu(e -> onVolverAlMenu.run());
 
-        hudPanel.onReset(e -> {
-            controller.reiniciarNivel();
-            requestFocusInWindow();
-        });
-
-        hudPanel.onVolverAlMenu(e -> {
-            controller.volverAlMenu();
-        });
-
-        controller.setOnMove(tableroPanel::repaint);
+        moveCallback.setOnMove(tableroPanel::repaint);
     }
 
     @Override
@@ -57,11 +43,6 @@ import java.awt.*;
         return tableroPanel;
     }
 
-    /**
-     * Reinserta el TableroPanel en la vista de juego. Necesario porque la pantalla
-     * de reproducción lo toma prestado (un componente Swing sólo puede tener un
-     * contenedor a la vez).
-     */
     @Override
     public void recuperarTablero() {
         if (tableroPanel.getParent() != this.centerWrapper) {

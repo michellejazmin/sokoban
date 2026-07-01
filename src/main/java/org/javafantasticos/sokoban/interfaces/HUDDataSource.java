@@ -1,13 +1,6 @@
 package org.javafantasticos.sokoban.interfaces;
 
-import org.javafantasticos.sokoban.model.player.Orientacion;
-
-public interface ControladorVista {
-    void undo();
-    void reiniciarNivel();
-    void volverAlMenu();
-    Orientacion getOrientacion();
-    void setOnMove(Runnable callback);
+public interface HUDDataSource {
     int getScore();
     int getNivelActual();
     int getTotalNiveles();

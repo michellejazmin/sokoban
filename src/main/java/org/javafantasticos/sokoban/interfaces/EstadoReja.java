@@ -1,4 +1,4 @@
-package org.javafantasticos.sokoban.model.muros;
+package org.javafantasticos.sokoban.interfaces;
 
 public interface EstadoReja {
     char getSimbolo();

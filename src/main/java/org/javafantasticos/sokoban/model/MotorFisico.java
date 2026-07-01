@@ -1,10 +1,11 @@
 package org.javafantasticos.sokoban.model;
 
+import org.javafantasticos.sokoban.interfaces.ITableroFisico;
 import org.javafantasticos.sokoban.model.player.Jugador;
 
 public class MotorFisico {
 
-    public int mover(Tablero tablero, int dx, int dy) {
+    public int mover(ITableroFisico tablero, int dx, int dy) {
         Jugador jugador = tablero.getJugador();
         int xJugador = jugador.getCoordenada().getPosX();
         int yJugador = jugador.getCoordenada().getPosY();
@@ -28,21 +29,21 @@ public class MotorFisico {
 
             elementoAdyacente.getCoordenada().setPosX(xDestinoCaja);
             elementoAdyacente.getCoordenada().setPosY(yDestinoCaja);
-            tablero.getGrillaSuperior().get(yDestinoCaja).set(xDestinoCaja, elementoAdyacente);
+            tablero.asignarSuperior(xDestinoCaja, yDestinoCaja, elementoAdyacente);
 
             pushEnEstePaso = true;
         }
 
         jugador.getCoordenada().setPosX(xDestinoJugador);
         jugador.getCoordenada().setPosY(yDestinoJugador);
-        tablero.getGrillaSuperior().get(yJugador).set(xJugador, null);
-        tablero.getGrillaSuperior().get(yDestinoJugador).set(xDestinoJugador, jugador);
+        tablero.limpiarSuperior(xJugador, yJugador);
+        tablero.asignarSuperior(xDestinoJugador, yDestinoJugador, jugador);
 
         if (tablero.getOnPisada() != null) {
-            ElementoBase pisoActual = tablero.getGrillaInferior().get(yDestinoJugador).get(xDestinoJugador);
+            ElementoBase pisoActual = tablero.getInferior(xDestinoJugador, yDestinoJugador);
             ElementoBase nuevoPiso = tablero.getOnPisada().apply(pisoActual);
             if (nuevoPiso != pisoActual) {
-                tablero.getGrillaInferior().get(yDestinoJugador).set(xDestinoJugador, nuevoPiso);
+                tablero.asignarInferior(xDestinoJugador, yDestinoJugador, nuevoPiso);
             }
         }
 
@@ -52,7 +53,7 @@ public class MotorFisico {
 
             elementoAdyacente.alSerEmpujada(tablero.getOnGameOver());
 
-            ElementoBase terrenoCaja = tablero.getGrillaInferior().get(yDestinoCaja).get(xDestinoCaja);
+            ElementoBase terrenoCaja = tablero.getInferior(xDestinoCaja, yDestinoCaja);
             if (terrenoCaja.esResbaloso()) {
                 pushes += deslizarCaja(tablero, elementoAdyacente, dx, dy);
             }
@@ -60,9 +61,7 @@ public class MotorFisico {
 
         tablero.actualizarRejas();
 
-        if (tablero.getOnStateChange() != null) {
-            tablero.getOnStateChange().accept(new TableroMemento(tablero), pushes);
-        }
+        tablero.notificarStateChange(tablero.crearMemento(), pushes);
 
         if (elementoAdyacente.esResbaloso()) {
             pushes += mover(tablero, dx, dy);
@@ -72,7 +71,7 @@ public class MotorFisico {
         return pushes;
     }
 
-    private int deslizarCaja(Tablero tablero, ElementoBase caja, int dx, int dy) {
+    private int deslizarCaja(ITableroFisico tablero, ElementoBase caja, int dx, int dy) {
         int xActual = caja.getCoordenada().getPosX();
         int yActual = caja.getCoordenada().getPosY();
         int xSiguiente = xActual + dx;
@@ -86,8 +85,8 @@ public class MotorFisico {
 
         caja.getCoordenada().setPosX(xSiguiente);
         caja.getCoordenada().setPosY(ySiguiente);
-        tablero.getGrillaSuperior().get(ySiguiente).set(xSiguiente, caja);
-        tablero.getGrillaSuperior().get(yActual).set(xActual, null);
+        tablero.asignarSuperior(xSiguiente, ySiguiente, caja);
+        tablero.limpiarSuperior(xActual, yActual);
 
         int pushes = 1;
 
@@ -95,7 +94,7 @@ public class MotorFisico {
             return pushes;
         }
 
-        ElementoBase terreno = tablero.getGrillaInferior().get(ySiguiente).get(xSiguiente);
+        ElementoBase terreno = tablero.getInferior(xSiguiente, ySiguiente);
         if (terreno.esResbaloso()) {
             pushes += deslizarCaja(tablero, caja, dx, dy);
         }

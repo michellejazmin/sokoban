@@ -7,8 +7,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class MovimientoTeclado implements KeyListener,IMovimientos {
-    private final GameController controller;
-    public MovimientoTeclado(GameController controller) {
+    private final InputController controller;
+    public MovimientoTeclado(InputController controller) {
         this.controller = controller;
     }
 

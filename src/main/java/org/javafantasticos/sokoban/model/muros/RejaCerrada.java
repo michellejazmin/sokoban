@@ -1,5 +1,7 @@
 package org.javafantasticos.sokoban.model.muros;
 
+import org.javafantasticos.sokoban.interfaces.EstadoReja;
+
 public class RejaCerrada implements EstadoReja {
 
     public RejaCerrada() {

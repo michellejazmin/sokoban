@@ -1,12 +1,13 @@
 package org.javafantasticos.sokoban.controller;
 
+import org.javafantasticos.sokoban.interfaces.IReproductorVista;
 import org.javafantasticos.sokoban.interfaces.Suscriptor;
 import org.javafantasticos.sokoban.model.Tablero;
 
 import javax.swing.Timer;
 
 
-public class ReproductorPartida {
+public class ReproductorPartida implements IReproductorVista {
     private static final int DELAY_MS = 350;
 
     private final Tablero tablero;

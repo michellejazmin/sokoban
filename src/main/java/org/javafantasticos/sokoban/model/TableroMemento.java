@@ -1,6 +1,6 @@
 package org.javafantasticos.sokoban.model;
 
-import org.javafantasticos.sokoban.model.muros.EstadoReja;
+import org.javafantasticos.sokoban.interfaces.EstadoReja;
 import org.javafantasticos.sokoban.model.cajas.Caja;
 import org.javafantasticos.sokoban.model.player.Jugador;
 import org.javafantasticos.sokoban.model.player.Orientacion;

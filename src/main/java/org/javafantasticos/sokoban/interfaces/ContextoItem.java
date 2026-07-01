@@ -1,4 +1,4 @@
-package org.javafantasticos.sokoban.model.items;
+package org.javafantasticos.sokoban.interfaces;
 
 public interface ContextoItem {
     void sumarBonus(int monto);

@@ -1,6 +1,6 @@
 package org.javafantasticos.sokoban.view;
 
-import org.javafantasticos.sokoban.interfaces.ControladorVista;
+import org.javafantasticos.sokoban.interfaces.HUDDataSource;
 import org.javafantasticos.sokoban.interfaces.VistaHUD;
 
 import javax.swing.*;
@@ -94,7 +94,7 @@ public class HUDPanel extends JPanel implements VistaHUD {
         return btn;
     }
 
-    public void actualizar(ControladorVista ctrl) {
+    public void actualizar(HUDDataSource ctrl) {
         scoreLabel.setText("Puntaje: " + ctrl.getScore());
         nivelLabel.setText("Nivel: " + ctrl.getNivelActual() + "/" + ctrl.getTotalNiveles());
         pasosLabel.setText("Pasos: " + ctrl.getSteps());
