@@ -56,7 +56,7 @@ public class GameController implements ContextoItem, ControladorVista {
         this.vistaJuego = new VistaJuego(tablero, this);
         this.hudPanel = vistaJuego.getHudPanel();
         this.tablero.suscribirVista(vistaJuego.getTableroPanel());
-        this.reproductorSonido = AdaptadorClip.getInstancia();
+        this.reproductorSonido = GestorSonido.getInstancia();
         this.gameOverPanel = GameOverPanel.getInstancia("");
         this.victoriaPanel = VictoriaPanel.getInstancia("");
         this.pasoNivelPanel = PasoNivelPanel.getInstancia("");
@@ -96,20 +96,20 @@ public class GameController implements ContextoItem, ControladorVista {
     }
 
     private void configurarCallbacksTablero() {
-        tablero.setOnRejasCambiadas(() -> reproductorSonido.reproducirReja());
+        tablero.setOnRejasCambiadas(() -> reproductorSonido.reproducir(ReproductorSonido.REJA));
         tablero.setOnStateChange((memento, pushCount) -> {
             gestorDePartida.registrarMovimiento(memento, pushCount);
             if (onMove != null) onMove.run();
             hudPanel.actualizar(this);
             if (pushCount > 0) {
-                reproductorSonido.reproducirEmpuje();
+                reproductorSonido.reproducir(ReproductorSonido.EMPUJE);
             } else {
-                reproductorSonido.reproducirMovimiento();
+                reproductorSonido.reproducir(ReproductorSonido.MOVIMIENTO);
             }
             verificarNivelCompletado();
         });
         tablero.setOnGameOver(motivo -> {
-            reproductorSonido.reproducirCajaRota();
+            reproductorSonido.reproducir(ReproductorSonido.CAJA_ROTA);
             mostrarGameOver(motivo);
         });
         tablero.setOnPisada(piso -> piso.aplicar(this));
@@ -130,7 +130,7 @@ public class GameController implements ContextoItem, ControladorVista {
     private void mostrarGameOver(String motivo) {
         if (gestorDePartida.isPartidaTerminada()) return;
         gestorDePartida.setPartidaTerminada(true);
-        reproductorSonido.reproducirGameOver(motivo);
+        reproductorSonido.reproducir(ReproductorSonido.GAME_OVER);
         gameOverPanel.setMotivo(motivo);
         navegador.mostrarGameOver();
         if (movimientos != null) movimientos.desregistrarDe((java.awt.Component) vistaJuego);
@@ -146,11 +146,11 @@ public class GameController implements ContextoItem, ControladorVista {
 
             boolean hayMasNiveles = gestorNiveles.getNivelActualIndex() < gestorNiveles.getTotalNiveles() - 1;
             if (hayMasNiveles) {
-                reproductorSonido.reproducirPasoNivel();
+                reproductorSonido.reproducir(ReproductorSonido.PASO_NIVEL);
                 pasoNivelPanel.setMensaje("Nivel " + getNivelActual() + " completado  ·  Puntaje: " + getScore());
                 navegador.mostrarPasoNivel();
             } else {
-                reproductorSonido.reproducirVictoria();
+                reproductorSonido.reproducir(ReproductorSonido.VICTORIA);
                 victoriaPanel.setMensaje("Puntaje: " + getScore()
                         + "  |  Pasos: " + getSteps() + "  |  Mov. cajas: " + getPushes());
                 navegador.mostrarVictoria();
@@ -208,7 +208,7 @@ public class GameController implements ContextoItem, ControladorVista {
         if (gestorDePartida.undo(tablero)) {
             if (onMove != null) onMove.run();
             hudPanel.actualizar(this);
-            reproductorSonido.reproducirUndo();
+            reproductorSonido.reproducir(ReproductorSonido.UNDO);
         }
     }
 
@@ -310,13 +310,13 @@ public class GameController implements ContextoItem, ControladorVista {
     @Override
     public void sumarBonus(int monto) {
         gestorDePartida.sumarBonus(monto);
-        reproductorSonido.reproducirItemMoneda();
+        reproductorSonido.reproducir(ReproductorSonido.MONEDA);
         hudPanel.actualizar(this);
     }
 
     @Override
     public void terminarPartida(String motivo) {
-        reproductorSonido.reproducirItemBomba();
+        reproductorSonido.reproducir(ReproductorSonido.BOMBA);
         if (reproductor != null) {
             reproductor.detener();
             reproductor = null;
@@ -333,7 +333,7 @@ public class GameController implements ContextoItem, ControladorVista {
     @Override
     public void sumarUndoExtra() {
         gestorDePartida.sumarUndoExtra();
-        reproductorSonido.reproducirItemUndo();
+        reproductorSonido.reproducir(ReproductorSonido.UNDO_ITEM);
         hudPanel.actualizar(this);
     }
 

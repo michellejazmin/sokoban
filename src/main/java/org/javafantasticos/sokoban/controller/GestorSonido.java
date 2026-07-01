@@ -6,47 +6,44 @@ import javax.sound.sampled.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class AdaptadorClip implements ReproductorSonido {
+public class GestorSonido implements ReproductorSonido {
     private static final String RUTA_SONIDOS = "src/main/resources/sonidos/";
-    private static AdaptadorClip instancia;
+    private static GestorSonido instancia;
 
     private final Map<String, Clip> clips;
     private boolean habilitado;
 
-    private AdaptadorClip() {
+    private GestorSonido() {
         this.clips = new HashMap<>();
         this.habilitado = true;
         precargarSonidos();
     }
 
-    public static AdaptadorClip getInstancia() {
+    public static GestorSonido getInstancia() {
         if (instancia == null) {
-            instancia = new AdaptadorClip();
+            instancia = new GestorSonido();
         }
         return instancia;
     }
 
     private void precargarSonidos() {
-        cargarClip("movimiento", "movimiento.wav");
-        cargarClip("empuje", "empuje.wav");
-        cargarClip("moneda", "moneda.wav");
-        cargarClip("bomba", "bomba.wav");
-        cargarClip("undo_item", "undo_item.wav");
-        cargarClip("victoria", "victoria.wav");
-        cargarClip("game_over", "game_over.wav");
-        cargarClip("undo", "undo.wav");
-        cargarClip("paso_nivel", "paso_nivel.wav");
-        cargarClip("caja_rota", "caja_rota.wav");
-        cargarClip("reja", "reja.wav");
+        List<String> eventos = List.of(
+                MOVIMIENTO, EMPUJE, MONEDA, BOMBA, UNDO_ITEM,
+                VICTORIA, GAME_OVER, UNDO, PASO_NIVEL, CAJA_ROTA, REJA
+        );
+        for (String clave : eventos) {
+            cargarClip(clave, clave + ".wav");
+        }
     }
 
     private void cargarClip(String clave, String archivo) {
         try {
             File f = new File(RUTA_SONIDOS + archivo);
             if (!f.exists()) {
-                System.err.println("[AdaptadorClip] Archivo no encontrado: " + f.getPath());
+                System.err.println("[GestorSonido] Archivo no encontrado: " + f.getPath());
                 return;
             }
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(f);
@@ -69,71 +66,17 @@ public class AdaptadorClip implements ReproductorSonido {
             clip.open(audioStream);
             clips.put(clave, clip);
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-            System.err.println("[AdaptadorClip] Error al cargar " + archivo + ": " + e.getMessage());
+            System.err.println("[GestorSonido] Error al cargar " + archivo + ": " + e.getMessage());
         }
     }
 
-    private void reproducir(String clave) {
+    @Override
+    public void reproducir(String evento) {
         if (!habilitado) return;
-        Clip clip = clips.get(clave);
+        Clip clip = clips.get(evento);
         if (clip == null) return;
         clip.setFramePosition(0);
         clip.start();
-    }
-
-    @Override
-    public void reproducirMovimiento() {
-        reproducir("movimiento");
-    }
-
-    @Override
-    public void reproducirEmpuje() {
-        reproducir("empuje");
-    }
-
-    @Override
-    public void reproducirItemMoneda() {
-        reproducir("moneda");
-    }
-
-    @Override
-    public void reproducirItemBomba() {
-        reproducir("bomba");
-    }
-
-    @Override
-    public void reproducirItemUndo() {
-        reproducir("undo_item");
-    }
-
-    @Override
-    public void reproducirVictoria() {
-        reproducir("victoria");
-    }
-
-    @Override
-    public void reproducirGameOver(String motivo) {
-        reproducir("game_over");
-    }
-
-    @Override
-    public void reproducirUndo() {
-        reproducir("undo");
-    }
-
-    @Override
-    public void reproducirPasoNivel() {
-        reproducir("paso_nivel");
-    }
-
-    @Override
-    public void reproducirCajaRota() {
-        reproducir("caja_rota");
-    }
-
-    @Override
-    public void reproducirReja() {
-        reproducir("reja");
     }
 
     @Override
