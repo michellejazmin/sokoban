@@ -47,7 +47,7 @@ public class ReplayPanel extends JPanel {
         botonPlayPause = crearBoton("⏸ Pausa", uiFont, new Color(0x27, 0xAE, 0x60));
         botonSiguiente = crearBoton("Siguiente →", uiFont, new Color(0x5D, 0x7B, 0x93));
         botonVolver = crearBoton("⌂ Volver al menu", uiFont, new Color(0xC0, 0x39, 0x2B));
-        botonContinuar = crearBoton("Siguiente nivel ▶", uiFont, new Color(0x27, 0xAE, 0x60));
+        botonContinuar = crearBoton("Siguiente nivel →", uiFont, new Color(0x27, 0xAE, 0x60));
 
         JPanel controles = new JPanel(new GridLayout(3, 1, 16, 8));
         controles.setBackground(new Color(0x16, 0x20, 0x2B));
