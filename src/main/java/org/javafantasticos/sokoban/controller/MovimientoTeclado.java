@@ -24,6 +24,7 @@ public class MovimientoTeclado implements KeyListener,IMovimientos {
             case KeyEvent.VK_DOWN, KeyEvent.VK_S -> abajo();
             case KeyEvent.VK_LEFT, KeyEvent.VK_A -> izquierda();
             case KeyEvent.VK_RIGHT, KeyEvent.VK_D -> derecha();
+            case KeyEvent.VK_Z -> { if (e.isControlDown()) deshacer(); }
             default  -> { /* Ignorar otras teclas */ }
         }
     }
@@ -31,6 +32,10 @@ public class MovimientoTeclado implements KeyListener,IMovimientos {
     @Override
     public void keyReleased(KeyEvent e) {
         // No se necesita para este caso
+    }
+
+    public void deshacer() {
+        controller.undo();
     }
 
     @Override
