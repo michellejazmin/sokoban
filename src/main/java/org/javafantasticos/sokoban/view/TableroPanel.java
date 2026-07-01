@@ -16,13 +16,13 @@ import java.util.List;
  * Al cambiar de nivel se actualiza vía {@link #actualizar(Tablero)} (Observer).
  */
 public class TableroPanel extends JPanel implements Suscriptor {
-    private static TableroPanel instancia;
+    //private static TableroPanel instancia;
 
     private static final int TAMANIO_CELDA = 50;
 
     private Tablero tablero;
 
-    private TableroPanel(Tablero tablero) {
+    public TableroPanel(Tablero tablero) {
         this.tablero = tablero;
         ajustarTamanio();
     }
@@ -33,12 +33,12 @@ public class TableroPanel extends JPanel implements Suscriptor {
         setPreferredSize(new Dimension(ancho, alto));
     }
 
-    public static TableroPanel getInstancia(Tablero tablero) {
+    /*public static TableroPanel getInstancia(Tablero tablero) {
         if (instancia == null) {
             instancia = new TableroPanel(tablero);
         }
         return instancia;
-    }
+    }*/
 
     /**
      * Redibuja el tablero. Llamar después de cada movimiento.

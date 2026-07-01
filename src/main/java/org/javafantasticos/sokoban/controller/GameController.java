@@ -62,7 +62,7 @@ public class GameController implements ContextoItem {
         this.bonus = 0;
         this.partidaTerminada = false;
 
-        this.vistaJuego = VistaJuego.getInstancia(tablero, this);
+        this.vistaJuego = new VistaJuego(tablero, this);
         this.hudPanel = vistaJuego.getHudPanel();
         this.tablero.suscribirVista(vistaJuego.getTableroPanel());
         this.gameOverPanel = GameOverPanel.getInstancia("");
@@ -219,11 +219,14 @@ public class GameController implements ContextoItem {
     }
 
     public void reiniciarNivel() {
+        tablero = gestorNiveles.reiniciarNivelActual();
         if (movimientos != null) {
             movimientos.desregistrarDe(vistaJuego);
         }
-        tablero = gestorNiveles.reiniciarNivelActual();
         recargarTablero();
+        if (movimientos == null) {
+            movimientos = new MovimientoTeclado(this);
+        }
         movimientos.registrarEn(vistaJuego);
         vistaJuego.requestFocusInWindow();
     }

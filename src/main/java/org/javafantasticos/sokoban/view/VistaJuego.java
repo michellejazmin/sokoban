@@ -13,16 +13,16 @@ import java.awt.*;
  * Patrón Singleton: única vista de juego durante toda la partida.
  */
 public class VistaJuego extends JPanel {
-    private static VistaJuego instancia;
+    //private static VistaJuego instancia;
 
     private final TableroPanel tableroPanel;
     private final HUDPanel hudPanel;
 
-    private VistaJuego(Tablero tablero, GameController controller) {
+    public VistaJuego(Tablero tablero, GameController controller) {
         super();
         this.setLayout(new BorderLayout());
 
-        this.tableroPanel = TableroPanel.getInstancia(tablero);
+        this.tableroPanel = new TableroPanel(tablero);
         this.add(tableroPanel, BorderLayout.CENTER);
 
         this.hudPanel = HUDPanel.getInstancia();
@@ -45,12 +45,12 @@ public class VistaJuego extends JPanel {
         controller.setOnMove(tableroPanel::repaint);
     }
 
-    public static VistaJuego getInstancia(Tablero tablero, GameController controller) {
+    /*public static VistaJuego getInstancia(Tablero tablero, GameController controller) {
         if (instancia == null) {
             instancia = new VistaJuego(tablero, controller);
         }
         return instancia;
-    }
+    }*/
 
     public TableroPanel getTableroPanel() {
         return tableroPanel;
