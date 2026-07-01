@@ -32,6 +32,7 @@ public class Tablero {
     private UnaryOperator<ElementoBase> onPisada;
     private Runnable onRejasCambiadas;
     private Suscriptor tableroPanel;
+    private final MotorFisico motorFisico = new MotorFisico();
 
     public Tablero(String nombre,
                    List<List<ElementoBase>> grillaInferior,
@@ -108,6 +109,13 @@ public class Tablero {
         this.onRejasCambiadas = callback;
     }
 
+    // Package-private accessors for MotorFisico (same package)
+    Consumer<String> getOnGameOver() { return onGameOver; }
+    UnaryOperator<ElementoBase> getOnPisada() { return onPisada; }
+    BiConsumer<TableroMemento, Integer> getOnStateChange() { return onStateChange; }
+    Runnable getOnRejasCambiadas() { return onRejasCambiadas; }
+    Suscriptor getTableroPanel() { return tableroPanel; }
+
     public TableroMemento crearMemento() {
         return new TableroMemento(this);
     }
@@ -116,114 +124,8 @@ public class Tablero {
         memento.restaurar(this);
     }
 
-    /**
-     * @return cantidad de cajas empujadas en este paso (incluyendo deslizamientos por aceite)
-     */
     public int mover(int dx, int dy) {
-        int xJugador = jugador.getCoordenada().getPosX();
-        int yJugador = jugador.getCoordenada().getPosY();
-        int xDestinoJugador = xJugador + dx;
-        int yDestinoJugador = yJugador + dy;
-
-        ElementoBase elementoAdyacente = getElemento(xDestinoJugador, yDestinoJugador);
-
-        if (elementoAdyacente.bloqueaPaso()) return 0;
-
-        boolean pushEnEstePaso = false;
-        int xDestinoCaja = -1;
-        int yDestinoCaja = -1;
-
-        // Si el elemento adyacente es una caja, intentamos moverla
-        if (elementoAdyacente.esMovible()) {
-            xDestinoCaja = xDestinoJugador + dx;
-            yDestinoCaja = yDestinoJugador + dy;
-            ElementoBase destinoCaja = getElemento(xDestinoCaja, yDestinoCaja);
-
-            // Si lo que hay detrás de la caja bloquea, no podemos mover
-            if (!destinoCaja.esOcupable()) return 0;
-
-            elementoAdyacente.getCoordenada().setPosX(xDestinoCaja);
-            elementoAdyacente.getCoordenada().setPosY(yDestinoCaja);
-            grillaSuperior.get(yDestinoCaja).set(xDestinoCaja, elementoAdyacente);
-
-            pushEnEstePaso = true;
-        }
-
-        jugador.getCoordenada().setPosX(xDestinoJugador);
-        jugador.getCoordenada().setPosY(yDestinoJugador);
-        grillaSuperior.get(yJugador).set(xJugador, null);
-        grillaSuperior.get(yDestinoJugador).set(xDestinoJugador, jugador);
-
-        if (onPisada != null) {
-            ElementoBase pisoActual = grillaInferior.get(yDestinoJugador).get(xDestinoJugador);
-            ElementoBase nuevoPiso = onPisada.apply(pisoActual);
-            if (nuevoPiso != pisoActual) {
-                grillaInferior.get(yDestinoJugador).set(xDestinoJugador, nuevoPiso);
-            }
-        }
-
-        int pushes = 0;
-        if (pushEnEstePaso) {
-            pushes = 1;
-
-            elementoAdyacente.alSerEmpujada(onGameOver);
-
-            // Deslizamiento de la caja sobre aceite
-            ElementoBase terrenoCaja = grillaInferior.get(yDestinoCaja).get(xDestinoCaja);
-            if (terrenoCaja.esResbaloso()) {
-                pushes += deslizarCaja(elementoAdyacente, dx, dy);
-            }
-        }
-
-        actualizarRejas();
-
-        if (onStateChange != null) {
-            onStateChange.accept(new TableroMemento(this), pushes);
-        }
-
-        // Deslizamiento del jugador sobre aceite
-        if (elementoAdyacente.esResbaloso()) {
-            pushes += mover(dx, dy);
-        }
-
-        notificarVista();
-        return pushes;
-    }
-
-    /**
-     * Desliza una caja sobre terreno resbaladizo (aceite) hasta que encuentre
-     * un obstáculo o llegue a una casilla no resbaladiza.
-     * @return cantidad de casillas que la caja se deslizó
-     */
-    private int deslizarCaja(ElementoBase caja, int dx, int dy) {
-        int xActual = caja.getCoordenada().getPosX();
-        int yActual = caja.getCoordenada().getPosY();
-        int xSiguiente = xActual + dx;
-        int ySiguiente = yActual + dy;
-
-        ElementoBase destino = getElemento(xSiguiente, ySiguiente);
-
-        if (!destino.esOcupable()) {
-            return 0;
-        }
-
-        caja.getCoordenada().setPosX(xSiguiente);
-        caja.getCoordenada().setPosY(ySiguiente);
-        grillaSuperior.get(ySiguiente).set(xSiguiente, caja);
-        grillaSuperior.get(yActual).set(xActual, null);
-
-        int pushes = 1;
-
-        if (!caja.alSerEmpujada(onGameOver)) {
-            return pushes;
-        }
-
-        ElementoBase terreno = grillaInferior.get(ySiguiente).get(xSiguiente);
-        if (terreno.esResbaloso()) {
-            pushes += deslizarCaja(caja, dx, dy);
-        }
-
-        return pushes;
+        return motorFisico.mover(this, dx, dy);
     }
 
     public void suscribirVista(Suscriptor tableroPanel) {
@@ -234,29 +136,14 @@ public class Tablero {
         this.tableroPanel = null;
     }
 
-    private void notificarVista() {
+    void notificarVista() {
         if (tableroPanel != null) {
             tableroPanel.actualizar(this);
         }
     }
 
-    private boolean hayCajaLlaveSobreCerrojo() {
-        boolean encontrado = false;
-        for (Caja caja : cajas) {
-            if (!encontrado && caja.esCajaLlave()) {
-                for (Destino destino : objetivos) {
-                    if (!encontrado && destino.esCerrojo()
-                            && caja.getCoordenada().equals(destino.getCoordenada())) {
-                        encontrado = true;
-                    }
-                }
-            }
-        }
-        return encontrado;
-    }
-
-    private void actualizarRejas() {
-        boolean cerrar = !hayCajaLlaveSobreCerrojo();
+    void actualizarRejas() {
+        boolean cerrar = !ReglasDelJuego.hayCajaLlaveSobreCerrojo(cajas, objetivos);
         boolean huboCambio = false;
 
         for (Reja reja : rejas) {
@@ -276,19 +163,7 @@ public class Tablero {
     }
 
     public int getCajasEnDestino() {
-        int count = 0;
-        for (var caja : cajas) {
-            boolean contada = false;
-            for (var destino : objetivos) {
-                if (!contada && caja.getCoordenada().equals(destino.getCoordenada())) {
-                    if (!destino.esCerrojo() || caja.esCajaLlave()) {
-                        contada = true;
-                        count++;
-                    }
-                }
-            }
-        }
-        return count;
+        return ReglasDelJuego.contarCajasEnDestino(cajas, objetivos);
     }
 
 }
