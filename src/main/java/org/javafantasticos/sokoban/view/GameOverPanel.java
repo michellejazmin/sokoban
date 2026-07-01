@@ -27,7 +27,7 @@ public class GameOverPanel extends JPanel {
 
         tituloLabel = new JLabel("Game Over");
         tituloLabel.setFont(titleFont);
-        tituloLabel.setForeground(new Color(0xC0, 0x39, 0x2B));
+        tituloLabel.setForeground(Color.WHITE);
 
         motivoLabel = new JLabel(motivo);
         motivoLabel.setFont(bodyFont);

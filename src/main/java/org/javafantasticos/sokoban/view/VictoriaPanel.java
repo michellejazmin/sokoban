@@ -8,7 +8,6 @@ import java.awt.image.BufferedImage;
 /**
  * Pantalla de victoria que aparece al completar el nivel.
  * Permite reproducir la partida recién jugada, volver al menú o salir.
- *
  * Patrón Singleton: única pantalla de victoria durante toda la ejecución.
  */
 public class VictoriaPanel extends JPanel {
@@ -33,13 +32,13 @@ public class VictoriaPanel extends JPanel {
 
         tituloLabel = new JLabel("¡Victoria!");
         tituloLabel.setFont(titleFont);
-        tituloLabel.setForeground(new Color(0x27, 0xAE, 0x60));
+        tituloLabel.setForeground(Color.WHITE);
 
         mensajeLabel = new JLabel(mensaje);
         mensajeLabel.setFont(bodyFont);
         mensajeLabel.setForeground(Color.WHITE);
 
-        botonReproducir = crearBoton("▶ Reproducir partida", bodyFont, new Color(0x27, 0xAE, 0x60));
+        botonReproducir = crearBoton("Reproducir partida", bodyFont, new Color(0x27, 0xAE, 0x60));
         botonVolver = crearBoton("Volver al menú principal", bodyFont, new Color(0x5D, 0x7B, 0x93));
         botonSalir = crearBoton("Salir", bodyFont, new Color(0xC0, 0x39, 0x2B));
 

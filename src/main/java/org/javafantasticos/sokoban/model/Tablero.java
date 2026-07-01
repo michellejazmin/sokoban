@@ -149,10 +149,10 @@ public class Tablero {
         for (Reja reja : rejas) {
             boolean estabaAbierta = reja.estaAbierta();
             if (cerrar && estabaAbierta) {
-                reja.setEstadoReja(new RejaCerrada(reja));
+                reja.setEstadoReja(new RejaCerrada());
                 huboCambio = true;
             } else if (!cerrar && !estabaAbierta) {
-                reja.setEstadoReja(new RejaAbierta(reja));
+                reja.setEstadoReja(new RejaAbierta());
                 huboCambio = true;
             }
         }

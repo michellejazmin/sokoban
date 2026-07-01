@@ -16,14 +16,15 @@ public class Ventana extends JFrame {
     private Ventana() {
         setTitle("Sokoban");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setMinimumSize(new Dimension(400, 400));
+        setMinimumSize(new Dimension(600, 600));
         setResizable(false);
-        setLocationRelativeTo(null);
 
         cardLayout = new CardLayout();
         contenedor = new JPanel(cardLayout);
 
         add(contenedor);
+        pack();
+        setLocationRelativeTo(null);
         setVisible(true);
     }
 
@@ -41,6 +42,7 @@ public class Ventana extends JFrame {
     private void mostrarPantalla(String nombre) {
         cardLayout.show(contenedor, nombre);
         pack();
+        setLocationRelativeTo(null);
     }
 
     public void mostrarJuego() {

@@ -11,8 +11,8 @@ import java.io.IOException;
 public class UIResources {
 
     private static final String RUTA_FONDO = "src/main/resources/pixel-8bit-brick-wall-blue.jpg";
-    private static final String RUTA_FUENTE_REGULAR = "src/main/resources/font/JetBrainsMono-Regular.ttf";
-    private static final String RUTA_FUENTE_BOLD = "src/main/resources/font/JetBrainsMono-Bold.ttf";
+    private static final String RUTA_FUENTE_REGULAR = "src/main/resources/font/MartianMonoNerdFont-Regular.ttf";
+    private static final String RUTA_FUENTE_BOLD = "src/main/resources/font/MartianMonoNerdFont-Bold.ttf";
     private static final String RUTA_JUGADOR_FRENTE = "src/main/resources/bloques/jugador_frente.png";
     private static final String RUTA_JUGADOR_ESPALDA = "src/main/resources/bloques/jugador_espalda.png";
     private static final String RUTA_JUGADOR_IZQUIERDA = "src/main/resources/bloques/jugador_izquierda.png";

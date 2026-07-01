@@ -1,9 +1,9 @@
 package org.javafantasticos.sokoban.model.muros;
 
-public class RejaAbierta extends EstadoReja {
+public class RejaAbierta implements EstadoReja {
 
-    public RejaAbierta(Reja contexto) {
-        super(contexto);
+    public RejaAbierta() {
+        // Constructor vacío, no se necesita hacer nada con el contexto en este caso
     }
 
     @Override
