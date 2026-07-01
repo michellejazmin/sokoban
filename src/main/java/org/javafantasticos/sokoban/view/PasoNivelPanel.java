@@ -2,10 +2,11 @@ package org.javafantasticos.sokoban.view;
 
 import javax.swing.*;
 import java.awt.*;
+import org.javafantasticos.sokoban.interfaces.PantallaPasoNivel;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
-public class PasoNivelPanel extends JPanel {
+public class PasoNivelPanel extends JPanel implements PantallaPasoNivel {
     private static PasoNivelPanel instancia;
 
     private final JLabel tituloLabel;

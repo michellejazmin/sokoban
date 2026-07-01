@@ -2,6 +2,7 @@ package org.javafantasticos.sokoban.view;
 
 import javax.swing.*;
 import java.awt.*;
+import org.javafantasticos.sokoban.interfaces.PantallaVictoria;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
@@ -10,7 +11,7 @@ import java.awt.image.BufferedImage;
  * Permite reproducir la partida recién jugada, volver al menú o salir.
  * Patrón Singleton: única pantalla de victoria durante toda la ejecución.
  */
-public class VictoriaPanel extends JPanel {
+public class VictoriaPanel extends JPanel implements PantallaVictoria {
     private static VictoriaPanel instancia;
 
     private final JLabel tituloLabel;

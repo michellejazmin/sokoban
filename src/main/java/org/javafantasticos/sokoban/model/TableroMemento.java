@@ -66,17 +66,15 @@ public class TableroMemento {
         tablero.getJugador().getCoordenada().setPosY(jugadorY);
         tablero.getJugador().setOrientacion(orientacion);
 
-        for (int i = 0; i < cajasCoords.size(); i++) {
+        for (int i = 0; i < cajasCoords.size() && i < tablero.getCajas().size(); i++) {
             int[] coords = cajasCoords.get(i);
             Integer ttl = cajasTtl.get(i);
+            Caja caja = tablero.getCajas().get(i);
 
-            if (ttl != null && coords[1] >= 0 && coords[1] < grillaSuperior.size()
-                && coords[0] >= 0 && coords[0] < grillaSuperior.get(coords[1]).size()) {
-                ElementoBase elem = grillaSuperior.get(coords[1]).get(coords[0]);
-
-                if (elem != null) {
-                    elem.setTtl(ttl);
-                }
+            caja.getCoordenada().setPosX(coords[0]);
+            caja.getCoordenada().setPosY(coords[1]);
+            if (ttl != null) {
+                caja.setTtl(ttl);
             }
         }
 

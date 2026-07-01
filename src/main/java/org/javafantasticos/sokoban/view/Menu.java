@@ -2,10 +2,11 @@ package org.javafantasticos.sokoban.view;
 
 import javax.swing.*;
 import java.awt.*;
+import org.javafantasticos.sokoban.interfaces.VistaMenu;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
-public class Menu extends JPanel {
+public class Menu extends JPanel implements VistaMenu {
     private static Menu instancia;
 
     private final JButton botonJugar;

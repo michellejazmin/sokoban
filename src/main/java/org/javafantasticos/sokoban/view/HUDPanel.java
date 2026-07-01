@@ -1,13 +1,14 @@
 package org.javafantasticos.sokoban.view;
 
 import org.javafantasticos.sokoban.interfaces.ControladorVista;
+import org.javafantasticos.sokoban.interfaces.VistaHUD;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-public class HUDPanel extends JPanel {
+public class HUDPanel extends JPanel implements VistaHUD {
     private static HUDPanel instancia;
 
     private final Font HUD_FONT;

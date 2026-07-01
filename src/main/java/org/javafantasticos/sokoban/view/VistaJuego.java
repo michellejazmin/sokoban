@@ -1,6 +1,8 @@
 package org.javafantasticos.sokoban.view;
 
 import org.javafantasticos.sokoban.interfaces.ControladorVista;
+import org.javafantasticos.sokoban.interfaces.VistaDeJuego;
+import org.javafantasticos.sokoban.interfaces.VistaHUD;
 import org.javafantasticos.sokoban.model.Tablero;
 
 import javax.swing.*;
@@ -10,7 +12,7 @@ import java.awt.*;
  * Ventana principal del juego.
  * Ensambla el panel de dibujo, el HUD y registra el listener de teclado.
  */
-public class VistaJuego extends JPanel {
+    public class VistaJuego extends JPanel implements VistaDeJuego {
     //private static VistaJuego instancia;
 
     private final TableroPanel tableroPanel;
@@ -50,6 +52,7 @@ public class VistaJuego extends JPanel {
         controller.setOnMove(tableroPanel::repaint);
     }
 
+    @Override
     public TableroPanel getTableroPanel() {
         return tableroPanel;
     }
@@ -59,6 +62,7 @@ public class VistaJuego extends JPanel {
      * de reproducción lo toma prestado (un componente Swing sólo puede tener un
      * contenedor a la vez).
      */
+    @Override
     public void recuperarTablero() {
         if (tableroPanel.getParent() != this.centerWrapper) {
             centerWrapper.add(tableroPanel);
@@ -67,7 +71,8 @@ public class VistaJuego extends JPanel {
         }
     }
 
-    public HUDPanel getHudPanel() {
+    @Override
+    public VistaHUD getHudPanel() {
         return hudPanel;
     }
 }

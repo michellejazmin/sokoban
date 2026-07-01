@@ -2,13 +2,20 @@ package org.javafantasticos.sokoban.controller;
 
 import org.javafantasticos.sokoban.interfaces.ControladorVista;
 import org.javafantasticos.sokoban.interfaces.IMovimientos;
+import org.javafantasticos.sokoban.interfaces.NavegadorPantallas;
+import org.javafantasticos.sokoban.interfaces.PantallaGameOver;
+import org.javafantasticos.sokoban.interfaces.PantallaPasoNivel;
+import org.javafantasticos.sokoban.interfaces.PantallaVictoria;
 import org.javafantasticos.sokoban.interfaces.ReproductorSonido;
+import org.javafantasticos.sokoban.interfaces.VistaDeJuego;
+import org.javafantasticos.sokoban.interfaces.VistaHUD;
+import org.javafantasticos.sokoban.interfaces.VistaMenu;
+import org.javafantasticos.sokoban.interfaces.VistaReplay;
 import org.javafantasticos.sokoban.model.Tablero;
 import org.javafantasticos.sokoban.model.items.ContextoItem;
 import org.javafantasticos.sokoban.model.player.Jugador;
 import org.javafantasticos.sokoban.model.player.Orientacion;
 import org.javafantasticos.sokoban.view.GameOverPanel;
-import org.javafantasticos.sokoban.view.HUDPanel;
 import org.javafantasticos.sokoban.view.Menu;
 import org.javafantasticos.sokoban.view.PasoNivelPanel;
 import org.javafantasticos.sokoban.view.ReplayPanel;
@@ -21,16 +28,17 @@ public class GameController implements ContextoItem, ControladorVista {
 
     private final GestorNiveles gestorNiveles;
     private final GestorDePartida gestorDePartida;
-    private final Ventana ventana;
-    private final Menu vistaMenu;
-    private VistaJuego vistaJuego;
-    private HUDPanel hudPanel;
+    private final NavegadorPantallas navegador;
+    private final VistaMenu vistaMenu;
+    private VistaDeJuego vistaJuego;
+    private VistaHUD hudPanel;
     private Tablero tablero;
+    private Tablero tableroParaReplay;
     private Jugador jugador;
-    private GameOverPanel gameOverPanel;
-    private VictoriaPanel victoriaPanel;
-    private PasoNivelPanel pasoNivelPanel;
-    private ReplayPanel replayPanel;
+    private PantallaGameOver gameOverPanel;
+    private PantallaVictoria victoriaPanel;
+    private PantallaPasoNivel pasoNivelPanel;
+    private VistaReplay replayPanel;
     private ReproductorPartida reproductor;
     private IMovimientos movimientos;
     private ReproductorSonido reproductorSonido;
@@ -40,7 +48,7 @@ public class GameController implements ContextoItem, ControladorVista {
     private GameController() {
         this.gestorNiveles = GestorNiveles.getInstancia();
         this.gestorDePartida = new GestorDePartida();
-        this.ventana = Ventana.getInstancia();
+        this.navegador = Ventana.getInstancia();
         this.vistaMenu = Menu.getInstancia();
         this.tablero = gestorNiveles.getTableroActual();
         this.jugador = tablero.getJugador();
@@ -57,12 +65,12 @@ public class GameController implements ContextoItem, ControladorVista {
         configurarCallbacksTablero();
         gestorDePartida.guardarInicial(tablero);
 
-        ventana.agregarPantalla(vistaMenu, "MENU");
-        ventana.agregarPantalla(vistaJuego, "JUEGO");
-        ventana.agregarPantalla(gameOverPanel, "GAMEOVER");
-        ventana.agregarPantalla(victoriaPanel, "VICTORIA");
-        ventana.agregarPantalla(pasoNivelPanel, "PASONIVEL");
-        ventana.agregarPantalla(replayPanel, "REPLAY");
+        navegador.agregarPantalla((javax.swing.JPanel) vistaMenu, "MENU");
+        navegador.agregarPantalla((javax.swing.JPanel) vistaJuego, "JUEGO");
+        navegador.agregarPantalla((javax.swing.JPanel) gameOverPanel, "GAMEOVER");
+        navegador.agregarPantalla((javax.swing.JPanel) victoriaPanel, "VICTORIA");
+        navegador.agregarPantalla((javax.swing.JPanel) pasoNivelPanel, "PASONIVEL");
+        navegador.agregarPantalla((javax.swing.JPanel) replayPanel, "REPLAY");
 
         this.vistaMenu.escucharBotonJugar(e -> empezarJuego());
         this.vistaMenu.escucharBotonSalir(e -> System.exit(0));
@@ -76,8 +84,8 @@ public class GameController implements ContextoItem, ControladorVista {
         this.pasoNivelPanel.escucharBotonReproducir(e -> reproducirPartida(true));
         this.pasoNivelPanel.escucharBotonVolver(e -> volverAlMenu());
 
-        ventana.mostrarMenu();
-        ventana.setVisible(true);
+        navegador.mostrarMenu();
+        navegador.setVisible(true);
     }
 
     public static GameController getInstancia() {
@@ -112,10 +120,10 @@ public class GameController implements ContextoItem, ControladorVista {
     }
 
     private void empezarJuego() {
-        ventana.mostrarJuego();
+        navegador.mostrarJuego();
         hudPanel.actualizar(this);
         this.movimientos = new MovimientoTeclado(this);
-        movimientos.registrarEn(vistaJuego);
+        movimientos.registrarEn((java.awt.Component) vistaJuego);
         vistaJuego.requestFocusInWindow();
     }
 
@@ -124,8 +132,8 @@ public class GameController implements ContextoItem, ControladorVista {
         gestorDePartida.setPartidaTerminada(true);
         reproductorSonido.reproducirGameOver(motivo);
         gameOverPanel.setMotivo(motivo);
-        ventana.mostrarGameOver();
-        if (movimientos != null) movimientos.desregistrarDe(vistaJuego);
+        navegador.mostrarGameOver();
+        if (movimientos != null) movimientos.desregistrarDe((java.awt.Component) vistaJuego);
         this.movimientos = null;
     }
 
@@ -133,19 +141,19 @@ public class GameController implements ContextoItem, ControladorVista {
         if (gestorDePartida.isPartidaTerminada()) return;
         if (getTotalCajas() > 0 && getCajasEnDestino() == getTotalCajas()) {
             gestorDePartida.setPartidaTerminada(true);
-            if (movimientos != null) movimientos.desregistrarDe(vistaJuego);
+            if (movimientos != null) movimientos.desregistrarDe((java.awt.Component) vistaJuego);
             this.movimientos = null;
 
             boolean hayMasNiveles = gestorNiveles.getNivelActualIndex() < gestorNiveles.getTotalNiveles() - 1;
             if (hayMasNiveles) {
                 reproductorSonido.reproducirPasoNivel();
                 pasoNivelPanel.setMensaje("Nivel " + getNivelActual() + " completado  ·  Puntaje: " + getScore());
-                ventana.mostrarPasoNivel();
+                navegador.mostrarPasoNivel();
             } else {
                 reproductorSonido.reproducirVictoria();
                 victoriaPanel.setMensaje("Puntaje: " + getScore()
                         + "  |  Pasos: " + getSteps() + "  |  Mov. cajas: " + getPushes());
-                ventana.mostrarVictoria();
+                navegador.mostrarVictoria();
             }
         }
     }
@@ -161,10 +169,11 @@ public class GameController implements ContextoItem, ControladorVista {
         if (gestorDePartida.isGrabacionVacia()) return;
         if (reproductor != null) reproductor.detener();
 
-        reproductor = new ReproductorPartida(tablero, gestorDePartida.getGrabacion(), vistaJuego.getTableroPanel());
+        Tablero tableroReplay = (tableroParaReplay != null) ? tableroParaReplay : tablero;
+        reproductor = new ReproductorPartida(tableroReplay, gestorDePartida.getGrabacion(), vistaJuego.getTableroPanel());
         replayPanel.cargar(vistaJuego.getTableroPanel(), reproductor, mostrarContinuar,
                 e -> volverAlMenu(), e -> siguienteNivel());
-        ventana.mostrarReplay();
+        navegador.mostrarReplay();
         reproductor.play();
     }
 
@@ -173,17 +182,19 @@ public class GameController implements ContextoItem, ControladorVista {
             reproductor.detener();
             reproductor = null;
         }
+        tableroParaReplay = null;
         vistaJuego.recuperarTablero();
         gestorNiveles.reiniciarProgreso();
         tablero = gestorNiveles.getTableroActual();
         sincronizarJugador();
         recargarTablero();
-        if (movimientos != null) movimientos.desregistrarDe(vistaJuego);
+        if (movimientos != null) movimientos.desregistrarDe((java.awt.Component) vistaJuego);
         this.movimientos = null;
-        ventana.mostrarMenu();
+        navegador.mostrarMenu();
     }
 
     private void recargarTablero() {
+        tableroParaReplay = null;
         tablero.suscribirVista(vistaJuego.getTableroPanel());
         configurarCallbacksTablero();
         gestorDePartida.reiniciar();
@@ -205,13 +216,13 @@ public class GameController implements ContextoItem, ControladorVista {
         jugador.setOrientacion(Orientacion.FRENTE);
         tablero = gestorNiveles.reiniciarNivelActual();
         if (movimientos != null) {
-            movimientos.desregistrarDe(vistaJuego);
+            movimientos.desregistrarDe((java.awt.Component) vistaJuego);
         }
         recargarTablero();
         if (movimientos == null) {
             movimientos = new MovimientoTeclado(this);
         }
-        movimientos.registrarEn(vistaJuego);
+        movimientos.registrarEn((java.awt.Component) vistaJuego);
         vistaJuego.requestFocusInWindow();
     }
 
@@ -256,9 +267,9 @@ public class GameController implements ContextoItem, ControladorVista {
         sincronizarJugador();
         jugador.setOrientacion(Orientacion.FRENTE);
         recargarTablero();
-        ventana.mostrarJuego();
+        navegador.mostrarJuego();
         this.movimientos = new MovimientoTeclado(this);
-        movimientos.registrarEn(vistaJuego);
+        movimientos.registrarEn((java.awt.Component) vistaJuego);
         vistaJuego.requestFocusInWindow();
     }
 
@@ -311,9 +322,10 @@ public class GameController implements ContextoItem, ControladorVista {
             reproductor = null;
         }
         vistaJuego.recuperarTablero();
+        tableroParaReplay = tablero;
         gestorNiveles.reiniciarProgreso();
         tablero = gestorNiveles.getTableroActual();
-        if (movimientos != null) movimientos.desregistrarDe(vistaJuego);
+        if (movimientos != null) movimientos.desregistrarDe((java.awt.Component) vistaJuego);
         this.movimientos = null;
         mostrarGameOver(motivo);
     }

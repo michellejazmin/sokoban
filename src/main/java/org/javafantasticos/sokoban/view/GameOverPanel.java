@@ -2,10 +2,11 @@ package org.javafantasticos.sokoban.view;
 
 import javax.swing.*;
 import java.awt.*;
+import org.javafantasticos.sokoban.interfaces.PantallaGameOver;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
-public class GameOverPanel extends JPanel {
+public class GameOverPanel extends JPanel implements PantallaGameOver {
     private static GameOverPanel instancia;
 
     private final JLabel tituloLabel;

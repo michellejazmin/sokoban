@@ -1,13 +1,14 @@
 package org.javafantasticos.sokoban.view;
 
 import javax.swing.*;
+import org.javafantasticos.sokoban.interfaces.NavegadorPantallas;
 import java.awt.*;
 
 /**
  * Patrón Singleton: la ventana principal del juego es única durante toda la
  * ejecución; tener más de una rompería el CardLayout y el ciclo de vida Swing.
  */
-public class Ventana extends JFrame {
+public class Ventana extends JFrame implements NavegadorPantallas {
     private static Ventana instancia;
 
     private final JPanel contenedor;
