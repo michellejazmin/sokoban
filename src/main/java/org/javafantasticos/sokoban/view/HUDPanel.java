@@ -28,7 +28,6 @@ public class HUDPanel extends JPanel {
         HUD_FONT   = UIResources.cargarFuenteRegular(14);
         SCORE_FONT = UIResources.cargarFuenteBold(18);
 
-        setBackground(new Color(0x1E, 0x2A, 0x38));
         setLayout(new GridLayout(5, 1, 0, 2));
         setBorder(new EmptyBorder(6, 12, 6, 12));
 

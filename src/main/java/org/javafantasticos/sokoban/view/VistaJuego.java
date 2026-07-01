@@ -11,23 +11,28 @@ import java.awt.*;
 /**
  * Ventana principal del juego.
  * Ensambla el panel de dibujo, el HUD y registra el listener de teclado.
- *
- * Patrón Singleton: única vista de juego durante toda la partida.
  */
 public class VistaJuego extends JPanel {
     //private static VistaJuego instancia;
 
     private final TableroPanel tableroPanel;
     private final HUDPanel hudPanel;
+    private static final Color COLOR_FONDO = new Color(0x1e2a38);
+    private final JPanel centerWrapper;
 
     public VistaJuego(Tablero tablero, GameController controller) {
         super();
         this.setLayout(new BorderLayout());
+        this.setBackground(COLOR_FONDO);
 
         this.tableroPanel = new TableroPanel(tablero, controller::getOrientacion);
-        this.add(tableroPanel, BorderLayout.CENTER);
+        this.centerWrapper = new JPanel(new GridBagLayout());
+        this.centerWrapper.setOpaque(false);
+        this.centerWrapper.add(tableroPanel);
+        this.add(centerWrapper, BorderLayout.CENTER);
 
         this.hudPanel = HUDPanel.getInstancia();
+        this.hudPanel.setOpaque(false);
         this.add(hudPanel, BorderLayout.SOUTH);
 
         hudPanel.onUndo(e -> {
@@ -47,13 +52,6 @@ public class VistaJuego extends JPanel {
         controller.setOnMove(tableroPanel::repaint);
     }
 
-    /*public static VistaJuego getInstancia(Tablero tablero, GameController controller) {
-        if (instancia == null) {
-            instancia = new VistaJuego(tablero, controller);
-        }
-        return instancia;
-    }*/
-
     public TableroPanel getTableroPanel() {
         return tableroPanel;
     }
@@ -64,8 +62,8 @@ public class VistaJuego extends JPanel {
      * contenedor a la vez).
      */
     public void recuperarTablero() {
-        if (tableroPanel.getParent() != this) {
-            add(tableroPanel, BorderLayout.CENTER);
+        if (tableroPanel.getParent() != this.centerWrapper) {
+            centerWrapper.add(tableroPanel, BorderLayout.CENTER);
             revalidate();
             repaint();
         }

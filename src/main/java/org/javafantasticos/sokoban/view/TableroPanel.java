@@ -13,7 +13,6 @@ import java.util.List;
 /**
  * Panel que dibuja el estado actual del tablero.
  * Cada celda se representa con un color según su símbolo.
- * Patrón Singleton: único panel de dibujo del tablero durante toda la partida.
  * Al cambiar de nivel se actualiza vía {@link #actualizar(Tablero)} (Observer).
  */
 public class TableroPanel extends JPanel implements Suscriptor {
@@ -33,13 +32,6 @@ public class TableroPanel extends JPanel implements Suscriptor {
         int alto  = tablero.getGrillaInferior().size() * TAMANIO_CELDA;
         setPreferredSize(new Dimension(ancho, alto));
     }
-
-    /*public static TableroPanel getInstancia(Tablero tablero) {
-        if (instancia == null) {
-            instancia = new TableroPanel(tablero);
-        }
-        return instancia;
-    }*/
 
     /**
      * Redibuja el tablero. Llamar después de cada movimiento.

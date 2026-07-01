@@ -288,18 +288,4 @@ public class Tablero {
         return count;
     }
 
-    // TODO: modificar el método para que funcione con la implementación de dos grillas
-    /*@Override
-    public String toString() {
-        StringBuilder tableroTexto = new StringBuilder();
-
-        for (List<ElementoBase> fila : grilla) {
-            for (ElementoBase elemento : fila) {
-                tableroTexto.append(elemento.getSimbolo()).append(' ');
-            }
-            tableroTexto.append(System.lineSeparator());
-        }
-
-        return tableroTexto.toString();
-    }*/
 }

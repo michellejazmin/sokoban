@@ -12,9 +12,8 @@ import java.util.List;
 
 /**
  * Implementación concreta que extrae niveles leyendo un archivo de texto (.txt).
- * No es Singleton a propósito: es stateless y se inyecta a través de la interfaz
- * {@link LectorNiveles}, lo que permite reemplazarlo (p. ej. por un lector JSON
- * o un mock para tests) sin tocar al resto del sistema.
+ * e inyecta a través de la interfaz {@link LectorNiveles}, lo que permite reemplazarlo
+ * (p. ej. por un lector JSON o un mock para tests) sin tocar al resto del sistema.
  */
 public final class TxtLevelsExtractor implements LectorNiveles {
     private static TxtLevelsExtractor instancia;
