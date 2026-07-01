@@ -176,6 +176,7 @@ public class GameController implements ContextoItem, ControladorVista {
         vistaJuego.recuperarTablero();
         gestorNiveles.reiniciarProgreso();
         tablero = gestorNiveles.getTableroActual();
+        sincronizarJugador();
         recargarTablero();
         if (movimientos != null) movimientos.desregistrarDe(vistaJuego);
         this.movimientos = null;
@@ -186,6 +187,7 @@ public class GameController implements ContextoItem, ControladorVista {
         tablero.suscribirVista(vistaJuego.getTableroPanel());
         configurarCallbacksTablero();
         gestorDePartida.reiniciar();
+        sincronizarJugador();
         gestorDePartida.guardarInicial(tablero);
         hudPanel.actualizar(this);
         vistaJuego.getTableroPanel().actualizar(tablero);
@@ -243,10 +245,15 @@ public class GameController implements ContextoItem, ControladorVista {
         return jugador.getOrientacion();
     }
 
+    public void sincronizarJugador() {
+        this.jugador = tablero.getJugador();
+    }
+
     private void siguienteNivel() {
         vistaJuego.recuperarTablero();
         gestorNiveles.avanzarNivel();
         tablero = gestorNiveles.getTableroActual();
+        sincronizarJugador();
         jugador.setOrientacion(Orientacion.FRENTE);
         recargarTablero();
         ventana.mostrarJuego();
