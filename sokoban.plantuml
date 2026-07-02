@@ -774,35 +774,36 @@ class VistaJuego {
 }
 
 Aceite               --^  ElementoBase
+BaseOverlayPanel ..> UIResources : <<use>>
 Bomba                --^  ItemPiso
 Caja                 --|>  ElementoBase        
 CajaFragil           --|>  Caja                
 CajaLlave            --|>  Caja                
 CajaNormal           --|>  Caja                
-'Caretaker            ..>  Snapshot            : "«create»"
+'Caretaker            ..>  Snapshot            : <<create>>
 Caretaker           "1" *--> "history\n*" Snapshot            
 Cerrojo              --|>  Destino             
 Destino              --|>  ElementoBase        
 ElementoBase        "1" *--> "coordenada\n1" Coordenada
-ElementoFactory      ..>  Aceite              : "«create»"
-ElementoFactory      ..>  Bomba               : "«create»"
-ElementoFactory      ..>  CajaFragil          : "«create»"
-ElementoFactory      ..>  CajaLlave           : "«create»"
-ElementoFactory      ..>  CajaNormal          : "«create»"
-ElementoFactory      ..>  Cerrojo             : "«create»"
-ElementoFactory      ..>  Destino             : "«create»"
-ElementoFactory      ..>  ElementoFactory     : "«create»"
+ElementoFactory      ..>  Aceite              : <<create>>
+ElementoFactory      ..>  Bomba               : <<create>>
+ElementoFactory      ..>  CajaFragil          : <<create>>
+ElementoFactory      ..>  CajaLlave           : <<create>>
+ElementoFactory      ..>  CajaNormal          : <<create>>
+ElementoFactory      ..>  Cerrojo             : <<create>>
+ElementoFactory      ..>  Destino             : <<create>>
+'ElementoFactory      ..>  ElementoFactory     : <<create>>
 ElementoFactory     "1" *--> "instancia\n1" ElementoFactory
-ElementoFactory      ..>  ItemMoneda          : "«create»"
-ElementoFactory      ..>  ItemUndoExtra       : "«create»"
-ElementoFactory      ..>  Jugador             : "«create»"
-ElementoFactory      ..>  Pared               : "«create»"
-ElementoFactory      ..>  Reja                : "«create»"
-ElementoFactory      ..>  Suelo               : "«create»"
+ElementoFactory      ..>  ItemMoneda          : <<create>>
+ElementoFactory      ..>  ItemUndoExtra       : <<create>>
+ElementoFactory      ..>  Jugador             : <<create>>
+ElementoFactory      ..>  Pared               : <<create>>
+ElementoFactory      ..>  Reja                : <<create>>
+ElementoFactory      ..>  Suelo               : <<create>>
 GameController      "1" *--> "instancia\n1" GameController      
-'GameController       ..>  GameController      : "«create»"
+'GameController       ..>  GameController      : <<create>>
 GameController      "1" *--> "flowController\n1" GameFlowController  
-'GameController       ..>  GameFlowController  : "«create»"
+'GameController       ..>  GameFlowController  : <<create>>
 GameController       ..|>  IContextoItem       
 GameController       ..|>  IMoveCallback       
 GameController      "1" *--> "navegador\n1" INavegadorPantallas 
@@ -812,14 +813,14 @@ GameController      "1" *--> "victoriaPanel\n1" IPantallaVictoria
 GameController      "1" *--> "reproductorSonido\n1" IReproductorSonido  
 GameController      "1" *--> "vistaMenu\n1" IVistaMenu          
 GameController      "1" *--> "replayPanel\n1" IVistaReplay        
-'GameController       ..>  InputController     : "«create»"
+'GameController       ..>  InputController     : <<create>>
 GameController      "1" *--> "inputController\n1" InputController     
 GameController      "1" *--> "reproductor\n1" ReproductorPartida  
-'GameController       ..>  ReproductorPartida  : "«create»"
+'GameController       ..>  ReproductorPartida  : <<create>>
 GameController      "1" *--> "tableroParaReplay\n1" Tablero             
 GameController      "1" *--> "vistaJuego\n1" VistaJuego          
-'GameController       ..>  VistaJuego          : "«create»"
-'GameFlowController   ..>  GestorDePartida     : "«create»"
+'GameController       ..>  VistaJuego          : <<create>>
+'GameFlowController   ..>  GestorDePartida     : <<create>>
 GameFlowController  "1" *--> "gestorDePartida\n1" GestorDePartida     
 GameFlowController  "1" *--> "gestorNiveles\n1" GestorNiveles       
 GameFlowController   ..|>  IHUDDataSource      
@@ -830,58 +831,63 @@ GameFlowController  "1" *--> "jugador\n1" Jugador
 GameFlowController  "1" *--> "tablero\n1" Tablero             
 GameOverPanel        --|>  BaseOverlayPanel    
 GameOverPanel       "1" *--> "instancia\n1" GameOverPanel       
-'GameOverPanel        ..>  GameOverPanel       : "«create»"
+'GameOverPanel        ..>  GameOverPanel       : <<create>>
 GameOverPanel        ..|>  IPantallaGameOver   
-GestorDePartida     "1" *--> "caretaker\n1" Caretaker           
-'GestorDePartida      ..>  Caretaker           : "«create»"
-'GestorDePartida      ..>  Grabacion           : "«create»"
+GameOverPanel ..> UIResources : <<use>>
+GestorDePartida     "1" *--> "caretaker\n1" Caretaker
+'GestorDePartida      ..>  Caretaker           : <<create>>
+'GestorDePartida      ..>  Grabacion           : <<create>>
 GestorDePartida     "1" *--> "grabacion\n1" Grabacion           
-'GestorNiveles        ..>  GestorNiveles       : "«create»"
+'GestorNiveles        ..>  GestorNiveles       : <<create>>
 GestorNiveles       "1" *--> "instancia\n1" GestorNiveles       
 GestorNiveles       "1" *--> "tableros\n*" Tablero             
 GestorNiveles       "1" *--> "factory\n1" TableroFactory      
-'GestorSonido         ..>  GestorSonido        : "«create»"
+'GestorSonido         ..>  GestorSonido        : <<create>>
 GestorSonido "1" *--> "instancia\n1" GestorSonido        
 GestorSonido ..|>  IReproductorSonido  
-'Grabacion            ..>  Snapshot            : "«create»"
+'Grabacion            ..>  Snapshot            : <<create>>
 Grabacion "1" *--> "frames\n*" Snapshot            
 HUDPanel  "1" *--> "instancia\n1" HUDPanel            
-'HUDPanel             ..>  HUDPanel            : "«create»"
-HUDPanel ..|>  IVistaHUD           
+'HUDPanel             ..>  HUDPanel            : <<create>>
+HUDPanel ..|>  IVistaHUD : <<use>>
+HUDPanel ..> UIResources : <<use>>
 InputController  "1" *--> "movimientos\n1" IMovimientos        
-'InputController      ..>  MovimientoTeclado   : "«create»"
+'InputController      ..>  MovimientoTeclado   : <<create>>
 ItemMoneda --|>  ItemPiso            
 ItemPiso --|> ElementoBase        
-'ItemPiso             ..>  Suelo               : "«create»"
+'ItemPiso             ..>  Suelo               : <<create>>
 ItemUndoExtra --|>  ItemPiso            
 Jugador --|>  ElementoBase        
 Jugador             "1" *--> "orientacion\n1" Orientacion         
 Main --> ILectorNiveles
 Main --> GameController
 Menu --|>  IVistaMenu
-Menu                "1" *--> "instancia\n1" Menu                
-'Menu                 ..>  Menu                : "«create»"
+Menu                "1" *--> "instancia\n1" Menu
+Menu ..> UIResources : <<use>>
+'Menu                 ..>  Menu                : <<create>>
 MovimientoTeclado --|>  IMovimientos        
 MovimientoTeclado   "1" *--> "controller\n1" InputController        
 Pared --|> ElementoBase
 PasoNivelPanel --|>  BaseOverlayPanel
 PasoNivelPanel --|>  IPantallaPasoNivel  
 PasoNivelPanel      "1" *--> "instancia\n1" PasoNivelPanel      
-'PasoNivelPanel       ..>  PasoNivelPanel      : "«create»"
+'PasoNivelPanel       ..>  PasoNivelPanel      : <<create>>
+PasoNivelPanel ..> UIResources : <<use>>
 Reja                 --|>  ElementoBase        
 Reja                "1" *--> "estado\n1" IEstadoReja         
-'Reja                 ..>  RejaCerrada         : "«create»"
+'Reja                 ..>  RejaCerrada         : <<create>>
 RejaAbierta          ..|>  IEstadoReja         
 RejaCerrada          ..|>  IEstadoReja         
 ReplayPanel         "1" *--> "reproductor\n1" IReproductorVista   
 ReplayPanel          ..|>  IVistaReplay        
-'ReplayPanel          ..>  ReplayPanel         : "«create»"
-ReplayPanel         "1" *--> "instancia\n1" ReplayPanel         
+'ReplayPanel          ..>  ReplayPanel         : <<create>>
+ReplayPanel         "1" *--> "instancia\n1" ReplayPanel
+ReplayPanel ..> UIResources : <<use>>
 ReproductorPartida  "1" *--> "grabacion\n1" Grabacion           
 ReproductorPartida   ..|>  IReproductorVista   
 ReproductorPartida  "1" *--> "panelVista\n1" ISuscriptor         
 ReproductorPartida  "1" *--> "tablero\n1" Tablero             
-Snapshot             +-[#820000,plain]-  Caretaker           
+Snapshot             +--  Caretaker
 Snapshot            "1" *--> "memento\n1" TableroMemento      
 Suelo                --|>  ElementoBase        
 Tablero             "1" *--> "cajas\n*" Caja                
@@ -891,35 +897,38 @@ Tablero             "1" *--> "tableroPanel\n1" ISuscriptor
 Tablero              ..|>  ITableroFisico      
 Tablero             "1" *--> "jugador\n1" Jugador             
 Tablero             "1" *--> "motorFisico\n1" MotorFisico         
-'Tablero              ..>  MotorFisico         : "«create»"
-Tablero             "1" *--> "rejas\n*" Reja                
-'Tablero              ..>  RejaAbierta         : "«create»"
-'Tablero              ..>  RejaCerrada         : "«create»"
-'Tablero              ..>  TableroMemento      : "«create»"
-'TableroFactory       ..>  Cerrojo             : "«create»"
-'TableroFactory       ..>  Coordenada          : "«create»"
+'Tablero              ..>  MotorFisico         : <<create>>
+Tablero             "1" *--> "rejas\n*" Reja
+Tablero ..> ReglasDelJuego : <<use>>
+'Tablero              ..>  RejaAbierta         : <<create>>
+'Tablero              ..>  RejaCerrada         : <<create>>
+'Tablero              ..>  TableroMemento      : <<create>>
+'TableroFactory       ..>  Cerrojo             : <<create>>
+'TableroFactory       ..>  Coordenada          : <<create>>
 TableroFactory      "1" *--> "elementoFactory\n1" ElementoFactory     
-'TableroFactory       ..>  Reja                : "«create»"
-'TableroFactory       ..>  Tablero             : "«create»"
-'TableroFactory       ..>  TableroFactory      : "«create»"
+'TableroFactory       ..>  Reja                : <<create>>
+'TableroFactory       ..>  Tablero             : <<create>>
+'TableroFactory       ..>  TableroFactory      : <<create>>
 TableroFactory      "1" *--> "instancia\n1" TableroFactory      
 TableroMemento      "1" *--> "estadosReja\n*" ElementoBase        
 TableroMemento      "1" *--> "estadosReja\n*" IEstadoReja         
 TableroMemento      "1" *--> "orientacion\n1" Orientacion         
 TableroPanel         ..|>  ISuscriptor         
 TableroPanel        "1" *--> "tablero\n1" Tablero
+TableroPanel ..> UIResources : <<use>>
 TxtLevelsExtractor ..|>  ILectorNiveles
 TxtLevelsExtractor "1" *--> "instancia\n1" TxtLevelsExtractor
-'TxtLevelsExtractor   ..>  TxtLevelsExtractor  : "«create»"
+'TxtLevelsExtractor   ..>  TxtLevelsExtractor  : <<create>>
 Ventana ..|>  INavegadorPantallas
-'Ventana ..> Ventana : "<<create>>"
+'Ventana ..> Ventana : <<create>>
 Ventana "1" *--> "instancia\n1" Ventana
 VictoriaPanel ..|> BaseOverlayPanel
 VictoriaPanel ..|>  IPantallaVictoria
 VictoriaPanel "1" *--> "instancia\n1" VictoriaPanel
-'VictoriaPanel ..> VictoriaPanel : "<<create>>"
+'VictoriaPanel ..> VictoriaPanel : <<create>>
+VictoriaPanel ..> UIResources : <<use>>
 VistaJuego "1" *--> "hudPanel\n1" HUDPanel
 VistaJuego ..|> IVistaDeJuego
 VistaJuego "1" *--> "tableroPanel\n1" TableroPanel
-'VistaJuego ..> TableroPanel : "<<create>>"
+'VistaJuego ..> TableroPanel : <<create>>
 @enduml
