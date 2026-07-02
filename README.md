@@ -28,14 +28,15 @@ mvn exec:java -Dexec.mainClass="org.javafantasticos.sokoban.Main"
 
 ## Controles
 
-| Tecla     | Acción               |
-|-----------|----------------------|
-| ↑ / W     | Mover arriba         |
-| ↓ / S     | Mover abajo          |
-| ← / A     | Mover izquierda      |
-| → / D     | Mover derecha        |
+| Tecla     | Acción                         |
+|-----------|--------------------------------|
+| ↑ / W     | Mover arriba                   |
+| ↓ / S     | Mover abajo                    |
+| ← / A     | Mover izquierda                |
+| → / D     | Mover derecha                  |
+| Ctrl+Z    | Deshacer últimos 5 movimientos |
 
-**Botones en pantalla:** Undo (deshacer), Reiniciar nivel, Volver al menú.
+**Botones en pantalla:** Deshacer, Reiniciar nivel, Volver al menú.
 
 ## Funcionalidades
 
@@ -158,7 +159,7 @@ Editado en PlantUML y en formato PNG para mayor comodidad:
 
 Video que demuestra las características del juego:
 
-➡️ [` JavaFantásticos – Gameplay Sokoban - YouTube`](https://www.youtube.com/watch?v=pltDtLvrL6M)
+➡️ [`JavaFantásticos – Gameplay Sokoban - YouTube`](https://www.youtube.com/watch?v=pltDtLvrL6M)
 
 ## Assets
 
