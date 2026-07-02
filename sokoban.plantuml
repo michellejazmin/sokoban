@@ -1,0 +1,925 @@
+@startuml Sokoban
+
+!theme sunlust
+top to bottom direction
+skinparam linetype ortho
+skinparam classAttributeIconSize 0
+skinparam defaultFontName "Lilex"
+
+class Aceite {
+  + Aceite(Coordenada): 
+  + esOcupable(): boolean
+  + esResbaloso(): boolean
+}
+class BaseOverlayPanel {
+  # BaseOverlayPanel(String, String): 
+  # mensajeLabel: JLabel
+  # tituloLabel: JLabel
+  # backgroundImage: BufferedImage
+  # crearBoton(String, Font, Color): JButton
+  # agregarBotonEn(int, JButton): void
+  # paintComponent(Graphics): void
+}
+class Bomba {
+  + Bomba(Coordenada): 
+  - MOTIVO: String
+  # aplicarEfecto(IContextoItem): void
+}
+class Caja {
+  # Caja(Coordenada, char): 
+  + esMovible(): boolean
+  + esCajaLlave(): boolean
+  + alSerEmpujada(Consumer<String>): boolean
+  + actualizar(Coordenada, int, int): void
+  + getTtl(): int
+  + setTtl(int): void
+  + bloqueaPasoAJugadorMasCaja(): boolean
+}
+class CajaFragil {
+  + CajaFragil(Coordenada): 
+  - ttl: int
+  + reducirVida(): void
+  + sinVida(): boolean
+  + setTtl(int): void
+  + getOverlayTexto(): String
+  + alSerEmpujada(Consumer<String>): boolean
+  + getTtl(): int
+}
+class CajaLlave {
+  + CajaLlave(Coordenada): 
+  + esCajaLlave(): boolean
+}
+class CajaNormal {
+  + CajaNormal(Coordenada): 
+}
+class Caretaker {
+  + Caretaker(): 
+  - history: Deque<Snapshot>
+  - maxUndoUses: int
+  - UNDO_STEPS: int
+  - undoCount: int
+  - MAX_UNDO_USES_INICIAL: int
+  + saveState(TableroMemento, int, int): void
+  + getMaxUndoUses(): int
+  + canUndo(): boolean
+  + getRemainingUndos(): int
+  + agregarUsoUndo(): void
+  + getUndoStepSize(): int
+  + undo(Tablero): Snapshot
+  + reset(): void
+}
+class Cerrojo {
+  + Cerrojo(Coordenada): 
+  + esCerrojo(): boolean
+}
+class Coordenada {
+  + Coordenada(int, int): 
+  - posX: int
+  - posY: int
+  + getPosX(): int
+  + setPosX(int): void
+  + setPosY(int): void
+  + hashCode(): int
+  + getPosY(): int
+  + equals(Object): boolean
+}
+class Destino {
+  # Destino(Coordenada, char): 
+  + Destino(Coordenada): 
+  + esOcupable(): boolean
+  + esCerrojo(): boolean
+}
+class ElementoBase {
+  # ElementoBase(Coordenada, char): 
+  # coordenada: Coordenada
+  - simbolo: char
+  + esOcupable(): boolean
+  + setEstadoReja(IEstadoReja): void
+  + getCoordenada(): Coordenada
+  + setTtl(int): void
+  + getOverlayTexto(): String
+  + getEstadoReja(): IEstadoReja
+  + bloqueaPaso(): boolean
+  + getSimbolo(): char
+  + esResbaloso(): boolean
+  + actualizar(Coordenada, int, int): void
+  + esMovible(): boolean
+  + bloqueaPasoAJugadorMasCaja(): boolean
+  + aplicar(IContextoItem): ElementoBase
+  + alSerEmpujada(Consumer<String>): boolean
+}
+class ElementoFactory {
+  - ElementoFactory(): 
+  - instancia: ElementoFactory
+  + crearElementoEstatico(char, Coordenada): ElementoBase
+  + crearDestino(Coordenada): Destino
+  + crearCaja(char, Coordenada): Caja
+  + getInstancia(): ElementoFactory
+  + crearJugador(Coordenada): Jugador
+  + crearSuelo(Coordenada): Suelo
+}
+class GameController {
+  - GameController(): 
+  - replayPanel: IVistaReplay
+  - reproductor: ReproductorPartida
+  - pasoNivelPanel: IPantallaPasoNivel
+  - inputController: InputController
+  - reproductorSonido: IReproductorSonido
+  - victoriaPanel: IPantallaVictoria
+  - flowController: GameFlowController
+  - vistaJuego: VistaJuego
+  - instancia: GameController
+  - vistaMenu: IVistaMenu
+  - onMove: Runnable
+  - navegador: INavegadorPantallas
+  - gameOverPanel: IPantallaGameOver
+  - tableroParaReplay: Tablero
+  + terminarPartida(String): void
+  - empezarJuego(): void
+  + getTotalNiveles(): int
+  - siguienteNivel(): void
+  + reiniciarNivel(): void
+  + getUndoStepSize(): int
+  + getInstancia(): GameController
+  + volverAlMenu(): void
+  + sumarUndoExtra(): void
+  + getTotalCajas(): int
+  + getScore(): int
+  + getUndoRemaining(): int
+  - mostrarGameOver(String): void
+  + getTablero(): Tablero
+  + getSteps(): int
+  - reproducirPartida(boolean): void
+  + getNivelActual(): int
+  + undo(): void
+  + sumarBonus(int): void
+  + getPushes(): int
+  - configurarCallbacks(): void
+  + getMaxUndoUses(): int
+  + setOnMove(Runnable): void
+  + canUndo(): boolean
+  - gestorDePartida(): GestorDePartida
+  + getCajasEnDestino(): int
+}
+class GameFlowController {
+  + GameFlowController(GestorNiveles, INavegadorPantallas, IVistaDeJuego): 
+  - onMove: BiConsumer<Integer, Tablero>
+  - onGameOver: Consumer<String>
+  - navegador: INavegadorPantallas
+  - jugador: Jugador
+  - onLevelComplete: Runnable
+  - vistaJuego: IVistaDeJuego
+  - onPisada: UnaryOperator<ElementoBase>
+  - gestorNiveles: GestorNiveles
+  - tablero: Tablero
+  - onRejasCambiadas: Runnable
+  - hudPanel: IVistaHUD
+  - gestorDePartida: GestorDePartida
+  + canUndo(): boolean
+  - recargar(): void
+  + recargarConSubscripcion(): void
+  + getGestorDePartida(): GestorDePartida
+  + getTotalNiveles(): int
+  + isPartidaTerminada(): boolean
+  + reiniciarProgreso(): void
+  + getPushes(): int
+  + getCajasEnDestino(): int
+  + empezarJuego(): void
+  + reiniciarNivel(): void
+  + getScore(): int
+  - reconfigurarCallbacks(): void
+  + verificarNivelCompletado(): void
+  + sincronizarJugador(): void
+  + getTablero(): Tablero
+  + undo(): void
+  + getTotalCajas(): int
+  + getUndoStepSize(): int
+  + configurarCallbacks(Runnable, BiConsumer<Integer, Tablero>, Consumer<String>, UnaryOperator<ElementoBase>, Runnable): void
+  + setTablero(Tablero): void
+  + mostrarGameOver(Consumer<String>, String): void
+  + setPartidaTerminada(boolean): void
+  + getNivelActual(): int
+  + getUndoRemaining(): int
+  + getSteps(): int
+  + siguienteNivel(): void
+  + volverAlMenu(): void
+  + getJugador(): Jugador
+  + getMaxUndoUses(): int
+}
+class GameOverPanel {
+  - GameOverPanel(String): 
+  - botonVolver: JButton
+  - instancia: GameOverPanel
+  - botonReproducir: JButton
+  - botonSalir: JButton
+  + setMotivo(String): void
+  + escucharBotonVolver(ActionListener): void
+  + getInstancia(String): GameOverPanel
+  + escucharBotonReproducir(ActionListener): void
+  + escucharBotonSalir(ActionListener): void
+}
+class GestorDePartida {
+  + GestorDePartida(): 
+  - SCORE_PER_LEVEL: int
+  - pushes: int
+  - bonus: int
+  - grabacion: Grabacion
+  - STEP_PENALTY: int
+  - steps: int
+  - PUSH_PENALTY: int
+  - caretaker: Caretaker
+  - partidaTerminada: boolean
+  + guardarInicial(Tablero): void
+  + getUndoStepSize(): int
+  + registrarMovimiento(TableroMemento, int): void
+  + isPartidaTerminada(): boolean
+  + getGrabacion(): Grabacion
+  + reiniciar(): void
+  + setPartidaTerminada(boolean): void
+  + getPushes(): int
+  + getUndoRemaining(): int
+  + sumarBonus(int): void
+  + terminarPartida(): void
+  + undo(Tablero): boolean
+  + getSteps(): int
+  + sumarUndoExtra(): void
+  + isGrabacionVacia(): boolean
+  + getScore(): int
+  + canUndo(): boolean
+  + getMaxUndoUses(): int
+}
+class GestorNiveles {
+  - GestorNiveles(): 
+  - tableros: List<Tablero>
+  - nivelActualIndex: int
+  - instancia: GestorNiveles
+  - factory: TableroFactory
+  - nivelesTexto: List<List<String>>
+  + reiniciarNivelActual(): Tablero
+  - inicializarTableros(): List<Tablero>
+  + getTableroActual(): Tablero
+  + getNivelActualIndex(): int
+  + reiniciarProgreso(): void
+  + getInstancia(): GestorNiveles
+  + avanzarNivel(): boolean
+  + getTotalNiveles(): int
+}
+class GestorSonido {
+  - GestorSonido(): 
+  - habilitado: boolean
+  - RUTA_SONIDOS: String
+  - instancia: GestorSonido
+  - clips: Map<String, Clip>
+  - precargarSonidos(): void
+  - cargarClip(String, String): void
+  + setHabilitado(boolean): void
+  + detenerTodo(): void
+  + isHabilitado(): boolean
+  + getInstancia(): GestorSonido
+  + reproducir(String): void
+}
+class Grabacion {
+  + Grabacion(): 
+  - frames: List<Snapshot>
+  + grabar(TableroMemento, int, int): void
+  + reset(): void
+  + get(int): Snapshot
+  + size(): int
+  + isEmpty(): boolean
+}
+class HUDPanel {
+  - HUDPanel(): 
+  - HUD_FONT: Font
+  - cajasObjetivoLabel: JLabel
+  - undosRestantesLabel: JLabel
+  - nivelLabel: JLabel
+  - movCajasLabel: JLabel
+  - SCORE_FONT: Font
+  - instancia: HUDPanel
+  - limiteUndoLabel: JLabel
+  - scoreLabel: JLabel
+  - volverAlMenuButton: JButton
+  - resetButton: JButton
+  - pasosLabel: JLabel
+  - undoButton: JButton
+  + onUndo(ActionListener): void
+  - crearFila(Component[]): JPanel
+  - crearBoton(String, Color): JButton
+  - crearFilaCentrada(Component): JPanel
+  - crearLabel(String): JLabel
+  - crearLabel(String, Font, Color): JLabel
+  + onVolverAlMenu(ActionListener): void
+  + getInstancia(): HUDPanel
+  + actualizar(IHUDDataSource): void
+  + onReset(ActionListener): void
+}
+interface IContextoItem << interface >> {
+  + sumarUndoExtra(): void
+  + terminarPartida(String): void
+  + sumarBonus(int): void
+}
+interface IEstadoReja << interface >> {
+  + bloqueaPaso(): boolean
+  + getSimbolo(): char
+  + esOcupable(): boolean
+  + estaAbierta(): boolean
+}
+interface IHUDDataSource << interface >> {
+  + getPushes(): int
+  + getUndoRemaining(): int
+  + getSteps(): int
+  + canUndo(): boolean
+  + getCajasEnDestino(): int
+  + getNivelActual(): int
+  + getUndoStepSize(): int
+  + getTotalNiveles(): int
+  + getTotalCajas(): int
+  + getScore(): int
+  + getMaxUndoUses(): int
+}
+interface ILectorNiveles << interface >> {
+  + extraerNivelesTexto(): List<List<String>>
+  + setRutaArchivo(String): void
+}
+interface IMoveCallback << interface >> {
+  + setOnMove(Runnable): void
+}
+interface IMovimientos << interface >> {
+  + derecha(): void
+  + arriba(): void
+  + registrarEn(Component): void
+  + abajo(): void
+  + izquierda(): void
+  + desregistrarDe(Component): void
+}
+interface INavegadorPantallas << interface >> {
+  + mostrarPasoNivel(): void
+  + mostrarVictoria(): void
+  + setVisible(boolean): void
+  + mostrarGameOver(): void
+  + mostrarJuego(): void
+  + agregarPantalla(JPanel, String): void
+  + mostrarMenu(): void
+  + mostrarReplay(): void
+}
+interface IPantallaGameOver << interface >> {
+  + setMotivo(String): void
+  + escucharBotonReproducir(ActionListener): void
+  + escucharBotonVolver(ActionListener): void
+  + escucharBotonSalir(ActionListener): void
+}
+interface IPantallaPasoNivel << interface >> {
+  + escucharBotonReproducir(ActionListener): void
+  + escucharBotonSiguiente(ActionListener): void
+  + setMensaje(String): void
+  + escucharBotonVolver(ActionListener): void
+}
+interface IPantallaVictoria << interface >> {
+  + escucharBotonReproducir(ActionListener): void
+  + escucharBotonSalir(ActionListener): void
+  + escucharBotonVolver(ActionListener): void
+  + setMensaje(String): void
+}
+interface IReproductorSonido << interface >> {
+  + CAJA_ROTA: String
+  + BOMBA: String
+  + UNDO_ITEM: String
+  + MONEDA: String
+  + UNDO: String
+  + PASO_NIVEL: String
+  + VICTORIA: String
+  + REJA: String
+  + GAME_OVER: String
+  + EMPUJE: String
+  + MOVIMIENTO: String
+  + detenerTodo(): void
+  + reproducir(String): void
+}
+interface IReproductorVista << interface >> {
+  + siguiente(): void
+  + getIndice(): int
+  + play(): void
+  + estaReproduciendo(): boolean
+  + getTotalFrames(): int
+  + anterior(): void
+  + setOnFrameChange(Runnable): void
+  + detener(): void
+  + pausar(): void
+  + reiniciar(): void
+}
+interface ISuscriptor << interface >> {
+  + actualizar(Tablero): void
+}
+interface ITableroFisico << interface >> {
+  + notificarStateChange(TableroMemento, int): void
+  + getJugador(): Jugador
+  + actualizarRejas(): void
+  + getOnPisada(): UnaryOperator<ElementoBase>
+  + notificarVista(): void
+  + limpiarSuperior(int, int): void
+  + crearMemento(): TableroMemento
+  + asignarInferior(int, int, ElementoBase): void
+  + getOnGameOver(): Consumer<String>
+  + getInferior(int, int): ElementoBase
+  + getElemento(int, int): ElementoBase
+  + asignarSuperior(int, int, ElementoBase): void
+}
+interface IVistaDeJuego << interface >> {
+  + requestFocusInWindow(): boolean
+  + getTableroPanel(): ISuscriptor
+  + getHudPanel(): IVistaHUD
+  + recuperarTablero(): void
+}
+interface IVistaHUD << interface >> {
+  + actualizar(IHUDDataSource): void
+}
+interface IVistaMenu << interface >> {
+  + escucharBotonJugar(ActionListener): void
+  + escucharBotonSalir(ActionListener): void
+}
+interface IVistaReplay << interface >> {
+  + cargar(ISuscriptor, IReproductorVista, boolean, ActionListener, ActionListener): void
+}
+class InputController {
+  + InputController(Supplier<Tablero>, Supplier<Jugador>, Runnable): 
+  - componente: Component
+  - jugadorSupplier: Supplier<Jugador>
+  - onUndo: Runnable
+  - tableroSupplier: Supplier<Tablero>
+  - movimientos: IMovimientos
+  + undo(): void
+  + moverDerecha(): void
+  + moverIzquierda(): void
+  + moverArriba(): void
+  + moverAbajo(): void
+  + registrar(Component): void
+  + desregistrar(Component): void
+}
+class ItemMoneda {
+  + ItemMoneda(Coordenada): 
+  - BONUS: int
+  # aplicarEfecto(IContextoItem): void
+}
+class ItemPiso {
+  # ItemPiso(Coordenada, char): 
+  + esOcupable(): boolean
+  # aplicarEfecto(IContextoItem): void
+  + aplicar(IContextoItem): ElementoBase
+}
+class ItemUndoExtra {
+  + ItemUndoExtra(Coordenada): 
+  # aplicarEfecto(IContextoItem): void
+}
+class Jugador {
+  + Jugador(Coordenada): 
+  - orientacion: Orientacion
+  + getOrientacion(): Orientacion
+  + setOrientacion(Orientacion): void
+  + esMovible(): boolean
+}
+class Main {
+  + Main(): 
+  + main(String[]): void
+}
+class Menu {
+  - Menu(): 
+  - instancia: Menu
+  - backgroundImage: BufferedImage
+  - botonSalir: JButton
+  - botonJugar: JButton
+  + escucharBotonJugar(ActionListener): void
+  # paintComponent(Graphics): void
+  + getInstancia(): Menu
+  + escucharBotonSalir(ActionListener): void
+}
+class MotorFisico {
+  + MotorFisico(): 
+  + mover(ITableroFisico, int, int): int
+  - deslizarCaja(ITableroFisico, ElementoBase, int, int): int
+}
+class MovimientoTeclado {
+  + MovimientoTeclado(InputController): 
+  - controller: InputController
+  + keyTyped(KeyEvent): void
+  + desregistrarDe(Component): void
+  + izquierda(): void
+  + registrarEn(Component): void
+  + abajo(): void
+  + arriba(): void
+  + keyPressed(KeyEvent): void
+  + deshacer(): void
+  + derecha(): void
+  + keyReleased(KeyEvent): void
+}
+enum Orientacion << enumeration >> {
+  + Orientacion(): 
+  + ESPALDA: 
+  + IZQUIERDA: 
+  + DERECHA: 
+  + FRENTE: 
+  + valueOf(String): Orientacion
+  + values(): Orientacion[]
+}
+class Pared {
+  + Pared(Coordenada): 
+  + bloqueaPaso(): boolean
+}
+class PasoNivelPanel {
+  - PasoNivelPanel(String): 
+  - botonReproducir: JButton
+  - instancia: PasoNivelPanel
+  - botonVolver: JButton
+  - botonSiguiente: JButton
+  + escucharBotonSiguiente(ActionListener): void
+  + escucharBotonVolver(ActionListener): void
+  + escucharBotonReproducir(ActionListener): void
+  + setMensaje(String): void
+  + getInstancia(String): PasoNivelPanel
+}
+class ReglasDelJuego {
+  + ReglasDelJuego(): 
+  + contarCajasEnDestino(List<Caja>, List<Destino>): int
+  + hayCajaLlaveSobreCerrojo(List<Caja>, List<Destino>): boolean
+}
+class Reja {
+  + Reja(Coordenada): 
+  - estado: IEstadoReja
+  + bloqueaPaso(): boolean
+  + setEstadoReja(IEstadoReja): void
+  + getSimbolo(): char
+  + estaAbierta(): boolean
+  + esOcupable(): boolean
+  + getEstadoReja(): IEstadoReja
+}
+class RejaAbierta {
+  + RejaAbierta(): 
+  + bloqueaPaso(): boolean
+  + esOcupable(): boolean
+  + estaAbierta(): boolean
+  + getSimbolo(): char
+}
+class RejaCerrada {
+  + RejaCerrada(): 
+  + esOcupable(): boolean
+  + bloqueaPaso(): boolean
+  + estaAbierta(): boolean
+  + getSimbolo(): char
+}
+class ReplayPanel {
+  - ReplayPanel(): 
+  - botonPlayPause: JButton
+  - reproductor: IReproductorVista
+  - botonSiguiente: JButton
+  - botonVolver: JButton
+  - botonContinuar: JButton
+  - progresoLabel: JLabel
+  - instancia: ReplayPanel
+  - contenedorTablero: JPanel
+  - botonAnterior: JButton
+  - crearBoton(String, Font, Color): JButton
+  + cargar(ISuscriptor, IReproductorVista, boolean, ActionListener, ActionListener): void
+  + getInstancia(): ReplayPanel
+  - actualizarControles(): void
+  - togglePlay(): void
+}
+class ReproductorPartida {
+  + ReproductorPartida(Tablero, Grabacion, ISuscriptor): 
+  - grabacion: Grabacion
+  - onFrameChange: Runnable
+  - timer: Timer
+  - tablero: Tablero
+  - DELAY_MS: int
+  - panelVista: ISuscriptor
+  - indice: int
+  + getTotalFrames(): int
+  - avanzarAutomatico(): void
+  + reiniciar(): void
+  + estaReproduciendo(): boolean
+  + setOnFrameChange(Runnable): void
+  - mostrarFrameActual(): void
+  + play(): void
+  + anterior(): void
+  + getIndice(): int
+  + pausar(): void
+  + detener(): void
+  - notificar(): void
+  + siguiente(): void
+}
+entity Snapshot << record >> {
+  + Snapshot(TableroMemento, int, int): 
+  - memento: TableroMemento
+  - steps: int
+  - pushes: int
+  + steps(): int
+  + pushes(): int
+  + memento(): TableroMemento
+}
+class Suelo {
+  + Suelo(Coordenada): 
+  + esOcupable(): boolean
+}
+class Tablero {
+  + Tablero(String, List<List<ElementoBase>>, List<List<ElementoBase>>, List<Caja>, List<Destino>, List<Reja>, Jugador): 
+  - elementoBajoJugador: ElementoBase
+  - onGameOver: Consumer<String>
+  - grillaInferior: List<List<ElementoBase>>
+  - grillaSuperior: List<List<ElementoBase>>
+  - onStateChange: BiConsumer<TableroMemento, Integer>
+  - cajas: List<Caja>
+  - motorFisico: MotorFisico
+  - tableroPanel: ISuscriptor
+  - rejas: List<Reja>
+  - onPisada: UnaryOperator<ElementoBase>
+  - onRejasCambiadas: Runnable
+  - objetivos: List<Destino>
+  - nombre: String
+  - jugador: Jugador
+  + getInferior(int, int): ElementoBase
+  ~ getOnStateChange(): BiConsumer<TableroMemento, Integer>
+  + getOnGameOver(): Consumer<String>
+  + crearMemento(): TableroMemento
+  + setOnGameOver(Consumer<String>): void
+  + getCajas(): List<Caja>
+  + mover(int, int): int
+  + limpiarSuperior(int, int): void
+  + notificarStateChange(TableroMemento, int): void
+  + getElemento(int, int): ElementoBase
+  ~ setElementoBajoJugador(ElementoBase): void
+  + desuscribirVista(): void
+  + notificarVista(): void
+  + suscribirVista(ISuscriptor): void
+  + getJugador(): Jugador
+  + setOnRejasCambiadas(Runnable): void
+  + asignarSuperior(int, int, ElementoBase): void
+  + getNombre(): String
+  + getGrillaInferior(): List<List<ElementoBase>>
+  + asignarInferior(int, int, ElementoBase): void
+  ~ getOnRejasCambiadas(): Runnable
+  + setOnPisada(UnaryOperator<ElementoBase>): void
+  + restaurar(TableroMemento): void
+  ~ getElementoBajoJugador(): ElementoBase
+  + actualizarRejas(): void
+  + getObjetivos(): List<Destino>
+  + setOnStateChange(BiConsumer<TableroMemento, Integer>): void
+  + getCajasEnDestino(): int
+  + getGrillaSuperior(): List<List<ElementoBase>>
+  + getOnPisada(): UnaryOperator<ElementoBase>
+  ~ getTableroPanel(): ISuscriptor
+}
+class TableroFactory {
+  - TableroFactory(): 
+  - elementoFactory: ElementoFactory
+  - instancia: TableroFactory
+  + crearTablero(String, List<String>): Tablero
+  + getInstancia(): TableroFactory
+}
+class TableroMemento {
+  ~ TableroMemento(Tablero): 
+  - orientacion: Orientacion
+  - jugadorY: int
+  - grillaInferior: List<List<ElementoBase>>
+  - elementoBajoJugador: ElementoBase
+  - grillaSuperior: List<List<ElementoBase>>
+  - jugadorX: int
+  - estadosReja: Map<ElementoBase, IEstadoReja>
+  - cajasCoords: List<int[]>
+  - cajasTtl: List<Integer>
+  - restaurarGrilla(List<List<ElementoBase>>, List<List<ElementoBase>>): void
+  - copiarGrilla(List<List<ElementoBase>>): List<List<ElementoBase>>
+  - recolectarEstadosReja(List<List<ElementoBase>>): void
+  ~ restaurar(Tablero): void
+}
+class TableroPanel {
+  + TableroPanel(Tablero): 
+  - tablero: Tablero
+  - TAMANIO_CELDA: int
+  # paintComponent(Graphics): void
+  - ajustarTamanio(): void
+  - dibujarCelda(Graphics, char, int, int, BufferedImage): void
+  + actualizar(Tablero): void
+}
+class TxtLevelsExtractor {
+  - TxtLevelsExtractor(): 
+  - instancia: TxtLevelsExtractor
+  - rutaArchivo: String
+  + extraerNivelesTexto(): List<List<String>>
+  + setRutaArchivo(String): void
+  + getInstancia(): TxtLevelsExtractor
+  - agregarTableroSiTieneFilas(List<List<String>>, List<String>): void
+}
+class UIResources {
+  - UIResources(): 
+  - RUTA_FUENTE_REGULAR: String
+  - RUTA_FONDO: String
+  - RUTA_ACEITE: String
+  - RUTA_DESHACER: String
+  - RUTA_JUGADOR_IZQUIERDA: String
+  - RUTA_CAJA_LLAVE: String
+  - RUTA_BOMBA: String
+  - RUTA_PARED: String
+  - RUTA_CAJA_NORMAL: String
+  - RUTA_REJA: String
+  - RUTA_MONEDA: String
+  - RUTA_CERROJO: String
+  - RUTA_FUENTE_BOLD: String
+  - RUTA_JUGADOR_DERECHA: String
+  - RUTA_CAJA_FRAGIL: String
+  - RUTA_DESTINO: String
+  - RUTA_SUELO: String
+  - RUTA_JUGADOR_FRENTE: String
+  - RUTA_JUGADOR_ESPALDA: String
+  + cargarFuenteBold(float): Font
+  + dibujarFondoMosaico(Graphics, BufferedImage, int, int): void
+  + cargarFuenteRegular(float): Font
+  + cargarFondo(): BufferedImage?
+  + cargarJugador(Orientacion): BufferedImage?
+  + cargarBloque(char): BufferedImage?
+}
+class Ventana {
+  - Ventana(): 
+  - contenedor: JPanel
+  - cardLayout: CardLayout
+  - instancia: Ventana
+  + mostrarReplay(): void
+  - mostrarPantalla(String): void
+  + mostrarJuego(): void
+  + mostrarPasoNivel(): void
+  + mostrarMenu(): void
+  + mostrarGameOver(): void
+  + mostrarVictoria(): void
+  + getInstancia(): Ventana
+  + agregarPantalla(JPanel, String): void
+}
+class VictoriaPanel {
+  - VictoriaPanel(String): 
+  - botonVolver: JButton
+  - botonSalir: JButton
+  - botonReproducir: JButton
+  - instancia: VictoriaPanel
+  + escucharBotonReproducir(ActionListener): void
+  + getInstancia(String): VictoriaPanel
+  + escucharBotonVolver(ActionListener): void
+  + setMensaje(String): void
+  + escucharBotonSalir(ActionListener): void
+}
+class VistaJuego {
+  + VistaJuego(Tablero, Runnable, Runnable, Runnable, IMoveCallback): 
+  - hudPanel: HUDPanel
+  - COLOR_FONDO: Color
+  - tableroPanel: TableroPanel
+  - centerWrapper: JPanel
+  + getTableroPanel(): TableroPanel
+  + recuperarTablero(): void
+  + getHudPanel(): IVistaHUD
+}
+
+Aceite               --^  ElementoBase
+Bomba                --^  ItemPiso
+Caja                 --|>  ElementoBase        
+CajaFragil           --|>  Caja                
+CajaLlave            --|>  Caja                
+CajaNormal           --|>  Caja                
+'Caretaker            ..>  Snapshot            : "«create»"
+Caretaker           "1" *--> "history\n*" Snapshot            
+Cerrojo              --|>  Destino             
+Destino              --|>  ElementoBase        
+ElementoBase        "1" *--> "coordenada\n1" Coordenada
+ElementoFactory      ..>  Aceite              : "«create»"
+ElementoFactory      ..>  Bomba               : "«create»"
+ElementoFactory      ..>  CajaFragil          : "«create»"
+ElementoFactory      ..>  CajaLlave           : "«create»"
+ElementoFactory      ..>  CajaNormal          : "«create»"
+ElementoFactory      ..>  Cerrojo             : "«create»"
+ElementoFactory      ..>  Destino             : "«create»"
+ElementoFactory      ..>  ElementoFactory     : "«create»"
+ElementoFactory     "1" *--> "instancia\n1" ElementoFactory
+ElementoFactory      ..>  ItemMoneda          : "«create»"
+ElementoFactory      ..>  ItemUndoExtra       : "«create»"
+ElementoFactory      ..>  Jugador             : "«create»"
+ElementoFactory      ..>  Pared               : "«create»"
+ElementoFactory      ..>  Reja                : "«create»"
+ElementoFactory      ..>  Suelo               : "«create»"
+GameController      "1" *--> "instancia\n1" GameController      
+'GameController       ..>  GameController      : "«create»"
+GameController      "1" *--> "flowController\n1" GameFlowController  
+'GameController       ..>  GameFlowController  : "«create»"
+GameController       ..|>  IContextoItem       
+GameController       ..|>  IMoveCallback       
+GameController      "1" *--> "navegador\n1" INavegadorPantallas 
+GameController      "1" *--> "gameOverPanel\n1" IPantallaGameOver   
+GameController      "1" *--> "pasoNivelPanel\n1" IPantallaPasoNivel  
+GameController      "1" *--> "victoriaPanel\n1" IPantallaVictoria   
+GameController      "1" *--> "reproductorSonido\n1" IReproductorSonido  
+GameController      "1" *--> "vistaMenu\n1" IVistaMenu          
+GameController      "1" *--> "replayPanel\n1" IVistaReplay        
+'GameController       ..>  InputController     : "«create»"
+GameController      "1" *--> "inputController\n1" InputController     
+GameController      "1" *--> "reproductor\n1" ReproductorPartida  
+'GameController       ..>  ReproductorPartida  : "«create»"
+GameController      "1" *--> "tableroParaReplay\n1" Tablero             
+GameController      "1" *--> "vistaJuego\n1" VistaJuego          
+'GameController       ..>  VistaJuego          : "«create»"
+'GameFlowController   ..>  GestorDePartida     : "«create»"
+GameFlowController  "1" *--> "gestorDePartida\n1" GestorDePartida     
+GameFlowController  "1" *--> "gestorNiveles\n1" GestorNiveles       
+GameFlowController   ..|>  IHUDDataSource      
+GameFlowController  "1" *--> "navegador\n1" INavegadorPantallas 
+GameFlowController  "1" *--> "vistaJuego\n1" IVistaDeJuego       
+GameFlowController  "1" *--> "hudPanel\n1" IVistaHUD           
+GameFlowController  "1" *--> "jugador\n1" Jugador             
+GameFlowController  "1" *--> "tablero\n1" Tablero             
+GameOverPanel        --|>  BaseOverlayPanel    
+GameOverPanel       "1" *--> "instancia\n1" GameOverPanel       
+'GameOverPanel        ..>  GameOverPanel       : "«create»"
+GameOverPanel        ..|>  IPantallaGameOver   
+GestorDePartida     "1" *--> "caretaker\n1" Caretaker           
+'GestorDePartida      ..>  Caretaker           : "«create»"
+'GestorDePartida      ..>  Grabacion           : "«create»"
+GestorDePartida     "1" *--> "grabacion\n1" Grabacion           
+'GestorNiveles        ..>  GestorNiveles       : "«create»"
+GestorNiveles       "1" *--> "instancia\n1" GestorNiveles       
+GestorNiveles       "1" *--> "tableros\n*" Tablero             
+GestorNiveles       "1" *--> "factory\n1" TableroFactory      
+'GestorSonido         ..>  GestorSonido        : "«create»"
+GestorSonido "1" *--> "instancia\n1" GestorSonido        
+GestorSonido ..|>  IReproductorSonido  
+'Grabacion            ..>  Snapshot            : "«create»"
+Grabacion "1" *--> "frames\n*" Snapshot            
+HUDPanel  "1" *--> "instancia\n1" HUDPanel            
+'HUDPanel             ..>  HUDPanel            : "«create»"
+HUDPanel ..|>  IVistaHUD           
+InputController  "1" *--> "movimientos\n1" IMovimientos        
+'InputController      ..>  MovimientoTeclado   : "«create»"
+ItemMoneda --|>  ItemPiso            
+ItemPiso --|> ElementoBase        
+'ItemPiso             ..>  Suelo               : "«create»"
+ItemUndoExtra --|>  ItemPiso            
+Jugador --|>  ElementoBase        
+Jugador             "1" *--> "orientacion\n1" Orientacion         
+Main --> ILectorNiveles
+Main --> GameController
+Menu --|>  IVistaMenu
+Menu                "1" *--> "instancia\n1" Menu                
+'Menu                 ..>  Menu                : "«create»"
+MovimientoTeclado --|>  IMovimientos        
+MovimientoTeclado   "1" *--> "controller\n1" InputController        
+Pared --|> ElementoBase
+PasoNivelPanel --|>  BaseOverlayPanel
+PasoNivelPanel --|>  IPantallaPasoNivel  
+PasoNivelPanel      "1" *--> "instancia\n1" PasoNivelPanel      
+'PasoNivelPanel       ..>  PasoNivelPanel      : "«create»"
+Reja                 --|>  ElementoBase        
+Reja                "1" *--> "estado\n1" IEstadoReja         
+'Reja                 ..>  RejaCerrada         : "«create»"
+RejaAbierta          ..|>  IEstadoReja         
+RejaCerrada          ..|>  IEstadoReja         
+ReplayPanel         "1" *--> "reproductor\n1" IReproductorVista   
+ReplayPanel          ..|>  IVistaReplay        
+'ReplayPanel          ..>  ReplayPanel         : "«create»"
+ReplayPanel         "1" *--> "instancia\n1" ReplayPanel         
+ReproductorPartida  "1" *--> "grabacion\n1" Grabacion           
+ReproductorPartida   ..|>  IReproductorVista   
+ReproductorPartida  "1" *--> "panelVista\n1" ISuscriptor         
+ReproductorPartida  "1" *--> "tablero\n1" Tablero             
+Snapshot             +-[#820000,plain]-  Caretaker           
+Snapshot            "1" *--> "memento\n1" TableroMemento      
+Suelo                --|>  ElementoBase        
+Tablero             "1" *--> "cajas\n*" Caja                
+Tablero             "1" *--> "objetivos\n*" Destino             
+Tablero             "1" *--> "elementoBajoJugador\n1" ElementoBase        
+Tablero             "1" *--> "tableroPanel\n1" ISuscriptor         
+Tablero              ..|>  ITableroFisico      
+Tablero             "1" *--> "jugador\n1" Jugador             
+Tablero             "1" *--> "motorFisico\n1" MotorFisico         
+'Tablero              ..>  MotorFisico         : "«create»"
+Tablero             "1" *--> "rejas\n*" Reja                
+'Tablero              ..>  RejaAbierta         : "«create»"
+'Tablero              ..>  RejaCerrada         : "«create»"
+'Tablero              ..>  TableroMemento      : "«create»"
+'TableroFactory       ..>  Cerrojo             : "«create»"
+'TableroFactory       ..>  Coordenada          : "«create»"
+TableroFactory      "1" *--> "elementoFactory\n1" ElementoFactory     
+'TableroFactory       ..>  Reja                : "«create»"
+'TableroFactory       ..>  Tablero             : "«create»"
+'TableroFactory       ..>  TableroFactory      : "«create»"
+TableroFactory      "1" *--> "instancia\n1" TableroFactory      
+TableroMemento      "1" *--> "estadosReja\n*" ElementoBase        
+TableroMemento      "1" *--> "estadosReja\n*" IEstadoReja         
+TableroMemento      "1" *--> "orientacion\n1" Orientacion         
+TableroPanel         ..|>  ISuscriptor         
+TableroPanel        "1" *--> "tablero\n1" Tablero
+TxtLevelsExtractor ..|>  ILectorNiveles
+TxtLevelsExtractor "1" *--> "instancia\n1" TxtLevelsExtractor
+'TxtLevelsExtractor   ..>  TxtLevelsExtractor  : "«create»"
+Ventana ..|>  INavegadorPantallas
+'Ventana ..> Ventana : "<<create>>"
+Ventana "1" *--> "instancia\n1" Ventana
+VictoriaPanel ..|> BaseOverlayPanel
+VictoriaPanel ..|>  IPantallaVictoria
+VictoriaPanel "1" *--> "instancia\n1" VictoriaPanel
+'VictoriaPanel ..> VictoriaPanel : "<<create>>"
+VistaJuego "1" *--> "hudPanel\n1" HUDPanel
+VistaJuego ..|> IVistaDeJuego
+VistaJuego "1" *--> "tableroPanel\n1" TableroPanel
+'VistaJuego ..> TableroPanel : "<<create>>"
+@enduml
